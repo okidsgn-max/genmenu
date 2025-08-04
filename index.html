@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор меню</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a6baf;
+            --secondary-color: #f8f9fa;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --text-color-light: #666;
+            --bg-color: #fff;
+            --menu-bg-color: #fff;
+            --menu-text-color: #333;
+            --menu-text-light: #666;
+            --font-main: 'Roboto', sans-serif;
+            --font-heading: 'Playfair Display', serif;
+            --text-align: left;
+            --title-font-size: 36px;
+            --section-font-size: 24px;
+            --divider-color: #eee;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: var(--font-main);
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3a5a9f;
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .template-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .template-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .template-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .template-option.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .preview-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            aspect-ratio: 16/9;
+        }
+        
+        .preview-actions {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .menu-preview {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+            background-color: var(--menu-bg-color);
+        }
+        
+        /* Стили для шаблона меню */
+        .menu-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .menu-header {
+            margin-bottom: 30px;
+            text-align: var(--text-align);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .header-text {
+            flex-grow: 1;
+            text-align: var(--header-text-align, 'left');
+        }
+        
+        .menu-title {
+            font-family: var(--font-heading);
+            font-size: var(--title-font-size);
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .menu-subtitle {
+            font-size: 16px;
+            color: var(--text-color-light);
+        }
+        
+        .menu-items-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .menu-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: var(--section-font-size);
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--divider-color);
+            color: var(--primary-color);
+        }
+        
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--divider-color);
+            color: var(--menu-text-color);
+        }
+        
+        .item-content {
+            flex-grow: 1;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            font-size: 14px;
+            color: var(--menu-text-light);
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            font-weight: 700;
+            white-space: nowrap;
+            margin-left: 20px;
+            text-align: right;
+            min-width: 150px;
+        }
+        
+        .volume-price {
+            display: inline;
+            font-size: 14px;
+            color: var(--menu-text-light);
+            margin-left: 5px;
+        }
+        
+        .volume-price:first-child {
+            margin-left: 0;
+        }
+        
+        .menu-footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--menu-text-light);
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid var(--divider-color);
+        }
+        
+        /* Стили для шаблона "Акция" */
+        .promo-template {
+            color: white;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 16/9;
+        }
+
+        .promo-template::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .promo-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .promo-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .promo-title {
+            font-family: var(--font-heading);
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .promo-subtitle {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .promo-items-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .promo-item {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .price-sticker {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: var(--accent-color);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            z-index: 3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            line-height: 1.2;
+        }
+
+        .price-sticker .amount {
+            font-size: 24px;
+        }
+
+        .price-sticker .currency {
+            font-size: 16px;
+        }
+
+        .promo-item-name {
+            font-weight: bold;
+            font-size: 22px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .promo-item-description {
+            color: var(--text-color-light);
+            font-size: 16px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .promo-item-old-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .promo-item-discount {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Стили для комбинированного шаблона */
+        .combined-template {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100%;
+            width: 100%;
+            aspect-ratio: 16/9;
+        }
+        
+        .combined-menu-part {
+            padding: 30px;
+            background: var(--menu-bg-color);
+            overflow-y: auto;
+        }
+        
+        .combined-promo-part {
+            position: relative;
+            color: white;
+            overflow-y: auto;
+        }
+        
+        .combined-promo-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Стили для генерации фона */
+        .bg-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bg-option-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .bg-option-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .generate-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Загрузочный экран */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 24px;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .combined-template {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-container {
+                aspect-ratio: unset;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label>Шаблон:</label>
+                <div class="template-options">
+                    <div class="template-option active" data-template="menu">Меню</div>
+                    <div class="template-option" data-template="promo">Акция</div>
+                    <div class="template-option" data-template="combined">Комбинированный</div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="title-input">Название меню:</label>
+                <input type="text" id="title-input" class="input" placeholder="Введите название меню">
+            </div>
+            
+            <div class="control-group">
+                <button class="btn" onclick="document.getElementById('file-input').click()">Загрузить меню</button>
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+            </div>
+            
+            <div class="control-group">
+                <button class="btn" onclick="document.getElementById('logo-upload').click()">Загрузить логотип</button>
+                <input type="file" id="logo-upload" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="control-group">
+                <label for="font-family-select">Шрифт:</label>
+                <select id="font-family-select" class="select">
+                    <option value="'Roboto', sans-serif">Roboto</option>
+                    <option value="'Playfair Display', serif">Playfair Display</option>
+                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                    <option value="'Cormorant Garamond', serif">Cormorant</option>
+                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                    <option value="'Raleway', sans-serif">Raleway</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="text-align-select">Выравнивание:</label>
+                <select id="text-align-select" class="select">
+                    <option value="left">По левому краю</option>
+                    <option value="center">По центру</option>
+                    <option value="right">По правому краю</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Цветовая схема:</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="font-size: 12px;">Основной цвет</label>
+                        <input type="color" id="primary-color-picker" value="#4a6baf">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px;">Акцентный цвет</label>
+                        <input type="color" id="accent-color-picker" value="#e74c3c">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px;">Фон меню</label>
+                        <input type="color" id="menu-bg-color-picker" value="#ffffff">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px;">Текст меню</label>
+                        <input type="color" id="menu-text-color-picker" value="#333333">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="multiple-prices-checkbox">
+                    <label for="multiple-prices-checkbox">Использовать цены для объемов (S/M/L)</label>
+                </div>
+            </div>
+            
+            <div class="controls" id="promo-controls" style="display: none;">
+                <div class="control-group">
+                    <button class="btn" onclick="document.getElementById('promo-file-input').click()">Загрузить данные акции</button>
+                    <input type="file" id="promo-file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                </div>
+                
+                <div class="control-group">
+                    <label for="promo-title-input">Заголовок акции:</label>
+                    <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок акции">
+                </div>
+                
+                <div class="control-group">
+                    <label for="promo-subtitle-input">Подзаголовок акции:</label>
+                    <input type="text" id="promo-subtitle-input" class="input" placeholder="Введите подзаголовок акции">
+                </div>
+                
+                <div class="control-group">
+                    <label>Фон:</label>
+                    <div class="bg-options">
+                        <button class="bg-option-btn active" data-type="color">Цвет</button>
+                        <button class="bg-option-btn" data-type="image">Изображение</button>
+                        <button class="bg-option-btn" data-type="generate">Сгенерировать</button>
+                    </div>
+                    
+                    <div id="bg-color-container">
+                        <input type="color" id="bg-color-picker" value="#4a6baf">
+                    </div>
+                    
+                    <div id="bg-image-container" style="display: none;">
+                        <button class="btn" onclick="document.getElementById('promo-background-upload').click()">Загрузить</button>
+                        <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div id="bg-generate-container" style="display: none;">
+                        <input type="text" id="bg-prompt" class="input" placeholder="Опишите фон для генерации">
+                        <button class="generate-btn" id="generate-bg-btn">Сгенерировать</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="discount-percent">Скидка (%):</label>
+                    <input type="number" id="discount-percent" value="20" min="1" max="99" style="width: 60px;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-container">
+            <div class="preview-actions">
+                <button class="btn" id="download-png-btn">Скачать PNG</button>
+                <button class="btn btn-secondary" id="download-pdf-btn">Скачать PDF</button>
+            </div>
+            <div class="menu-preview" id="menu-preview"></div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div>Генерация фона...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Основные переменные
+            const templateOptions = document.querySelectorAll('.template-option');
+            const titleInput = document.getElementById('title-input');
+            const fileInput = document.getElementById('file-input');
+            const logoUpload = document.getElementById('logo-upload');
+            const fontFamilySelect = document.getElementById('font-family-select');
+            const textAlignSelect = document.getElementById('text-align-select');
+            const primaryColorPicker = document.getElementById('primary-color-picker');
+            const accentColorPicker = document.getElementById('accent-color-picker');
+            const menuBgColorPicker = document.getElementById('menu-bg-color-picker');
+            const menuTextColorPicker = document.getElementById('menu-text-color-picker');
+            const multiplePricesCheckbox = document.getElementById('multiple-prices-checkbox');
+            const menuPreview = document.getElementById('menu-preview');
+            const downloadPngBtn = document.getElementById('download-png-btn');
+            const downloadPdfBtn = document.getElementById('download-pdf-btn');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            
+            // Переменные для акции
+            const promoControls = document.getElementById('promo-controls');
+            const promoFileInput = document.getElementById('promo-file-input');
+            const promoTitleInput = document.getElementById('promo-title-input');
+            const promoSubtitleInput = document.getElementById('promo-subtitle-input');
+            const discountPercentInput = document.getElementById('discount-percent');
+            
+            // Переменные для генерации фона
+            const bgOptionBtns = document.querySelectorAll('.bg-option-btn');
+            const bgColorContainer = document.getElementById('bg-color-container');
+            const bgImageContainer = document.getElementById('bg-image-container');
+            const bgGenerateContainer = document.getElementById('bg-generate-container');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const bgPromptInput = document.getElementById('bg-prompt');
+            const generateBgBtn = document.getElementById('generate-bg-btn');
+            const FUSION_BRAIN_API_KEY = "4E9B065BA535E9DA71C52A7B2AA11C04";
+            
+            let currentTemplate = 'menu';
+            let excelData = null;
+            let promoExcelData = null;
+            let currentBgType = "color";
+            let promoBackgroundImage = null;
+            let logoImage = null;
+            
+            // Инициализация
+            init();
+
+            function init() {
+                setupEventListeners();
+                updateTemplate();
+                updateFontSizes();
+            }
+
+            function setupEventListeners() {
+                // Выбор шаблона
+                templateOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        templateOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        currentTemplate = this.dataset.template;
+                        updateTemplate();
+                        renderMenu();
+                    });
+                });
+                
+                // Загрузка файла меню
+                fileInput.addEventListener('change', function(e) {
+                    loadExcelFile(e.target.files[0], false);
+                });
+                
+                // Загрузка файла акции
+                promoFileInput.addEventListener('change', function(e) {
+                    loadExcelFile(e.target.files[0], true);
+                });
+                
+                // Загрузка логотипа
+                logoUpload.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            logoImage = event.target.result;
+                            renderMenu();
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+                
+                // Изменение названия
+                titleInput.addEventListener('input', renderMenu);
+                promoTitleInput.addEventListener('input', renderMenu);
+                promoSubtitleInput.addEventListener('input', renderMenu);
+                
+                // Изменение шрифта
+                fontFamilySelect.addEventListener('change', function() {
+                    document.documentElement.style.setProperty('--font-heading', this.value);
+                });
+                
+                // Изменение выравнивания
+                textAlignSelect.addEventListener('change', function() {
+                    document.documentElement.style.setProperty('--text-align', this.value);
+                    // Обновляем выравнивание заголовка при изменении логотипа
+                    updateHeaderAlignment();
+                });
+                
+                // Изменение цветов
+                primaryColorPicker.addEventListener('input', function() {
+                    document.documentElement.style.setProperty('--primary-color', this.value);
+                    renderMenu();
+                });
+                
+                accentColorPicker.addEventListener('input', function() {
+                    document.documentElement.style.setProperty('--accent-color', this.value);
+                    renderMenu();
+                });
+                
+                menuBgColorPicker.addEventListener('input', function() {
+                    document.documentElement.style.setProperty('--menu-bg-color', this.value);
+                    renderMenu();
+                });
+                
+                menuTextColorPicker.addEventListener('input', function() {
+                    document.documentElement.style.setProperty('--menu-text-color', this.value);
+                    document.documentElement.style.setProperty('--menu-text-light', this.value.replace(/\)$/, ', 0.7)'));
+                    renderMenu();
+                });
+                
+                // Изменение настройки нескольких цен
+                multiplePricesCheckbox.addEventListener('change', renderMenu);
+                
+                // Скачивание PNG
+                downloadPngBtn.addEventListener('click', downloadAsPNG);
+                
+                // Скачивание PDF
+                downloadPdfBtn.addEventListener('click', downloadAsPDF);
+                
+                // Обработчики для выбора типа фона
+                bgOptionBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        bgOptionBtns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentBgType = this.dataset.type;
+                        
+                        bgColorContainer.style.display = 'none';
+                        bgImageContainer.style.display = 'none';
+                        bgGenerateContainer.style.display = 'none';
+                        
+                        if (currentBgType === 'color') {
+                            bgColorContainer.style.display = 'block';
+                        } else if (currentBgType === 'image') {
+                            bgImageContainer.style.display = 'block';
+                        } else if (currentBgType === 'generate') {
+                            bgGenerateContainer.style.display = 'block';
+                        }
+                    });
+                });
+                
+                bgColorPicker.addEventListener('input', function() {
+                    if (currentBgType === 'color') {
+                        document.documentElement.style.setProperty('--primary-color', this.value);
+                        renderMenu();
+                    }
+                });
+                
+                // Загрузка фонового изображения
+                document.getElementById('promo-background-upload').addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            promoBackgroundImage = event.target.result;
+                            applyBackgroundImage();
+                            renderMenu();
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+                
+                generateBgBtn.addEventListener('click', generateBackground);
+                
+                // Изменение процента скидки
+                discountPercentInput.addEventListener('input', renderMenu);
+            }
+            
+            function updateTemplate() {
+                if (currentTemplate === 'promo' || currentTemplate === 'combined') {
+                    promoControls.style.display = 'block';
+                } else {
+                    promoControls.style.display = 'none';
+                }
+            }
+            
+            function updateFontSizes() {
+                // Можно добавить логику для изменения размеров шрифтов
+            }
+            
+            function updateHeaderAlignment() {
+                // Если логотипа нет и выравнивание по умолчанию - выравниваем заголовок по правому краю
+                if (!logoImage && textAlignSelect.value === 'left') {
+                    document.documentElement.style.setProperty('--header-text-align', 'right');
+                } else {
+                    document.documentElement.style.setProperty('--header-text-align', textAlignSelect.value);
+                }
+            }
+            
+            function loadExcelFile(file, isPromo) {
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    if (isPromo) {
+                        promoExcelData = jsonData;
+                    } else {
+                        excelData = jsonData;
+                    }
+                    
+                    renderMenu();
+                };
+                reader.onerror = function() {
+                    alert('Ошибка при чтении файла');
+                };
+                reader.readAsArrayBuffer(file);
+            }
+            
+            function formatPrice(price) {
+                if (!price) return '';
+                const num = parseFloat(price);
+                return isNaN(num) ? price : num.toFixed(0) + ' ₽';
+            }
+            
+            function getVolumePrices(item) {
+                const volumes = ['S', 'M', 'L'];
+                let pricesHtml = '';
+                let hasVolumePrices = false;
+                
+                volumes.forEach(vol => {
+                    if (item[vol] && !isNaN(parseFloat(item[vol]))) {
+                        pricesHtml += `<span class="volume-price">${vol}: ${formatPrice(item[vol])}</span>`;
+                        hasVolumePrices = true;
+                    }
+                });
+                
+                return hasVolumePrices ? pricesHtml : '';
+            }
+            
+            function getRandomFooterText() {
+                const texts = [
+                    'Приятного аппетита!',
+                    'Ждем вас снова!',
+                    'С любовью к вкусной еде',
+                    'Только свежие продукты',
+                    'Готовим с душой'
+                ];
+                return texts[Math.floor(Math.random() * texts.length)];
+            }
+            
+            async function generateBackground() {
+                const prompt = bgPromptInput.value.trim();
+                if (!prompt) {
+                    alert('Введите описание для генерации фона');
+                    return;
+                }
+                
+                loadingOverlay.style.display = 'flex';
+                
+                try {
+                    // Используем прокси для обхода CORS
+                    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                    const apiUrl = 'https://api.fusionbrain.ai/v1/text2image/run';
+                    
+                    const response = await fetch(proxyUrl + apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${FUSION_BRAIN_API_KEY}`,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            width: 800,
+                            height: 450,
+                            style: "DEFAULT"
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.uuid) {
+                        // Проверяем статус генерации
+                        const imageUrl = await checkGenerationStatus(data.uuid);
+                        if (imageUrl) {
+                            promoBackgroundImage = imageUrl;
+                            applyBackgroundImage();
+                            renderMenu();
+                        }
+                    } else {
+                        throw new Error(data.message || 'Ошибка генерации');
+                    }
+                } catch (error) {
+                    console.error('Ошибка генерации фона:', error);
+                    alert('Произошла ошибка при генерации фона: ' + error.message);
+                } finally {
+                    loadingOverlay.style.display = 'none';
+                }
+            }
+
+            async function checkGenerationStatus(taskId) {
+                let attempts = 0;
+                const maxAttempts = 30;
+                const delay = 2000;
+                
+                while (attempts < maxAttempts) {
+                    try {
+                        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                        const apiUrl = `https://api.fusionbrain.ai/v1/text2image/status/${taskId}`;
+                        
+                        const response = await fetch(proxyUrl + apiUrl, {
+                            headers: {
+                                'Authorization': `Bearer ${FUSION_BRAIN_API_KEY}`,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.status === 'DONE') {
+                            return data.images[0];
+                        } else if (data.status === 'FAILED') {
+                            throw new Error('Генерация не удалась');
+                        }
+                        
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        attempts++;
+                    } catch (error) {
+                        console.error('Ошибка проверки статуса:', error);
+                        throw error;
+                    }
+                }
+                
+                throw new Error('Превышено время ожидания генерации');
+            }
+            
+            function applyBackgroundImage() {
+                // Применяет фоновое изображение для шаблона акции
+                if (currentTemplate === 'promo' || currentTemplate === 'combined') {
+                    renderMenu();
+                }
+            }
+            
+            function renderMenu() {
+                if (!excelData && currentTemplate !== 'promo') return;
+                if (currentTemplate === 'promo' && !promoExcelData) return;
+                
+                updateHeaderAlignment();
+                
+                let menuHtml = '';
+                let promoHtml = '';
+                
+                // Генерация HTML для обычного меню
+                if (excelData && currentTemplate !== 'promo') {
+                    const categories = [...new Set(excelData.map(item => item.Категория || 'Основное меню'))];
+                    
+                    categories.forEach(category => {
+                        menuHtml += `<div class="menu-section"><div class="section-title">${category}</div>`;
+                        
+                        excelData.filter(item => (item.Категория || 'Основное меню') === category).forEach(item => {
+                            const hasDescription = item.Описание && item.Описание.trim() !== '';
+                            const volumePrices = multiplePricesCheckbox.checked ? getVolumePrices(item) : '';
+                            const showMainPrice = !multiplePricesCheckbox.checked || !volumePrices;
+                            
+                            menuHtml += `
+                            <div class="menu-item">
+                                <div class="item-content">
+                                    <div class="item-name">${item.Название || ''}</div>
+                                    ${hasDescription ? `<div class="item-description">${item.Описание}</div>` : ''}
+                                </div>
+                                <div class="item-price">
+                                    ${showMainPrice ? formatPrice(item.Цена) : volumePrices}
+                                </div>
+                            </div>
+                            `;
+                        });
+                        
+                        menuHtml += `</div>`;
+                    });
+                }
+                
+                // Генерация HTML для акции
+                const discount = parseInt(discountPercentInput.value) || 0;
+                
+                if (promoExcelData) {
+                    promoExcelData.forEach(item => {
+                        const hasDescription = item.Описание && item.Описание.trim() !== '';
+                        const originalPrice = parseFloat(item.Цена) || 0;
+                        const discountedPrice = originalPrice * (100 - discount) / 100;
+                        
+                        promoHtml += `
+                        <div class="promo-item">
+                            <div class="price-sticker">
+                                <div class="amount">${Math.round(discountedPrice)}</div>
+                                <div class="currency">₽</div>
+                            </div>
+                            <div class="promo-item-name">${item.Название || ''}</div>
+                            ${hasDescription ? `<div class="promo-item-description">${item.Описание}</div>` : ''}
+                            ${originalPrice > 0 ? `
+                            <div>
+                                <span class="promo-item-old-price">${formatPrice(originalPrice)}</span>
+                                <div class="promo-item-discount">Скидка ${discount}%</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        `;
+                    });
+                }
+                
+                if (currentTemplate === 'menu') {
+                    menuPreview.innerHTML = `
+                        <div class="menu-content">
+                            <div class="menu-header">
+                                <div class="logo-container">
+                                    ${logoImage ? `<img src="${logoImage}" class="logo-img" alt="Логотип">` : ''}
+                                </div>
+                                <div class="header-text">
+                                    <div class="menu-title">${titleInput.value || 'Название меню'}</div>
+                                    <div class="menu-subtitle">${new Date().toLocaleDateString('ru-RU', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}</div>
+                                </div>
+                            </div>
+                            <div class="menu-items-container">
+                                ${menuHtml}
+                            </div>
+                            <div class="menu-footer">
+                                ${getRandomFooterText()}
+                            </div>
+                        </div>
+                    `;
+                } 
+                else if (currentTemplate === 'promo') {
+                    menuPreview.innerHTML = '';
+                    
+                    if (currentBgType === 'color') {
+                        menuPreview.style.backgroundColor = bgColorPicker.value;
+                    } else if (promoBackgroundImage) {
+                        const bgImage = document.createElement('div');
+                        bgImage.className = 'template-bg-image';
+                        bgImage.style.position = 'absolute';
+                        bgImage.style.top = '0';
+                        bgImage.style.left = '0';
+                        bgImage.style.right = '0';
+                        bgImage.style.bottom = '0';
+                        bgImage.style.backgroundImage = `url(${promoBackgroundImage})`;
+                        bgImage.style.backgroundSize = 'cover';
+                        bgImage.style.backgroundPosition = 'center';
+                        bgImage.style.zIndex = '0';
+                        menuPreview.appendChild(bgImage);
+                    }
+                    
+                    const content = document.createElement('div');
+                    content.className = 'promo-content';
+                    content.innerHTML = `
+                        <div class="promo-header">
+                            <div class="promo-title">${promoTitleInput.value || 'Акция'}</div>
+                            <div class="promo-subtitle">${promoSubtitleInput.value || 'Специальное предложение'}</div>
+                        </div>
+                        <div class="promo-items-container">
+                            ${promoHtml}
+                        </div>
+                    `;
+                    menuPreview.appendChild(content);
+                }
+                else if (currentTemplate === 'combined') {
+                    menuPreview.innerHTML = `
+                        <div class="combined-template">
+                            <div class="combined-menu-part">
+                                <div class="menu-header">
+                                    <div class="logo-container">
+                                        ${logoImage ? `<img src="${logoImage}" class="logo-img" alt="Логотип">` : ''}
+                                    </div>
+                                    <div class="header-text">
+                                        <div class="menu-title">${titleInput.value || 'Наше меню'}</div>
+                                        <div class="menu-subtitle">${new Date().toLocaleDateString('ru-RU', { 
+                                            year: 'numeric', 
+                                            month: 'long', 
+                                            day: 'numeric' 
+                                        })}</div>
+                                    </div>
+                                </div>
+                                <div class="menu-items-container">
+                                    ${menuHtml}
+                                </div>
+                            </div>
+                            <div class="combined-promo-part">
+                                ${promoBackgroundImage ? 
+                                    `<div class="template-bg-image" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url(${promoBackgroundImage}); background-size: cover; background-position: center; z-index: 0;"></div>` 
+                                    : ''
+                                }
+                                <div class="combined-promo-content">
+                                    <div class="promo-header">
+                                        <div class="promo-title">${promoTitleInput.value || 'Акция'}</div>
+                                        <div class="promo-subtitle">${promoSubtitleInput.value || 'Специальное предложение'}</div>
+                                    </div>
+                                    <div class="promo-items-container">
+                                        ${promoHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            function downloadAsPNG() {
+                html2canvas(menuPreview).then(canvas => {
+                    canvas.toBlob(function(blob) {
+                        saveAs(blob, 'menu.png');
+                    });
+                });
+            }
+            
+            function downloadAsPDF() {
+                html2canvas(menuPreview).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm'
+                    });
+                    
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('menu.pdf');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
