@@ -81,11 +81,11 @@
             margin-right:20px;
             object-fit: initial;
         }
-        
+        ≈
         .header-title {
             font-size: 20px;
             font-weight: 600;
-            color: #131313;
+            color: #3d435c;
             margin: 0;
  margin-bottom: 15px;
         }
@@ -123,7 +123,7 @@
         .tab-buttons {
             display: flex;
             margin-bottom: 10px;
-            border-bottom: 0px solid #ddd;
+            border-bottom: 0px;
             position: sticky;
             top: 0;
             background: white;
@@ -138,7 +138,7 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
-            border-bottom: 0px solid transparent;
+            border-bottom: 0px ;
             transition: all 0.3s;
         }
 
@@ -770,7 +770,7 @@
         
         <div class="preview-wrapper">
             <div class="menu-preview" id="menu-preview">
-                <div style="text-align: center; color: #999; padding: 40px;">
+                <div style="text-align: center; color: #a3a9c2; padding: 40px;">
                     <h3>Сейчас здесь будет ваше меню</h3>
                     <p>Настройте параметры слева и загрузите данные</p>
                 </div>
@@ -1132,7 +1132,7 @@
                 
                 if (currentTab === 'menu' && !excelData) {
                     menuPreview.innerHTML = `
-                        <div style="text-align: center; color: #999; padding: 40px;">
+                        <div style="text-align: center; color: #a3a9c2; padding: 40px;">
                             <h3>Сейчас здесь будет ваше меню</h3>
                             <p>Загрузите файл с меню и настройте параметры слева</p>
                         </div>
@@ -1142,7 +1142,7 @@
                 
                 if (currentTab === 'promo' && !promoTitleInput.value && !promoTextInput.value && !promoPriceInput.value) {
                     menuPreview.innerHTML = `
-                        <div style="text-align: center; color: #999; padding: 40px;">
+                        <div style="text-align: center; color: #a3a9c2; padding: 40px;">
                             <h3>Сейчас здесь будет ваша акция</h3>
                             <p>Введите данные для акции и настройте параметры слева</p>
                         </div>
@@ -1152,7 +1152,7 @@
                 
                 if (currentTab === 'combined' && (!excelData || (!promoTitleInput.value && !promoTextInput.value && !promoPriceInput.value))) {
                     menuPreview.innerHTML = `
-                        <div style="text-align: center; color: #999; padding: 40px;">
+                        <div style="text-align: center; color: #a3a9c2; padding: 40px;">
                             <h3>Сейчас здесь будет комбинированное меню</h3>
                             <p>Загрузите файл с меню и введите данные для акции</p>
                         </div>
