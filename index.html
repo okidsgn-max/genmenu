@@ -29,7 +29,7 @@
             --primary-color: #00b398;
             --secondary-color: #f8f9fa;
             --accent-color: #e74c3c;
-            --bg-color: #f5f5f5;
+            --bg-color: #fff;
             --menu-bg-color: #fff;
             --menu-text-color: #667099;
             --menu-text-light: #8e8e9e;
@@ -83,7 +83,7 @@
             margin-right:20px;
             object-fit: initial;
         }
-
+        
         .header-title {
             font-size: 20px;
             font-weight: 600;
@@ -97,14 +97,15 @@
             flex: 1;
             gap: 20px;
             overflow: hidden;
-            height: calc(100% - 70px);
+            height: calc(100% - 120px);
         }
         
         .controls-panel {
             background: white;
             padding: 20px;
             border-radius: 8px;
-            width: 380px;
+            box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+            width: 350px;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -113,7 +114,6 @@
         .controls-content {
             flex: 1;
             overflow-y: auto;
-            padding-right: 10px;
         }
         
         .controls-footer {
@@ -125,20 +125,22 @@
         .tab-buttons {
             display: flex;
             margin-bottom: 10px;
+            border-bottom: 0px;
             position: sticky;
             top: 0;
             background: white;
-            z-index: 10;
+            z-index: 0;
         }
         
         .tab-btn {
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 10px 10px;
             background: none;
             border: none;
             cursor: pointer;
             font-weight: 600;
+            border-bottom: 0px ;
             transition: all 0.3s;
         }
 
@@ -149,13 +151,14 @@
         }
         
         .tab-btn.active {
+            border-bottom: 0px solid var(--active-color);
             color: var(--active-color);
         }
         
         .control-group {
             margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .control-group:last-child {
@@ -170,14 +173,19 @@
             color: var(--text-color);
         }
         
-        .checkbox-group {
+        .checkbox-group, .radio-group {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
         }
         
-        .checkbox-group input {
+        .checkbox-group input, .radio-group input {
             margin-right: 10px;
+        }
+
+        .radio-group label {
+            margin-right: 15px;
+            font-weight: normal;
         }
         
         .btn {
@@ -205,7 +213,7 @@
         }
         
         .btn-secondary:hover {
-            background: #f0f0f0;
+            background: #e0e0e0;
         }
         
         .input {
@@ -223,10 +231,10 @@
             width: 100%;
             padding: 10px;
             border: 1px solid var(--input-border);
-            border-radius: 4px;
+           border-radius: 4px;
             font-family: inherit;
             font-size: 14px;
-            background-color: var(--input-bg);
+            background: var(--input-bg);
             margin-bottom: 10px;
         }
 
@@ -237,94 +245,99 @@
             align-items: center;
             margin-bottom: 15px;
         }
-
-        .setting-row label {
-            grid-column: 1 / -1;
-        }
         
         .preview-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--bg-color);
+            background: #e0e0e0; /* Default grey background */
             border-radius: 8px;
+            overflow: hidden;
         }
         
         .preview-container {
-            width: 100%;
+            background: white;
+            border-radius: 8px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            aspect-ratio: 16 / 9;
+            box-shadow: none;
+            background-color: transparent;
+        }
+        
+        .preview-actions {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
         }
         
         .menu-preview {
             width: 100%;
-            height: 100%;
+            aspect-ratio: 16 / 9;
+            margin: auto;
             position: relative;
-            background-color: #f5f5f5;
+            background-color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
         }
-        
-        .preview-actions {
-            padding: 15px 0 0 0;
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 800px;
-        }
-        
-        /* -- Global Menu Styles -- */
-        .menu-board {
+
+        .menu-board-content-wrapper {
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
-            background-size: cover;
-            background-position: center;
-            padding-top: 8%;
-            position: relative;
         }
 
-        .menu-top-header {
+        .menu-board-header {
+            min-height: 5%;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px 20px 30px;
-            position: absolute;
-            top: 15px;
-            left: 0;
             width: 100%;
-            z-index: 5;
+            flex-shrink: 0;
         }
 
-        .menu-logo {
-            max-height: 60px;
+        .menu-board-logo {
+            max-height: 50px;
             max-width: 150px;
             object-fit: contain;
         }
 
-        .menu-date {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--menu-text-color);
+        .menu-board-date {
+            font-size: 16px;
+            color: var(--text-color);
+        }
+
+        .menu-board-body {
+            flex-grow: 1;
+            overflow: hidden;
+            padding: 20px;
+            height: 100%;
         }
         
-        /* -- List Layout Styles -- */
-        .menu-content-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 30px;
+        .menu-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+        
+        .menu-items-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
         .menu-items-container.two-columns {
-            display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
         }
         
         .menu-section {
@@ -355,7 +368,6 @@
         }
         
         .item-name {
-            font-family: var(--font-item);
             font-weight: 500;
             font-size: var(--item-font-size);
             margin-bottom: 5px;
@@ -369,81 +381,115 @@
         }
         
         .item-price {
-            font-family: var(--font-item);
+            font-family: var(--font-price);
             font-weight: 700;
-            font-size: var(--item-font-size);
+            font-size: var(--price-font-size);
+            color: var(--price-font-color);
             white-space: nowrap;
             margin-left: 20px;
             text-align: right;
             min-width: 80px;
         }
-        
-        /* -- Grid Layout Styles -- */
-        .menu-content-grid {
+
+        /* Grid 2x2 Layout Styles */
+        .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            gap: 20px;
-            padding: 0 30px 30px 30px;
+            gap: 15px;
+            width: 100%;
             height: 100%;
         }
 
         .grid-cell {
-            display: flex;
+            background-color: #f8f9fa;
             border-radius: 8px;
+            padding: 15px;
+            display: flex;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
         }
-
+        
         .grid-cell-content {
             flex: 1;
-            padding: 20px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
         }
-
-        .grid-cell-content .item-name {
-            font-size: 1.2em;
+        
+        .grid-cell-image-wrapper {
+            width: 50%;
+            height: 100%;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
-        .grid-cell-content .item-description {
-            flex-grow: 1;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-        .grid-cell-content .item-price {
-            margin-left: 0;
-            text-align: left;
+        
+        .combined-view .grid-cell-image-wrapper {
+            height: 80%;
+            align-self: center;
         }
 
         .grid-cell-image {
-            width: 100px;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .upload-placeholder-btn {
             width: 100%;
             height: 100%;
-            background-color: #e9ecef;
-            border: 2px dashed #ced4da;
-            color: #6c757d;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .upload-image-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed var(--active-color);
+            border-radius: 50%;
+            background: rgba(0, 179, 152, 0.1);
+            color: var(--active-color);
             font-size: 30px;
             cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
         
-        /* -- Promo Template Styles -- */
+        .volume-price {
+            display: inline;
+            font-size: 14px;
+            color: var(--menu-text-light);
+            margin-left: 5px;
+        }
+        
+        /* Стили для шаблона "Акция" */
         .promo-template {
+            color: white;
+            position: relative;
             width: 100%;
             height: 100%;
-            position: relative;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
-            color: white;
+            display: flex;
+            padding: 40px;
+        }
+
+        .promo-template.layout-left .promo-image-container { order: 1; }
+        .promo-template.layout-left .promo-content { order: 2; text-align: left; }
+        .promo-template.layout-right .promo-image-container { order: 2; }
+        .promo-template.layout-right .promo-content { order: 1; text-align: right; }
+        .promo-template.layout-center { flex-direction: column; text-align: center; }
+        .promo-template.layout-center .promo-image-container { order: 1; height: 50%; }
+        .promo-template.layout-center .promo-content { order: 2; }
+        
+        .promo-image-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .promo-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .promo-content {
@@ -453,15 +499,10 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 40px;
+            flex: 1;
             box-sizing: border-box;
         }
         
-        .promo-content.align-left { text-align: left; align-items: flex-start; }
-        .promo-content.align-center { text-align: center; align-items: center; }
-        .promo-content.align-right { text-align: right; align-items: flex-end; }
-
-
         .promo-title {
             font-size: var(--promo-title-font-size);
             font-weight: 700;
@@ -480,8 +521,8 @@
             font-weight: bold;
             margin-top: 20px;
         }
-        
-        /* -- Combined Template Styles -- */
+
+        /* Стили для комбинированного шаблона */
         .combined-template {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -491,37 +532,36 @@
         }
         
         .combined-menu-part {
-            position: relative;
+            background: var(--menu-bg-color);
             overflow: hidden;
-            display: flex;
+            display: flex; /* For centering content */
             flex-direction: column;
         }
-
+        
         .combined-promo-part {
             position: relative;
-        }
-        
-        /* -- Helper Styles -- */
-        .bg-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .bg-option-btn {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            background: white;
-        }
-
-        .bg-option-btn.active {
-            background: var(--active-color);
             color: white;
-            border-color: var(--active-color);
+            overflow: hidden;
+            display: flex; /* Added */
+            align-items: center; /* Added */
+            justify-content: center; /* Added */
         }
         
+        .combined-promo-part .promo-template {
+            padding: 30px;
+        }
+
+        /* Стили для генерации фона */
+        .prompt-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+        }
+        
+        /* Загрузочный экран */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -553,6 +593,7 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Drag and drop стили */
         .drop-area {
             border: 2px dashed #ccc;
             border-radius: 8px;
@@ -566,7 +607,7 @@
         
         .drop-area:hover, .drop-area.highlight {
             border-color: var(--active-color);
-            background: rgba(0, 179, 152, 0.05);
+            background: rgba(0, 179, 152, 0.1);
         }
         
         .file-info {
@@ -585,92 +626,99 @@
         <div class="controls-panel">
             <h1 class="header-title">Генератор менюборда</h1>
             <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню">Меню</button>
-                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция">Акция</button>
-                <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="2 в 1">2в1</button>
+                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
+                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция"> Акция</button>
+                <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="2 в 1"> 2в1</button>
             </div>
+
             <div class="controls-content">
                 <div id="menu-controls">
                     <div class="control-group">
                         <label>Загрузка данных:</label>
                         <div class="drop-area" id="menu-drop-area">
                             Перетащите файл Excel или
-                            <button class="btn btn-secondary" style="width:auto; display:inline-block; padding: 5px 10px; margin: 5px 0 0 0;" onclick="document.getElementById('file-input').click()">Выберите файл</button>
+                            <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Выберите файл</button>
                             <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;">
                             <div class="file-info" id="menu-file-info">Файл не выбран</div>
                         </div>
                     </div>
 
                     <div class="control-group">
-                        <label>Логотип (по желанию):</label>
-                        <button class="btn btn-secondary" onclick="document.getElementById('logo-upload').click()">Загрузить логотип</button>
+                        <label>Загрузка логотипа:</label>
+                        <button class="btn btn-secondary" onclick="document.getElementById('logo-upload').click()">Загрузить лого</button>
                         <input type="file" id="logo-upload" accept="image/*" style="display: none;">
                         <div class="file-info" id="logo-file-info">Логотип не загружен</div>
                     </div>
 
                     <div class="control-group">
                         <label>Тип верстки меню:</label>
-                        <select id="menu-layout-select" class="select">
-                            <option value="list">Список</option>
-                            <option value="grid">Сетка 2x2</option>
-                        </select>
+                        <div class="radio-group">
+                            <input type="radio" id="layout-list" name="layout-type" value="list" checked>
+                            <label for="layout-list">Список</label>
+                            <input type="radio" id="layout-grid" name="layout-type" value="grid">
+                            <label for="layout-grid">Сетка 2x2</label>
+                        </div>
                     </div>
                     
-                    <div class="control-group">
-                        <label>Фон меню:</label>
-                        <div class="bg-options">
-                            <button class="bg-option-btn active" data-type="color">Цвет</button>
-                            <button class="bg-option-btn" data-type="image">Изображение</button>
+                    <div class="control-group" id="list-settings">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="show-description-checkbox">
+                            <label for="show-description-checkbox">Показывать описание блюда</label>
                         </div>
-                        <div id="bg-color-container-menu">
-                            <input type="color" id="menu-bg-color-picker" value="#f5f5f5" style="width: 100%; height: 40px;">
-                        </div>
-                        <div id="bg-image-container-menu" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('menu-bg-upload').click()">Добавить фон</button>
-                            <input type="file" id="menu-bg-upload" accept="image/*" style="display: none;">
-                            <div class="file-info" id="menu-bg-file-info">Фон не загружен</div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="multiple-prices-checkbox">
+                            <label for="multiple-prices-checkbox">Использовать цены для объемов (S/M/L)</label>
                         </div>
                     </div>
 
+                    <div class="control-group" id="grid-settings" style="display: none;">
+                        <label>Цвет фона ячейки:</label>
+                        <input type="color" id="grid-cell-bg-color" value="#ffffff" style="width: 40%; height: 40px;">
+                    </div>
+
                     <div class="control-group">
-                        <label>Шрифт заголовка:</label>
+                        <label>Фон блока:</label>
+                        <input type="color" id="menu-bg-color-picker" value="#f5f5f5" style="width: 40%; height: 40px;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('menu-bg-upload').click()">Добавить картинку</button>
+                        <input type="file" id="menu-bg-upload" accept="image/*" style="display: none;">
+                    </div>
+
+                    <div class="control-group">
+                        <label>Шрифт категорий:</label>
                         <div class="setting-row">
                             <select id="category-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
                             </select>
                             <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
                             <input type="color" id="category-color-picker" value="#00b398">
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="show-description-checkbox">
-                            <label for="show-description-checkbox">Показывать описание блюда</label>
-                        </div>
-                        <div id="description-settings" style="display: none;">
-                            <label>Шрифт описания:</label>
-                            <div class="setting-row">
-                                <select id="description-font-select" class="select">
-                                    <option value="'Roboto', sans-serif">Roboto</option>
-                                    <option value="'Open Sans', sans-serif">Open Sans</option>
-                                </select>
-                                <input type="number" id="description-font-size" class="input" value="14" min="8" max="50">
-                                <input type="color" id="description-color-picker" value="#6c757d">
-                            </div>
+                    <div class="control-group" id="description-settings-group" style="display: none;">
+                        <label>Шрифт описания:</label>
+                        <div class="setting-row">
+                            <select id="description-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                            </select>
+                            <input type="number" id="description-font-size" class="input" value="14" min="8" max="50">
+                            <input type="color" id="description-color-picker" value="#667099">
                         </div>
                     </div>
-                    
+
                     <div class="control-group">
                         <label>Шрифт цен:</label>
                         <div class="setting-row">
-                            <select id="item-font-select" class="select">
+                            <select id="price-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
                                 <option value="'Lato', sans-serif">Lato</option>
                             </select>
-                            <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
-                            <input type="color" id="item-color-picker" value="#3d435c">
+                            <input type="number" id="price-font-size" class="input" value="16" min="10" max="100">
+                            <input type="color" id="price-color-picker" value="#3d435c">
                         </div>
                     </div>
                 </div>
@@ -678,12 +726,9 @@
                 <div id="promo-controls" style="display: none;">
                     <div class="control-group">
                         <label for="promo-title-input">Заголовок акции:</label>
-                        <input type="text" id="promo-title-input" class="input" placeholder="Супер предложение!">
+                        <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок акции">
                         <div class="setting-row">
-                            <select id="promo-title-font-select" class="select">
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                            </select>
+                            <select id="promo-title-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
                             <input type="number" id="promo-title-size" class="input" value="60" min="10" max="180">
                             <input type="color" id="promo-title-color-picker" value="#ffffff">
                         </div>
@@ -691,12 +736,9 @@
                     
                     <div class="control-group">
                         <label for="promo-text-input">Текст акции:</label>
-                        <input type="text" id="promo-text-input" class="input" placeholder="Только сегодня!">
+                        <input type="text" id="promo-text-input" class="input" placeholder="Введите текст акции">
                         <div class="setting-row">
-                            <select id="promo-text-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                            </select>
+                             <select id="promo-text-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option></select>
                             <input type="number" id="promo-text-size" class="input" value="30" min="10" max="100">
                             <input type="color" id="promo-text-color-picker" value="#ffffff">
                         </div>
@@ -704,44 +746,35 @@
                     
                     <div class="control-group">
                         <label for="promo-price-input">Цена товара (₽):</label>
-                        <input type="number" id="promo-price-input" class="input" placeholder="999">
+                        <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
                         <div class="setting-row">
-                            <select id="promo-price-font-select" class="select">
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                            </select>
-                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="180">
+                            <select id="promo-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
+                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="100">
                             <input type="color" id="promo-price-color-picker" value="#ffffff">
                         </div>
                     </div>
                     
                     <div class="control-group">
-                        <label>Фон акции:</label>
-                        <div class="bg-options">
-                            <button class="bg-option-btn active" data-type="color">Цвет</button>
-                            <button class="bg-option-btn" data-type="image">Свой</button>
-                            <button class="bg-option-btn" data-type="generate">AI Фон</button>
-                        </div>
-                        <div id="bg-color-container">
-                            <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
-                        </div>
-                        <div id="bg-image-container" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Загрузить фон</button>
-                            <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
-                            <div class="file-info" id="bg-file-info">Фон не загружен</div>
-                        </div>
-                        <div id="bg-generate-container" style="display: none;">
-                            <input type="text" id="bg-prompt" class="input" placeholder="Опишите фон, например: food photography">
-                            <button class="btn" id="generate-bg-btn">Сгенерировать фон</button>
-                        </div>
+                        <label>Фон блока:</label>
+                        <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Изображение акции:</label>
+                        <input type="text" id="bg-prompt" class="prompt-input" placeholder="Опишите картинку для генерации">
+                        <button class="generate-btn" id="generate-bg-btn">Сгенерировать (AI)</button>
+                        <div class="file-info">или</div>
+                        <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Загрузить свою</button>
+                        <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
+                        <div class="file-info" id="bg-file-info">Изображение не загружено</div>
                     </div>
 
-                     <div class="control-group">
-                        <label>Расположение текста:</label>
-                        <select id="promo-align-select" class="select">
-                            <option value="align-center">Центр</option>
-                            <option value="align-left">Слева</option>
-                            <option value="align-right">Справа</option>
+                    <div class="control-group">
+                        <label>Расположение картинки:</label>
+                        <select id="promo-layout-select" class="select">
+                            <option value="left">Слева</option>
+                            <option value="right">Справа</option>
+                            <option value="center">По центру</option>
                         </select>
                     </div>
                 </div>
@@ -751,7 +784,11 @@
         <div class="preview-wrapper">
             <div class="preview-container">
                 <div class="menu-preview" id="menu-preview">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                        <h3>Здесь будет ваше меню</h3>
+                        <p>Настройте параметры слева и загрузите данные</p>
                     </div>
+                </div>
             </div>
             <div class="preview-actions">
                 <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
@@ -762,582 +799,507 @@
     
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <div id="loading-text">Загрузка...</div>
+        <div id="loading-text">Генерация...</div>
     </div>
+    <input type="file" id="grid-image-upload" accept="image/*" style="display: none;">
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- DOM Elements ---
+        // API Keys - IMPORTANT: Replace with your actual keys
+        const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
+        const FUSION_BRAIN_SECRET_KEY = 'YOUR_SECRET_KEY'; // Replace with your secret key
+
+        // DOM Elements
         const getEl = (id) => document.getElementById(id);
         const queryEl = (sel) => document.querySelector(sel);
         const queryAll = (sel) => document.querySelectorAll(sel);
         
-        // Tabs
         const tabButtons = queryAll('.tab-btn');
         const menuControls = getEl('menu-controls');
         const promoControls = getEl('promo-controls');
-
-        // General
-        const menuPreview = getEl('menu-preview');
-        const loadingOverlay = getEl('loading-overlay');
-        const loadingText = getEl('loading-text');
-
-        // Menu Controls
         const fileInput = getEl('file-input');
         const menuDropArea = getEl('menu-drop-area');
         const menuFileInfo = getEl('menu-file-info');
-        const logoUpload = getEl('logo-upload');
-        const logoFileInfo = getEl('logo-file-info');
-        const menuLayoutSelect = getEl('menu-layout-select');
-        const menuBgOptions = queryAll('#menu-controls .bg-option-btn');
-        const menuBgColorContainer = getEl('bg-color-container-menu');
-        const menuBgImageContainer = getEl('bg-image-container-menu');
-        const menuBgColorPicker = getEl('menu-bg-color-picker');
-        const menuBgUpload = getEl('menu-bg-upload');
-        const menuBgFileInfo = getEl('menu-bg-file-info');
-        const showDescriptionCheckbox = getEl('show-description-checkbox');
-        const descriptionSettings = getEl('description-settings');
-
-        // Font Controls
-        const categoryFontSelect = getEl('category-font-select');
-        const categoryFontSizeInput = getEl('category-font-size');
-        const categoryColorPicker = getEl('category-color-picker');
-        const descriptionFontSelect = getEl('description-font-select');
-        const descriptionFontSizeInput = getEl('description-font-size');
-        const descriptionColorPicker = getEl('description-color-picker');
-        const itemFontSelect = getEl('item-font-select');
-        const itemFontSizeInput = getEl('item-font-size');
-        const itemColorPicker = getEl('item-color-picker');
-
-        // Promo Controls
-        const promoTitleInput = getEl('promo-title-input');
-        const promoTextInput = getEl('promo-text-input');
-        const promoPriceInput = getEl('promo-price-input');
-        const promoTitleFontSelect = getEl('promo-title-font-select');
-        const promoTextFontSelect = getEl('promo-text-font-select');
-        const promoPriceFontSelect = getEl('promo-price-font-select');
-        const promoTitleColorPicker = getEl('promo-title-color-picker');
-        const promoTextColorPicker = getEl('promo-text-color-picker');
-        const promoPriceColorPicker = getEl('promo-price-color-picker');
-        const promoTitleSizeInput = getEl('promo-title-size');
-        const promoTextSizeInput = getEl('promo-text-size');
-        const promoPriceSizeInput = getEl('promo-price-size');
-        const promoAlignSelect = getEl('promo-align-select');
-        const bgOptionBtns = queryAll('#promo-controls .bg-option-btn');
-        const bgColorContainer = getEl('bg-color-container');
-        const bgImageContainer = getEl('bg-image-container');
-        const bgGenerateContainer = getEl('bg-generate-container');
-        const promoBackgroundUpload = getEl('promo-background-upload');
-        const bgFileInfo = getEl('bg-file-info');
-        const bgColorPicker = getEl('bg-color-picker');
-        const bgPromptInput = getEl('bg-prompt');
-        const generateBgBtn = getEl('generate-bg-btn');
-        
-        // Download Buttons
+        const menuPreview = getEl('menu-preview');
         const downloadPngBtn = getEl('download-png-btn');
         const downloadPdfBtn = getEl('download-pdf-btn');
+        const loadingOverlay = getEl('loading-overlay');
+        const loadingText = getEl('loading-text');
 
-        // --- State ---
-        let state = {
-            currentTab: 'menu',
-            menuData: null,
-            logoImage: null,
-            menuLayout: 'list',
-            menuBgType: 'color',
-            menuBgImage: null,
-            promoBgType: 'color',
-            promoBgImage: null,
+        // State variables
+        let currentTab = 'menu';
+        let excelData = null;
+        let logoImage = null;
+        let menuBackgroundImage = null;
+        let promoImage = null;
+        let gridImages = {}; // To store uploaded images for grid cells by index
+        let currentGridImageInput = null; // To track which grid cell is uploading an image
+
+        // Field aliases for Excel parsing
+        const FIELD_ALIASES = {
+            name: ['наименование', 'название', 'блюдо'],
+            description: ['описание', 'состав'],
+            price: ['цена', 'стоимость', 'с ндс', 'price'],
+            category: ['категория', 'раздел'],
+            image: ['фото', 'изображение', 'картинка', 'image'],
+            s: ['s', 'small', 'маленький'],
+            m: ['m', 'medium', 'средний'],
+            l: ['l', 'large', 'большой'],
         };
-
-        // --- Mappings for flexible Excel parsing ---
-        const COLUMN_MAPPINGS = {
-            name: ['Наименование', 'Название', 'name', 'title'],
-            description: ['Описание', 'description'],
-            price: ['Цена', 'Стоимость', 'с ндс', 'price'],
-            category: ['Категория', 'category'],
-            image: ['Фото', 'Изображение', 'image', 'img'],
-        };
-
-        // --- API Details ---
-        const FUSIONBRAIN_API = {
-            KEY: '7BE81F273FA49A565F4BFFA787DE9D3C',
-            SECRET: 'YOUR_SECRET_KEY', // Secret key is often required, add if needed
-            URL: 'https://api.fusionbrain.ai/web/api/v1/text2image',
-            CHECK_URL: 'https://api.fusionbrain.ai/web/api/v1/text2image/status/',
-        };
-
-        // --- Initialization ---
-        init();
-
+        
         function init() {
             setupEventListeners();
             updateTab();
-            render();
+            renderMenu();
         }
 
         function setupEventListeners() {
             // Tabs
-            tabButtons.forEach(btn => btn.addEventListener('click', handleTabClick));
-            
-            // File Uploads
-            setupDropArea(menuDropArea, fileInput, handleMenuFile);
-            logoUpload.addEventListener('change', handleLogoFile);
-            menuBgUpload.addEventListener('change', (e) => handleImageUpload(e, 'menuBgImage', menuBgFileInfo));
-            promoBackgroundUpload.addEventListener('change', (e) => handleImageUpload(e, 'promoBgImage', bgFileInfo));
-
-            // Menu Controls
-            menuLayoutSelect.addEventListener('change', (e) => updateState({ menuLayout: e.target.value }));
-            menuBgOptions.forEach(btn => btn.addEventListener('click', () => handleBgOptionClick('menu', btn.dataset.type)));
-            showDescriptionCheckbox.addEventListener('change', () => {
-                descriptionSettings.style.display = showDescriptionCheckbox.checked ? 'block' : 'none';
-                render();
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentTab = this.dataset.tab;
+                    updateTab();
+                    renderMenu();
+                });
             });
 
-            // Promo Controls
-            bgOptionBtns.forEach(btn => btn.addEventListener('click', () => handleBgOptionClick('promo', btn.dataset.type)));
-            generateBgBtn.addEventListener('click', generateAIBg);
-            
-            // All controls that trigger a re-render
-            const renderControls = [
-                menuBgColorPicker, categoryFontSelect, categoryFontSizeInput, categoryColorPicker,
-                descriptionFontSelect, descriptionFontSizeInput, descriptionColorPicker,
-                itemFontSelect, itemFontSizeInput, itemColorPicker, promoTitleInput, promoTextInput,
-                promoPriceInput, promoTitleFontSelect, promoTextFontSelect, promoPriceFontSelect,
-                promoTitleColorPicker, promoTextColorPicker, promoPriceColorPicker, promoTitleSizeInput,
-                promoTextSizeInput, promoPriceSizeInput, promoAlignSelect, bgColorPicker
-            ];
-            renderControls.forEach(el => el.addEventListener('input', render));
-
-            // Download
+            // General Controls
+            setupDropArea(menuDropArea, fileInput, menuFileInfo, loadExcelFile);
+            getEl('logo-upload').addEventListener('change', (e) => handleImageUpload(e, (result) => { logoImage = result; getEl('logo-file-info').textContent = e.target.files[0].name; renderMenu(); }));
+            getEl('menu-bg-upload').addEventListener('change', (e) => handleImageUpload(e, (result) => { menuBackgroundImage = result; renderMenu(); }));
             downloadPngBtn.addEventListener('click', downloadAsPNG);
             downloadPdfBtn.addEventListener('click', downloadAsPDF);
-        }
+            
+            // Menu Controls
+            queryAll('input[name="layout-type"]').forEach(radio => radio.addEventListener('change', handleLayoutChange));
+            getEl('show-description-checkbox').addEventListener('change', handleDescriptionToggle);
+            getEl('grid-image-upload').addEventListener('change', handleGridImageSelected);
+            
+            // Promo Controls
+            getEl('promo-background-upload').addEventListener('change', (e) => handleImageUpload(e, (result) => { promoImage = result; getEl('bg-file-info').textContent = e.target.files[0].name; renderMenu(); }));
+            getEl('generate-bg-btn').addEventListener('click', generatePromoImage);
 
-        // --- State & UI Updates ---
-        function updateState(newState) {
-            state = { ...state, ...newState };
-            render();
-        }
-
-        function updateTab() {
-            menuControls.style.display = 'none';
-            promoControls.style.display = 'none';
-
-            if (state.currentTab === 'menu' || state.currentTab === 'combined') {
-                menuControls.style.display = 'block';
-            }
-            if (state.currentTab === 'promo' || state.currentTab === 'combined') {
-                promoControls.style.display = 'block';
-            }
-        }
-        
-        function setLoading(isLoading, text = 'Загрузка...') {
-            loadingText.textContent = text;
-            loadingOverlay.style.display = isLoading ? 'flex' : 'none';
+            // Universal render triggers
+            const controlsToWatch = [
+                'multiple-prices-checkbox', 'category-font-select', 'category-font-size', 'category-color-picker',
+                'description-font-select', 'description-font-size', 'description-color-picker', 'price-font-select', 'price-font-size', 'price-color-picker',
+                'menu-bg-color-picker', 'grid-cell-bg-color', 'promo-title-input', 'promo-text-input', 'promo-price-input',
+                'promo-title-font-select', 'promo-text-font-select', 'promo-price-font-select', 'promo-title-color-picker',
+                'promo-text-color-picker', 'promo-price-color-picker', 'promo-title-size', 'promo-text-size', 'promo-price-size',
+                'bg-color-picker', 'promo-layout-select'
+            ];
+            controlsToWatch.forEach(id => getEl(id).addEventListener('input', renderMenu));
         }
 
         // --- Event Handlers ---
-        function handleTabClick(e) {
-            tabButtons.forEach(b => b.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            state.currentTab = e.currentTarget.dataset.tab;
-            updateTab();
-            render();
+
+        function handleLayoutChange() {
+            const layout = queryEl('input[name="layout-type"]:checked').value;
+            getEl('list-settings').style.display = layout === 'list' ? 'block' : 'none';
+            getEl('grid-settings').style.display = layout === 'grid' ? 'block' : 'none';
+            renderMenu();
+        }
+
+        function handleDescriptionToggle() {
+            const show = getEl('show-description-checkbox').checked;
+            getEl('description-settings-group').style.display = show ? 'block' : 'none';
+            renderMenu();
+        }
+
+        function handleImageUpload(e, callback) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => callback(event.target.result);
+                reader.readAsDataURL(e.target.files[0]);
+            }
         }
         
-        function handleBgOptionClick(panel, type) {
-            const options = panel === 'menu' ? menuBgOptions : bgOptionBtns;
-            const containers = {
-                menu: [menuBgColorContainer, menuBgImageContainer],
-                promo: [bgColorContainer, bgImageContainer, bgGenerateContainer]
-            };
-            
-            options.forEach(b => b.classList.remove('active'));
-            const clickedBtn = [...options].find(b => b.dataset.type === type);
-            if(clickedBtn) clickedBtn.classList.add('active');
-
-            if (panel === 'menu') {
-                updateState({ menuBgType: type });
-                containers.menu.forEach(c => c.style.display = 'none');
-                if (type === 'color') menuBgColorContainer.style.display = 'block';
-                else if (type === 'image') menuBgImageContainer.style.display = 'block';
-            } else {
-                 updateState({ promoBgType: type });
-                containers.promo.forEach(c => c.style.display = 'none');
-                if (type === 'color') bgColorContainer.style.display = 'block';
-                else if (type === 'image') bgImageContainer.style.display = 'block';
-                else if (type === 'generate') bgGenerateContainer.style.display = 'block';
-            }
-            render();
+        function handleGridImageUpload(index) {
+            currentGridImageInput = index;
+            getEl('grid-image-upload').click();
         }
 
-        // --- File Handling ---
-        function handleMenuFile(file) {
+        function handleGridImageSelected(e) {
+            if (e.target.files && e.target.files[0] && currentGridImageInput !== null) {
+                handleImageUpload(e, (result) => {
+                    gridImages[currentGridImageInput] = result;
+                    renderMenu();
+                    currentGridImageInput = null;
+                });
+            }
+        }
+        
+        function setupDropArea(area, input, info, fileHandler) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => area.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); }, false));
+            ['dragenter', 'dragover'].forEach(e => area.addEventListener(e, () => area.classList.add('highlight'), false));
+            ['dragleave', 'drop'].forEach(e => area.addEventListener(e, () => area.classList.remove('highlight'), false));
+            area.addEventListener('drop', (e) => {
+                input.files = e.dataTransfer.files;
+                if(input.files.length) {
+                   info.textContent = input.files[0].name;
+                   fileHandler(input.files[0]);
+                }
+            }, false);
+            input.addEventListener('change', () => {
+                 if(input.files.length) {
+                   info.textContent = input.files[0].name;
+                   fileHandler(input.files[0]);
+                }
+            });
+        }
+        
+        // --- Data Processing ---
+
+        function findHeader(headerRow, aliases) {
+            for (const alias of aliases) {
+                const header = headerRow.find(h => h.toString().toLowerCase().trim() === alias);
+                if (header) return header;
+            }
+            return null;
+        }
+
+        function loadExcelFile(file) {
             if (!file) return;
-            menuFileInfo.textContent = file.name;
-            setLoading(true, "Обработка файла...");
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    if (json.length === 0) throw new Error("Excel file is empty.");
                     
-                    const processedData = jsonData.map(row => {
-                        const newRow = {};
-                        for (const key in COLUMN_MAPPINGS) {
-                            const possibleHeaders = COLUMN_MAPPINGS[key];
-                            const foundHeader = possibleHeaders.find(h => row[h] !== undefined);
-                            newRow[key] = foundHeader ? row[foundHeader] : null;
+                    const headers = Object.keys(json[0]);
+                    const headerMap = {};
+                    for (const key in FIELD_ALIASES) {
+                        headerMap[key] = findHeader(headers, FIELD_ALIASES[key]);
+                    }
+
+                    excelData = json.map(row => {
+                        const newItem = {};
+                        for (const key in headerMap) {
+                            if (headerMap[key]) {
+                                newItem[key] = row[headerMap[key]];
+                            }
                         }
-                        return newRow;
+                        return newItem;
                     });
-                    
-                    updateState({ menuData: processedData });
+
+                    gridImages = {}; // Reset grid images on new file
+                    renderMenu();
                 } catch (error) {
                     alert('Ошибка при чтении файла: ' + error.message);
-                } finally {
-                    setLoading(false);
                 }
             };
             reader.readAsArrayBuffer(file);
         }
 
-        function handleImageUpload(event, stateKey, infoElement) {
-            const file = event.target.files[0];
-            if (!file) return;
-            infoElement.textContent = file.name;
-            const reader = new FileReader();
-            reader.onload = (e) => updateState({ [stateKey]: e.target.result });
-            reader.readAsDataURL(file);
-        }
-
-        function handleLogoFile(e) {
-            handleImageUpload(e, 'logoImage', logoFileInfo)
-        }
-        
-        function handleGridImageUpload(e, index) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (re) => {
-                const newData = [...state.menuData];
-                newData[index].image = re.target.result;
-                updateState({ menuData: newData });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function setupDropArea(area, input, handler) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eName => area.addEventListener(eName, e => e.preventDefault() && e.stopPropagation(), false));
-            ['dragenter', 'dragover'].forEach(eName => area.addEventListener(eName, () => area.classList.add('highlight'), false));
-            ['dragleave', 'drop'].forEach(eName => area.addEventListener(eName, () => area.classList.remove('highlight'), false));
-            area.addEventListener('drop', e => {
-                const files = e.dataTransfer.files;
-                if(files.length) {
-                    input.files = files;
-                    handler(files[0]);
-                }
-            }, false);
-            input.addEventListener('change', () => input.files.length && handler(input.files[0]));
-        }
-
-        // --- Rendering Engine ---
-        function render() {
-            setCssVariables();
-            menuPreview.innerHTML = ''; // Clear previous content
-
-            let contentHtml = '';
-            if (state.currentTab === 'menu') {
-                contentHtml = renderMenuBoard();
-            } else if (state.currentTab === 'promo') {
-                contentHtml = renderPromoBoard();
-            } else if (state.currentTab === 'combined') {
-                contentHtml = renderCombinedBoard();
-            }
-            
-            if (!contentHtml) {
-                menuPreview.innerHTML = `<div style="text-align: center; color: #a3a9c2; padding: 40px;">
-                    <h3>Здесь будет ваше меню</h3>
-                    <p>Настройте параметры и загрузите данные</p>
-                </div>`;
-                return;
-            }
-            
-            menuPreview.innerHTML = contentHtml;
-            attachDynamicEventListeners();
-        }
-
-        function attachDynamicEventListeners() {
-            queryAll('.upload-placeholder-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const inputId = `grid-image-upload-${btn.dataset.index}`;
-                    getEl(inputId).click();
-                });
-            });
-        }
-        
-        function renderHeader() {
-            if (!state.logoImage) return '';
-            const date = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
-            return `
-                <div class="menu-top-header">
-                    <img src="${state.logoImage}" alt="Логотип" class="menu-logo">
-                    <div class="menu-date" style="color: var(--item-font-color);">${date}</div>
-                </div>`;
-        }
-        
-        function renderMenuBoard() {
-            if (!state.menuData) return '';
-            const bgStyle = getBackgroundStyle('menu');
-            const headerHtml = renderHeader();
-            let content;
-
-            if (state.menuLayout === 'grid') {
-                content = renderGridLayout();
-            } else {
-                content = renderListLayout();
-            }
-            
-            return `<div class="menu-board" style="${bgStyle}">${headerHtml}${content}</div>`;
-        }
-
-        function renderListLayout() {
-            const categories = [...new Set(state.menuData.map(item => item.category || 'Основное меню'))];
-            let menuHtml = '';
-
-            categories.forEach(category => {
-                menuHtml += `<div class="menu-section"><div class="section-title">${category}</div>`;
-                state.menuData.filter(item => (item.category || 'Основное меню') === category).forEach(item => {
-                    menuHtml += `
-                        <div class="menu-item">
-                            <div class="item-content">
-                                <div class="item-name">${item.name || ''}</div>
-                                ${showDescriptionCheckbox.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                            </div>
-                            <div class="item-price">${formatPrice(item.price)}</div>
-                        </div>`;
-                });
-                menuHtml += `</div>`;
-            });
-            return `<div class="menu-content-list">${menuHtml}</div>`;
-        }
-        
-        function renderGridLayout() {
-            const items = state.menuData.slice(0, 4);
-            let gridHtml = '';
-            
-            items.forEach((item, index) => {
-                const imageStyle = item.image ? `background-image: url('${item.image}')` : '';
-                const imagePart = item.image 
-                    ? `<div class="grid-cell-image" style="${imageStyle}"></div>`
-                    : `<div class="grid-cell-image">
-                           <button class="upload-placeholder-btn" data-index="${index}">+</button>
-                           <input type="file" id="grid-image-upload-${index}" accept="image/*" style="display:none;" onchange="handleGridImageUpload(event, ${index})">
-                       </div>`;
-
-                gridHtml += `
-                    <div class="grid-cell" style="background-color: ${menuBgColorPicker.value};">
-                        <div class="grid-cell-content">
-                            <div class="item-name">${item.name || ''}</div>
-                            ${showDescriptionCheckbox.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                            <div class="item-price">${formatPrice(item.price)}</div>
-                        </div>
-                        ${imagePart}
-                    </div>`;
-            });
-
-            return `<div class="menu-content-grid">${gridHtml}</div>`;
-        }
-        
-        function renderPromoBoard() {
-            const bgStyle = getBackgroundStyle('promo');
-            const alignmentClass = promoAlignSelect.value;
-            return `
-                <div class="promo-template" style="${bgStyle}">
-                    <div class="promo-content ${alignmentClass}">
-                        ${promoTitleInput.value ? `<div class="promo-title" style="font-family: ${promoTitleFontSelect.value}; color: ${promoTitleColorPicker.value}">${promoTitleInput.value}</div>` : ''}
-                        ${promoTextInput.value ? `<div class="promo-text" style="font-family: ${promoTextFontSelect.value}; color: ${promoTextColorPicker.value}">${promoTextInput.value}</div>` : ''}
-                        ${promoPriceInput.value ? `<div class="promo-price" style="font-family: ${promoPriceFontSelect.value}; color: ${promoPriceColorPicker.value}">${formatPrice(promoPriceInput.value)}</div>` : ''}
-                    </div>
-                </div>`;
-        }
-
-        function renderCombinedBoard() {
-            const menuPart = renderMenuBoard();
-            const promoPart = renderPromoBoard();
-
-            if (!menuPart || !promoPart) return '';
-
-            // This is tricky. We need to extract the inner content of the rendered boards.
-            const menuContent = menuPart.replace(/<div class="menu-board"[^>]*>|<\/div>$/g, '');
-            const promoContent = promoPart.replace(/<div class="promo-template"[^>]*>|<\/div>$/g, '');
-            
-            const menuBgStyle = getBackgroundStyle('menu');
-            const promoBgStyle = getBackgroundStyle('promo');
-            
-            return `
-                <div class="combined-template">
-                    <div class="combined-menu-part" style="${menuBgStyle}">${menuContent}</div>
-                    <div class="combined-promo-part" style="${promoBgStyle}">${promoContent}</div>
-                </div>`;
-        }
-        
         // --- AI Image Generation ---
-        async function generateAIBg() {
-            const prompt = bgPromptInput.value.trim();
+        
+        async function generatePromoImage() {
+            const prompt = getEl('bg-prompt').value.trim();
             if (!prompt) {
-                alert('Введите описание для генерации фона');
+                alert('Введите описание для генерации изображения.');
                 return;
             }
-            
-            setLoading(true, "Магия AI... Отправляем запрос.");
+            if (FUSION_BRAIN_SECRET_KEY === 'YOUR_SECRET_KEY') {
+                alert('Пожалуйста, введите ваш Secret Key для FusionBrain API в коде index.html');
+                return;
+            }
 
-            const params = {
-                type: "GENERATE",
-                style: "DEFAULT",
-                width: 1024,
-                height: 576, // 16:9 ratio
-                generateParams: {
-                    query: prompt
-                }
-            };
-            
+            loadingText.textContent = 'Запрос на генерацию...';
+            loadingOverlay.style.display = 'flex';
+
+            const API_URL = 'https://api.fusionbrain.ai/web/api/v1/text2image/run';
+            const CHECK_URL = 'https://api.fusionbrain.ai/web/api/v1/text2image/status/';
+
             try {
-                const response = await fetch(FUSIONBRAIN_API.URL, {
-                    method: 'POST',
-                    headers: {
-                        'X-Key': `Key ${FUSIONBRAIN_API.KEY}`,
-                        'X-Secret': `Secret ${FUSIONBRAIN_API.SECRET}`, // Add if you get a secret key
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(params)
+                // 1. Get Model ID
+                const modelResp = await fetch('https://api.fusionbrain.ai/web/api/v1/models', {
+                    method: 'GET',
+                    headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`, 'X-Secret': `Secret ${FUSION_BRAIN_SECRET_KEY}` }
                 });
+                const models = await modelResp.json();
+                if (!models || models.length === 0) throw new Error('Could not fetch models.');
+                const modelId = models[0].id;
+
+                // 2. Run Generation
+                const params = new FormData();
+                params.append('model_id', modelId);
+                params.append('prompt', prompt);
+
+                const runResp = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`, 'X-Secret': `Secret ${FUSION_BRAIN_SECRET_KEY}` },
+                    body: params
+                });
+                const runData = await runResp.json();
+                if (runData.error || !runData.uuid) throw new Error(runData.message || 'Failed to start generation.');
                 
-                const data = await response.json();
-                if (data.uuid) {
-                    setLoading(true, "Фон генерируется... (может занять до минуты)");
-                    checkGenerationStatus(data.uuid);
-                } else {
-                    throw new Error(data.message || 'Ошибка API');
+                const uuid = runData.uuid;
+                loadingText.textContent = 'Изображение генерируется...';
+
+                // 3. Check Status
+                for (let i = 0; i < 30; i++) { // Poll for ~2.5 minutes
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    const checkResp = await fetch(CHECK_URL + uuid, {
+                        method: 'GET',
+                        headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`, 'X-Secret': `Secret ${FUSION_BRAIN_SECRET_KEY}` }
+                    });
+                    const statusData = await checkResp.json();
+                    
+                    if (statusData.status === 'DONE') {
+                        promoImage = `data:image/jpeg;base64,${statusData.images[0]}`;
+                        getEl('bg-file-info').textContent = "Сгенерировано AI: " + prompt.substring(0, 20) + '...';
+                        renderMenu();
+                        return;
+                    } else if (statusData.status === 'FAIL') {
+                        throw new Error(statusData.errorDescription || 'Generation failed.');
+                    }
                 }
+                 throw new Error('Generation timed out.');
             } catch (error) {
-                console.error("Ошибка API:", error);
-                alert(`Ошибка при генерации: ${error.message}`);
-                setLoading(false);
+                console.error('Ошибка генерации фона:', error);
+                alert('Произошла ошибка при генерации: ' + error.message);
+            } finally {
+                loadingOverlay.style.display = 'none';
             }
         }
         
-        function checkGenerationStatus(uuid, attempts = 0) {
-            if (attempts > 30) { // 30 * 2s = 1 minute timeout
-                alert('Не удалось получить сгенерированное изображение. Попробуйте позже.');
-                setLoading(false);
-                return;
-            }
-
-            setTimeout(async () => {
-                try {
-                    const response = await fetch(`${FUSIONBRAIN_API.CHECK_URL}${uuid}`, {
-                         headers: {
-                            'X-Key': `Key ${FUSIONBRAIN_API.KEY}`,
-                            'X-Secret': `Secret ${FUSIONBRAIN_API.SECRET}`
-                        }
-                    });
-                    const data = await response.json();
-
-                    if (data.status === 'DONE' && data.images) {
-                        const base64Image = `data:image/jpeg;base64,${data.images[0]}`;
-                        updateState({ promoBgImage: base64Image });
-                        bgFileInfo.textContent = "Сгенерированный фон";
-                        setLoading(false);
-                    } else if (data.status === 'FAIL') {
-                        throw new Error(data.errorDescription || 'Генерация не удалась');
-                    } else {
-                        // In progress, check again
-                        checkGenerationStatus(uuid, attempts + 1);
-                    }
-                } catch (error) {
-                    console.error('Ошибка проверки статуса:', error);
-                    alert(`Ошибка при проверке: ${error.message}`);
-                    setLoading(false);
-                }
-            }, 2000);
-        }
-
-        // --- Helpers & Utilities ---
-        function setCssVariables() {
-            const root = document.documentElement;
-            root.style.setProperty('--category-font-size', categoryFontSizeInput.value + 'px');
-            root.style.setProperty('--category-font-color', categoryColorPicker.value);
-            root.style.setProperty('--font-category', categoryFontSelect.value);
-            root.style.setProperty('--item-font-size', itemFontSizeInput.value + 'px');
-            root.style.setProperty('--item-font-color', itemColorPicker.value);
-            root.style.setProperty('--font-item', itemFontSelect.value);
-            root.style.setProperty('--description-font-size', descriptionFontSizeInput.value + 'px');
-            root.style.setProperty('--description-font-color', descriptionColorPicker.value);
-            root.style.setProperty('--font-description', descriptionFontSelect.value);
-            root.style.setProperty('--promo-title-font-size', promoTitleSizeInput.value + 'px');
-            root.style.setProperty('--promo-text-font-size', promoTextSizeInput.value + 'px');
-            root.style.setProperty('--promo-price-font-size', promoPriceSizeInput.value + 'px');
-        }
-
-        function getBackgroundStyle(type) {
-            if (type === 'menu') {
-                if (state.menuBgType === 'image' && state.menuBgImage) {
-                    return `background-image: url(${state.menuBgImage});`;
-                }
-                return `background-color: ${menuBgColorPicker.value};`;
-            } else { // promo
-                if ((state.promoBgType === 'image' || state.promoBgType === 'generate') && state.promoBgImage) {
-                    return `background-image: url(${state.promoBgImage});`;
-                }
-                return `background-color: ${bgColorPicker.value};`;
-            }
+        // --- Rendering Logic ---
+        
+        function updateTab() {
+            tabButtons.forEach(b => b.classList.remove('active'));
+            queryEl(`.tab-btn[data-tab="${currentTab}"]`).classList.add('active');
+            menuControls.style.display = (currentTab === 'menu' || currentTab === 'combined') ? 'block' : 'none';
+            promoControls.style.display = (currentTab === 'promo' || currentTab === 'combined') ? 'block' : 'none';
         }
 
         function formatPrice(price) {
-            if (price === null || price === undefined) return '';
-            const num = parseFloat(price);
+            if (!price) return '';
+            const num = parseFloat(String(price).replace(/[^0-9.,]/g, '').replace(',', '.'));
             return isNaN(num) ? price : num.toFixed(0) + ' ₽';
         }
+        
+        function renderHeader() {
+            const date = new Date();
+            const dateString = date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+            return `
+                <div class="menu-board-header">
+                    ${logoImage ? `<img src="${logoImage}" alt="Логотип" class="menu-board-logo">` : '<div></div>'}
+                    <div class="menu-board-date">${dateString}</div>
+                </div>
+            `;
+        }
 
-        // --- Download Functions ---
+        function renderMenuItem(item) {
+            const showDesc = getEl('show-description-checkbox').checked;
+            const useVolumePrices = getEl('multiple-prices-checkbox').checked;
+            
+            let priceHtml = '';
+            const volumePrices = ['s', 'm', 'l'].map(vol => item[vol] ? `<span class="volume-price">${vol.toUpperCase()}: ${formatPrice(item[vol])}</span>` : '').join('');
+            
+            if (useVolumePrices && volumePrices) {
+                priceHtml = volumePrices;
+            } else {
+                priceHtml = formatPrice(item.price);
+            }
+
+            return `
+                <div class="menu-item">
+                    <div class="item-content">
+                        <div class="item-name">${item.name || ''}</div>
+                        ${(showDesc && item.description) ? `<div class="item-description">${item.description}</div>` : ''}
+                    </div>
+                    <div class="item-price">${priceHtml}</div>
+                </div>
+            `;
+        }
+        
+        function renderMenuList() {
+            if (!excelData) return '<div>Загрузите файл с меню.</div>';
+            const categories = [...new Set(excelData.map(item => item.category || 'Основное меню'))];
+            let html = '';
+            categories.forEach(category => {
+                html += `<div class="menu-section"><div class="section-title">${category}</div>`;
+                excelData.filter(item => (item.category || 'Основное меню') === category)
+                         .forEach(item => { html += renderMenuItem(item); });
+                html += `</div>`;
+            });
+            return `<div class="menu-content">${html}</div>`;
+        }
+
+        function renderMenuGrid() {
+            if (!excelData) return '<div>Загрузите файл с меню.</div>';
+            const gridItems = excelData.slice(0, 4);
+            const bgColor = getEl('grid-cell-bg-color').value;
+
+            let html = gridItems.map((item, index) => {
+                const imageSrc = gridImages[index] || item.image || null;
+                const showDesc = getEl('show-description-checkbox').checked;
+                
+                return `
+                    <div class="grid-cell" style="background-color: ${bgColor};">
+                        <div class="grid-cell-content">
+                            <div>
+                                <div class="item-name">${item.name || ''}</div>
+                                ${(showDesc && item.description) ? `<div class="item-description">${item.description}</div>` : ''}
+                            </div>
+                            <div class="item-price">${formatPrice(item.price)}</div>
+                        </div>
+                        <div class="grid-cell-image-wrapper">
+                           ${imageSrc 
+                               ? `<img src="${imageSrc}" class="grid-cell-image" alt="${item.name}">`
+                               : `<button class="upload-image-btn" onclick="handleGridImageUpload(${index})">+</button>`
+                           }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            return `<div class="grid-container">${html}</div>`;
+        }
+
+        function renderMenuBody(isCombined = false) {
+             const layout = queryEl('input[name="layout-type"]:checked').value;
+             let menuHtml = '';
+
+             if (layout === 'grid') {
+                 menuHtml = renderMenuGrid();
+             } else {
+                 menuHtml = renderMenuList();
+             }
+             
+             // In combined view, the grid image needs a different class for sizing
+             if (isCombined) {
+                 menuHtml = menuHtml.replace(/grid-cell-image-wrapper/g, 'grid-cell-image-wrapper combined-view');
+             }
+
+             return `<div class="menu-board-body">${menuHtml}</div>`;
+        }
+
+        function renderPromoBody() {
+            const layout = getEl('promo-layout-select').value;
+            const title = getEl('promo-title-input').value;
+            const text = getEl('promo-text-input').value;
+            const price = getEl('promo-price-input').value;
+
+            const contentHtml = `
+                <div class="promo-content">
+                    ${title ? `<div class="promo-title">${title}</div>` : ''}
+                    ${text ? `<div class="promo-text">${text}</div>` : ''}
+                    ${price ? `<div class="promo-price">${formatPrice(price)}</div>` : ''}
+                </div>`;
+            
+            const imageHtml = promoImage ? `
+                <div class="promo-image-container">
+                    <img src="${promoImage}" class="promo-image" alt="Акция">
+                </div>` : '';
+            
+            return `<div class="promo-template layout-${layout}">${imageHtml}${contentHtml}</div>`;
+        }
+        
+        function applyStyles() {
+            const root = document.documentElement.style;
+            root.setProperty('--category-font-size', getEl('category-font-size').value + 'px');
+            root.setProperty('--category-font-color', getEl('category-color-picker').value);
+            root.setProperty('--font-category', getEl('category-font-select').value);
+            root.setProperty('--description-font-size', getEl('description-font-size').value + 'px');
+            root.setProperty('--description-font-color', getEl('description-color-picker').value);
+            root.setProperty('--font-description', getEl('description-font-select').value);
+            root.setProperty('--price-font-size', getEl('price-font-size').value + 'px');
+            root.setProperty('--price-font-color', getEl('price-color-picker').value);
+            root.setProperty('--font-price', getEl('price-font-select').value);
+
+            root.setProperty('--promo-title-font-size', getEl('promo-title-size').value + 'px');
+            root.setProperty('--promo-text-font-size', getEl('promo-text-size').value + 'px');
+            root.setProperty('--promo-price-font-size', getEl('promo-price-size').value + 'px');
+            
+            // Set promo text colors directly in style tags for higher specificity against global rules
+            const promoTitle = queryEl('.promo-title');
+            if(promoTitle) promoTitle.style.color = getEl('promo-title-color-picker').value;
+            const promoText = queryEl('.promo-text');
+            if(promoText) promoText.style.color = getEl('promo-text-color-picker').value;
+            const promoPrice = queryEl('.promo-price');
+            if(promoPrice) promoPrice.style.color = getEl('promo-price-color-picker').value;
+        }
+
+        function renderMenu() {
+            menuPreview.innerHTML = ''; // Clear previous content
+            
+            let finalHtml = '';
+            let menuBgStyle = '';
+            
+            if (menuBackgroundImage) {
+                menuBgStyle = `background-image: url(${menuBackgroundImage}); background-size: cover; background-position: center;`;
+            } else {
+                menuBgStyle = `background-color: ${getEl('menu-bg-color-picker').value};`;
+            }
+
+            if (currentTab === 'menu') {
+                finalHtml = `
+                    <div class="menu-board-content-wrapper" style="${menuBgStyle}">
+                        ${renderHeader()}
+                        ${renderMenuBody()}
+                    </div>
+                `;
+            } else if (currentTab === 'promo') {
+                const promoBgColor = getEl('bg-color-picker').value;
+                finalHtml = `
+                    <div class="menu-board-content-wrapper" style="background-color: ${promoBgColor};">
+                        ${renderPromoBody()}
+                    </div>
+                `;
+            } else if (currentTab === 'combined') {
+                const promoBgColor = getEl('bg-color-picker').value;
+                finalHtml = `
+                    <div class="combined-template">
+                        <div class="combined-menu-part" style="${menuBgStyle}">
+                            ${renderHeader()}
+                            ${renderMenuBody(true)}
+                        </div>
+                        <div class="combined-promo-part" style="background-color: ${promoBgColor};">
+                           ${renderPromoBody()}
+                        </div>
+                    </div>
+                `;
+            } else {
+                 finalHtml = `<div>Выберите режим</div>`;
+            }
+
+            menuPreview.innerHTML = finalHtml;
+            applyStyles();
+        }
+        
+        // --- Saving/Exporting ---
         function downloadAsPNG() {
-            setLoading(true, "Сохранение JPEG...");
-            html2canvas(menuPreview, { scale: 2 }).then(canvas => {
-                canvas.toBlob(blob => {
+            const element = getEl('menu-preview');
+            html2canvas(element, { backgroundColor: null, scale: 2, useCORS: true }).then(canvas => {
+                canvas.toBlob(function(blob) {
                     saveAs(blob, 'menuboard.jpeg');
-                    setLoading(false);
                 }, 'image/jpeg', 0.95);
             });
         }
-        
-        function downloadAsPDF() {
-            setLoading(true, "Сохранение PDF...");
-            const { jsPDF } = window.jspdf;
             
-            html2canvas(menuPreview, { scale: 3 }).then(canvas => { // Higher scale for better PDF quality
-                const imgData = canvas.toDataURL('image/png');
+        function downloadAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = getEl('menu-preview');
+            
+            html2canvas(element, {backgroundColor: null, scale: 2, useCORS: true}).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
                 const pdf = new jsPDF({
                     orientation: 'landscape',
-                    unit: 'mm',
-                    format: 'a4'
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
                 });
                 
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                 pdf.save('menuboard.pdf');
-                setLoading(false);
             });
         }
 
-        // Make functions accessible from inline HTML event attributes
-        window.handleGridImageUpload = handleGridImageUpload;
-
+        init();
     });
     </script>
 </body>
