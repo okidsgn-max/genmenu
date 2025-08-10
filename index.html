@@ -300,7 +300,7 @@
             color: var(--desc-font-color);
             margin-bottom: 5px;
             font-weight: 300;
-            white-space: nowrap; /* Prevent description from wrapping */
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -334,12 +334,32 @@
             border-radius: 8px;
             padding: 15px;
             display: grid;
-            grid-template-columns: 1fr 50%; /* Left text, right image */
-            grid-template-rows: auto 1fr auto; /* Name, Description, Price */
+            grid-template-columns: 1fr 50%;
+            grid-template-rows: auto 1fr auto;
             gap: 5px 15px;
             position: relative;
             overflow: hidden;
         }
+        
+        .grid-cell.promo-cell {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 20px;
+            background-size: 90% 90%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: transparent;
+        }
+        
+        .grid-cell.promo-cell .promo-content {
+            z-index: 2;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            width: 100%;
+        }
+
         .grid-cell .item-name { 
             grid-area: 1 / 1 / 2 / 2; 
             font-weight: 700;
@@ -418,7 +438,7 @@
         .promo-text {
             font-size: var(--promo-text-font-size);
             font-family: var(--promo-text-font-family);
-            color: var(--promo-text-font-color);
+            color: var(--promo-text-color);
             margin-bottom: 30px; line-height: 1.3;
         }
         .promo-price {
@@ -451,7 +471,7 @@
 
         /* Specific styles for promo part in 2x2 combined layout */
         .combined-template.grid-layout .combined-promo-part {
-            background-size: 90% 90%; /* Promo image covers 90% of area */
+            background-size: 90% 90%;
             background-position: center;
         }
 
@@ -464,7 +484,7 @@
             flex-direction: column;
             text-align: left;
             color: white;
-            background: none; /* Ensure no background on content itself */
+            background: none;
         }
         
         .loading-overlay {
@@ -684,7 +704,7 @@
                             Вы можете загрузить изображение для справки, но подбор параметров осуществляется вручную.
                         </div>
                     </div>
-                    </div>
+                </div>
             </div>
         </div>
         
@@ -789,7 +809,7 @@
             
             // --- API KEYS ---
             const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
-            const FUSION_BRAIN_SECRET_KEY = ''; // Leave blank if not required
+            const FUSION_BRAIN_SECRET_KEY = '';
 
             function init() {
                 setupEventListeners();
@@ -798,7 +818,6 @@
             }
 
             function setupEventListeners() {
-                // Tabs
                 controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
                     state.currentTab = btn.dataset.tab;
                     controls.tabButtons.forEach(b => b.classList.remove('active'));
@@ -807,20 +826,14 @@
                     render();
                 }));
 
-                // Drag & Drop for Menu
                 setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo, handleExcelFile);
-                // Drag & Drop for Style (dummy for now)
                 setupDropArea(controls.styleDropArea, controls.styleImageInput, controls.styleFileInfo, (file) => {
                     controls.styleFileInfo.textContent = file.name;
-                    // No actual AI analysis implemented here. Inform user.
                 });
 
-                // Menu Controls
                 [controls.layoutSelect, controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
                  controls.categoryFont, controls.categorySize, controls.categoryColor,
-                 // Item Name Font
                  controls.itemNameFont, controls.itemNameSize, controls.itemNameColor,
-                 // Item Price Font
                  controls.itemPriceFont, controls.itemPriceSize, controls.itemPriceColor,
                  controls.descFont, controls.descSize, controls.descColor,
                  controls.gridBgColorPicker, controls.cellBgColorPicker].forEach(el => {
@@ -830,10 +843,9 @@
                 
                 controls.layoutSelect.addEventListener('change', () => {
                     controls.gridColorsGroup.style.display = controls.layoutSelect.value === 'grid' ? 'block' : 'none';
-                    render(); // Re-render to apply grid settings if changed
+                    render();
                 });
 
-                // Promo Controls
                 [controls.promoTitle, controls.promoText, controls.promoPrice, controls.promoTitleFont,
                  controls.promoTitleSize, controls.promoTitleColor, controls.promoTextFont, controls.promoTextSize,
                  controls.promoTextColor, controls.promoPriceFont, controls.promoPriceSize, controls.promoPriceColor,
@@ -846,11 +858,9 @@
                 controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
                 controls.generateBgBtn.addEventListener('click', generateAIBg);
                 
-                // Downloads
                 controls.downloadPngBtn.addEventListener('click', downloadAsPNG);
                 controls.downloadPdfBtn.addEventListener('click', downloadAsPDF);
 
-                // Grid photo upload
                 controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
                 controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
             }
@@ -861,7 +871,7 @@
                 controls.promoControls.style.display = 'none';
                 controls.combinedControls.style.display = 'none';
                 controls.styleControls.style.display = 'none';
-                controls.gridColorsGroup.style.display = 'none'; // Hide by default, show if menu and grid are active
+                controls.gridColorsGroup.style.display = 'none';
 
                 if (state.currentTab === 'menu') {
                     controls.menuControls.style.display = 'block';
@@ -913,7 +923,6 @@
                         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                         const jsonData = XLSX.utils.sheet_to_json(worksheet);
                         
-                        // Normalize keys
                         state.excelData = jsonData.map(row => ({
                             name: row['Название'] || row['Наименование'] || '',
                             description: row['Описание'] || '',
@@ -922,7 +931,7 @@
                             category: row['Категория'] || 'Основное меню',
                             S: row['S'] || '', M: row['M'] || '', L: row['L'] || ''
                         }));
-                        state.gridImages = {}; // Reset images on new file
+                        state.gridImages = {};
                         render();
                     } catch (error) { alert('Ошибка при чтении файла: ' + error.message); }
                 };
@@ -966,7 +975,7 @@
                         state.currentGridTarget = null;
                     };
                     reader.readAsDataURL(file);
-                    e.target.value = ''; // Reset input
+                    e.target.value = '';
                 }
             }
 
@@ -979,15 +988,12 @@
                 root.setProperty('--category-font-family', controls.categoryFont.value);
                 root.setProperty('--category-font-size', controls.categorySize.value + 'px');
                 root.setProperty('--category-font-color', controls.categoryColor.value);
-                // Item Name Font
                 root.setProperty('--item-name-font-family', controls.itemNameFont.value);
                 root.setProperty('--item-name-font-size', controls.itemNameSize.value + 'px');
                 root.setProperty('--item-name-font-color', controls.itemNameColor.value);
-                // Item Price Font
                 root.setProperty('--item-price-font-family', controls.itemPriceFont.value);
                 root.setProperty('--item-price-font-size', controls.itemPriceSize.value + 'px');
                 root.setProperty('--item-price-font-color', controls.itemPriceColor.value);
-
                 root.setProperty('--desc-font-family', controls.descFont.value);
                 root.setProperty('--desc-font-size', controls.descSize.value + 'px');
                 root.setProperty('--desc-font-color', controls.descColor.value);
@@ -996,7 +1002,7 @@
                 root.setProperty('--promo-title-font-color', controls.promoTitleColor.value);
                 root.setProperty('--promo-text-font-family', controls.promoTextFont.value);
                 root.setProperty('--promo-text-font-size', controls.promoTextSize.value + 'px');
-                root.setProperty('--promo-text-font-color', controls.promoTextColor.value);
+                root.setProperty('--promo-text-color', controls.promoTextColor.value);
                 root.setProperty('--promo-price-font-family', controls.promoPriceFont.value);
                 root.setProperty('--promo-price-font-size', controls.promoPriceSize.value + 'px');
                 root.setProperty('--promo-price-font-color', controls.promoPriceColor.value);
@@ -1088,7 +1094,6 @@
                 applyStyles();
                 let html = '';
                 
-                // Show initial placeholder if no data or no tab selected
                 if ( (state.currentTab === 'menu' && !state.excelData) ||
                      (state.currentTab === 'promo' && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)) ||
                      (state.currentTab === 'combined' && (!state.excelData && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)))
@@ -1110,7 +1115,7 @@
                     const promoContainer = document.createElement('div');
                     promoContainer.className = 'promo-template';
                     promoContainer.innerHTML = renderPromoHTMLContent();
-                    setPromoBackground(promoContainer, controls.promoBgType.value, controls.promoBgPos.value, state.promoBgImage, controls.bgColorPicker.value);
+                    setPromoBackground(promoContainer);
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
                     const combinedTemplate = document.createElement('div');
@@ -1118,7 +1123,7 @@
 
                     const menuLayoutIsGrid = controls.layoutSelect.value === 'grid';
                     if (menuLayoutIsGrid) {
-                        combinedTemplate.classList.add('grid-layout'); // Add class for specific combined grid styling
+                        combinedTemplate.classList.add('grid-layout');
                     }
 
                     const menuPart = document.createElement('div');
@@ -1128,7 +1133,7 @@
                     const promoPart = document.createElement('div');
                     promoPart.className = 'combined-promo-part';
                     promoPart.innerHTML = renderPromoHTMLContent();
-                    setPromoBackground(promoPart, controls.promoBgType.value, controls.promoBgPos.value, state.promoBgImage, controls.bgColorPicker.value);
+                    setPromoBackground(promoPart);
 
                     combinedTemplate.appendChild(menuPart);
                     combinedTemplate.appendChild(promoPart);
@@ -1141,23 +1146,28 @@
                         <p><strong>Примечание:</strong> В текущей версии автоматический подбор стилей не поддерживается.</p>
                     </div>`;
                     controls.menuPreview.style.backgroundImage = 'none';
-                    controls.menuPreview.style.backgroundColor = '#f5f5f5'; // Default light background for style tab
+                    controls.menuPreview.style.backgroundColor = '#f5f5f5';
                 }
                 
                 controls.menuPreview.innerHTML = html;
             }
 
-            function setPromoBackground(element, type, position, imageSrc, color) {
+            function setPromoBackground(element) {
+                const type = controls.promoBgType.value;
+                const position = controls.promoBgPos.value;
+                const imageSrc = state.promoBgImage;
+                const color = controls.bgColorPicker.value;
+
                 element.style.backgroundPosition = position;
+                element.style.backgroundColor = '';
+                element.style.backgroundImage = 'none';
+
                 if (type === 'color') {
                     element.style.backgroundColor = color;
-                    element.style.backgroundImage = 'none';
                 } else if ((type === 'image' || type === 'generate') && imageSrc) {
                     element.style.backgroundImage = `url(${imageSrc})`;
-                    element.style.backgroundColor = '';
                 } else {
-                    element.style.backgroundColor = color; // Fallback to color if image not available
-                    element.style.backgroundImage = 'none';
+                    element.style.backgroundColor = color;
                 }
             }
             
@@ -1170,7 +1180,6 @@
                 controls.loadingOverlay.style.display = 'flex';
                 
                 try {
-                    // Step 1: Request generation
                     const runResponse = await fetch('https://api-key.fusionbrain.ai/key/api/v1/text2image/run', {
                         method: 'POST',
                         headers: { 
@@ -1178,7 +1187,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            "model_id": 4, // Kandinsky 2.2
+                            "model_id": 4,
                             "prompt": prompt,
                             "negative_prompt": "",
                             "styles": [],
@@ -1192,9 +1201,8 @@
                     const uuid = runData.uuid;
                     controls.loadingText.textContent = 'Генерация изображения... \nЭто может занять минуту.';
 
-                    // Step 2: Poll for result
                     for (let i = 0; i < 30; i++) {
-                        await new Promise(resolve => setTimeout(resolve, 4000)); // wait 4 seconds
+                        await new Promise(resolve => setTimeout(resolve, 4000));
                         const statusResponse = await fetch(`https://api-key.fusionbrain.ai/key/api/v1/text2image/status/${uuid}`, {
                            headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`}
                         });
@@ -1230,7 +1238,7 @@
 
                 html2canvas(target, { 
                     backgroundColor: null, 
-                    scale: 2, // Capture at higher resolution for better quality
+                    scale: 2,
                     width: 1920,
                     height: 1080 
                 }).then(canvas => {
@@ -1245,7 +1253,7 @@
 
             function downloadAsPNG() {
                 download((canvas, filename) => {
-                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg'); // Changed to JPEG as per request
+                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
                 }, 'menuboard.jpeg');
             }
             
