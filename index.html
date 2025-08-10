@@ -25,9 +25,29 @@
             --active-color: #008f79;
             --input-bg: #f6f6f9;
             --input-border: hsl(228, 20%, 97%);
+            
+            --primary-color: #00b398;
+            --secondary-color: #f8f9fa;
             --accent-color: #e74c3c;
+            --bg-color: #fff;
             --menu-bg-color: #fff;
+            --menu-text-color: #667099;
+            --menu-text-light: #8e8e9e;
+            --font-main: 'Roboto', sans-serif;
+            --font-heading: 'Roboto', sans-serif;
+            --text-align: left;
+            --section-font-size: 24px;
+            --item-name-font-size: 16px;
+            --item-desc-font-size: 12px;
+            --item-price-font-size: 16px;
+            --promo-title-font-size: 60px;
+            --promo-text-font-size: 30px;
+            --promo-price-font-size: 40px;
             --divider-color: #eee;
+            --category-font-color: #00b398;
+            --category-font-size: 24px;
+            --item-font-color: #667099;
+            --item-font-size: 16px;
         }
         
         * {
@@ -37,7 +57,7 @@
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: var(--font-main);
             color: var(--text-color);
             background-color: #f5f5f5;
             padding: 20px;
@@ -52,6 +72,7 @@
             align-items: center;
             margin-bottom: 5px;
             padding-bottom: 15px;
+            border-bottom: 0px solid #eee;
         }
         
         .header-logo {
@@ -74,13 +95,14 @@
             flex: 1;
             gap: 20px;
             overflow: hidden;
-            height: calc(100% - 70px);
+            height: calc(100% - 120px);
         }
         
         .controls-panel {
             background: white;
             padding: 20px;
             border-radius: 8px;
+            box-shadow: 0 0px 0px rgba(0,0,0,0.1);
             width: 380px;
             display: flex;
             flex-direction: column;
@@ -92,10 +114,25 @@
             overflow-y: auto;
             padding-right: 10px;
         }
+
+        .controls-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        .controls-content::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 5px;
+        }
+        
+        .controls-footer {
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-top: auto;
+        }
         
         .tab-buttons {
             display: flex;
             margin-bottom: 10px;
+            border-bottom: 0px;
             position: sticky;
             top: 0;
             background: white;
@@ -105,11 +142,12 @@
         .tab-btn {
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 10px 10px;
             background: none;
             border: none;
             cursor: pointer;
             font-weight: 600;
+            border-bottom: 0px ;
             transition: all 0.3s;
         }
 
@@ -120,22 +158,26 @@
         }
         
         .tab-btn.active {
+            border-bottom: 0px solid var(--active-color);
             color: var(--active-color);
         }
         
         .control-group {
             margin-bottom: 15px;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
         
-        .control-group:last-child { border-bottom: none; }
+        .control-group:last-child {
+            border-bottom: none;
+        }
         
         .control-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
             font-size: 14px;
+            color: var(--text-color);
         }
         
         .checkbox-group {
@@ -144,8 +186,9 @@
             margin-bottom: 10px;
         }
         
-        .checkbox-group input { margin-right: 10px; }
-        .checkbox-group label { margin-bottom: 0; }
+        .checkbox-group input {
+            margin-right: 10px;
+        }
         
         .btn {
             background: var(--button-color);
@@ -154,244 +197,322 @@
             padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
+            font-family: inherit;
             font-size: 14px;
             transition: background 0.3s;
             width: 100%;
             margin-bottom: 10px;
         }
-        .btn:hover { background: var(--button-hover); }
+        
+        .btn:hover {
+            background: var(--button-hover);
+        }
+        
         .btn-secondary {
             background: none;
             color: var(--text-color);
             border: 1px solid #ddd;
         }
-        .btn-secondary:hover { background: #f0f0f0; }
         
-        .input, .select {
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .input {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--input-border);
             border-radius: 4px;
+            font-family: inherit;
             font-size: 14px;
             margin-bottom: 10px;
             background-color: var(--input-bg);
         }
         
-        .setting-row {
-            display: grid;
-            grid-template-columns: 1fr 70px 40px;
-            gap: 10px;
-            align-items: center;
+        .select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            background: var(--input-bg);
             margin-bottom: 10px;
         }
-        
-        .setting-row .input, .setting-row .select { margin-bottom: 0; }
+
+        .setting-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 30px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
         .setting-row input[type="color"] {
-            width: 100%;
-            height: 38px;
+            width: 30px;
+            height: 30px;
             padding: 0;
             border: none;
             background: none;
         }
-
+        
         .preview-wrapper {
             flex: 1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
         
-        #aspect-ratio-wrapper {
+        .preview-container {
             width: 100%;
             max-width: 1280px;
-            aspect-ratio: 16 / 9;
-            margin-bottom: 15px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .menu-preview {
-            width: 100%;
-            height: 100%;
-            background-color: white;
-            overflow: hidden; /* Important for capturing */
         }
         
-        .preview-placeholder {
+        .menu-preview {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            flex-direction: column;
-            text-align: center;
-            color: #a3a9c2;
-            padding: 40px;
+            overflow: hidden;
+            position: relative;
         }
-        
+
         .preview-actions {
+            padding: 15px 0;
             display: flex;
             gap: 10px;
             width: 100%;
-            max-width: 500px;
+            max-width: 1280px;
         }
         
-        /* MENU LIST LAYOUT */
-        .menu-list-content {
+        /* Стили для шаблона меню */
+        .menu-content {
             width: 100%;
             height: 100%;
-            padding: 40px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            padding: 30px;
         }
+        
         .menu-items-container {
             flex: 1;
             overflow: hidden;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 30px;
+            gap: 20px;
         }
-        .menu-items-container.two-columns { grid-template-columns: 1fr 1fr; }
-        .menu-section { margin-bottom: 20px; }
+
+        .menu-items-container.two-columns {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .menu-items-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        
+        .menu-section {
+            margin-bottom: 30px;
+        }
+        
         .section-title {
+            font-family: var(--font-category);
+            font-size: var(--category-font-size);
             font-weight: 700;
             margin-bottom: 15px;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--divider-color);
+            color: var(--category-font-color);
         }
+        
         .menu-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--divider-color);
+            color: var(--item-font-color);
         }
-        .item-content { flex-grow: 1; }
-        .item-name { font-weight: 500; margin-bottom: 5px; }
-        .item-description {
-            color: #8e8e9e;
-            margin-bottom: 5px;
+        
+        .item-content {
+            flex-grow: 1;
             padding-right: 10px;
         }
+        
+        .item-name {
+            font-family: var(--font-item);
+            font-weight: 500;
+            font-size: var(--item-font-size);
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            font-size: var(--item-desc-font-size);
+            color: var(--menu-text-light);
+            margin-bottom: 5px;
+            font-family: var(--font-desc);
+        }
+        
         .item-price {
+            font-family: var(--font-item);
             font-weight: 700;
+            font-size: var(--item-font-size);
             white-space: nowrap;
             margin-left: 20px;
             text-align: right;
+            min-width: 80px;
         }
-
-        /* MENU GRID LAYOUT */
-        .menu-grid-content {
+        
+        /* Grid Layout Styles */
+        .menu-grid-container {
             width: 100%;
             height: 100%;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .menu-grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            gap: 15px;
-            height: 100%;
+            gap: 5px;
+            padding: 5px;
         }
-        .grid-item {
-            border: 1px solid #eee;
-            border-radius: 6px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .menu-grid-item {
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            padding: 10px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        .grid-item-content { flex-grow: 1; }
-        .grid-item .item-price { text-align: left; margin-left: 0; margin-top: 10px; }
-        .grid-item-image-container {
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            position: relative;
-            margin-top: 10px;
-            align-self: flex-end;
-            height: 50%;
-            max-height: 50%;
+        .grid-item-content {
+            flex-grow: 1;
+        }
+        .grid-item-image-wrapper {
+            width: 50%;
+            height: 40%;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
         }
         .grid-item-image {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 4px;
         }
-        .add-image-btn {
-            position: absolute;
-            bottom: 0px;
-            right: 0px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--button-color);
-            color: white;
-            border: none;
+        .upload-image-btn {
+            width: 100%;
+            height: 100%;
+            background: #f5f6f8;
+            border: 2px dashed #d1d5e0;
+            color: #a3a9c2;
             cursor: pointer;
-            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
-        .add-image-btn:hover { background: var(--button-hover); }
-
-        /* PROMO TEMPLATE */
+        .upload-image-btn:hover {
+            background: #e9ecf1;
+            border-color: #00b398;
+        }
+        
+        /* Стили для шаблона "Акция" */
         .promo-template {
             color: white;
             position: relative;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            display: flex;
-        }
-        .promo-background {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover;
             background-position: center;
         }
+
         .promo-content {
             position: relative;
             z-index: 2;
             height: 100%;
-            width: 100%;
             display: flex;
-            align-items: center;
-            padding: 50px;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: var(--promo-text-align, left);
         }
-        .promo-text-wrapper { text-align: left; flex: 1; }
-        .promo-image-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; }
-        .promo-image { max-width: 100%; max-height: 80%; object-fit: contain; }
+
+        .promo-title {
+            font-size: var(--promo-title-font-size);
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .promo-text {
+            font-size: var(--promo-text-font-size);
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .promo-price {
+            font-size: var(--promo-price-font-size);
+            font-weight: bold;
+            margin-top: 20px;
+        }
         
-        .promo-content.img-left { flex-direction: row; }
-        .promo-content.img-right { flex-direction: row-reverse; }
-        .promo-content.img-center .promo-text-wrapper {
-            position: absolute;
-            z-index: 3;
-            bottom: 50px; left: 50px; right: 50px;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            background: rgba(0,0,0,0.3);
-            padding: 20px;
-            border-radius: 8px;
+        /* Стили для комбинированного шаблона */
+        .combined-template {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
-
-        .promo-title { font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
-        .promo-text { line-height: 1.3; margin-bottom: 30px; }
-        .promo-price { font-weight: bold; margin-top: 20px; }
-
-        /* LOADING OVERLAY */
+        
+        .combined-menu-part {
+            padding: 30px;
+            background: var(--menu-bg-color);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .combined-menu-scroll {
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .combined-promo-part {
+            position: relative;
+            color: white;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .combined-promo-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: var(--promo-text-align, left);
+        }
+        
+        /* Загрузочный экран */
         .loading-overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(0,0,0,0.7);
             display: none;
             justify-content: center;
@@ -402,6 +523,7 @@
             flex-direction: column;
             text-align: center;
         }
+        
         .spinner {
             border: 5px solid #f3f3f3;
             border-top: 5px solid var(--active-color);
@@ -411,12 +533,17 @@
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
+        
+        #loading-text {
+            font-size: 18px;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
-        /* DRAG & DROP */
+        /* Drag and drop стили */
         .drop-area {
             border: 2px dashed #ccc;
             border-radius: 8px;
@@ -427,12 +554,17 @@
             transition: all 0.3s;
             background-color: var(--input-bg);
         }
+        
         .drop-area:hover, .drop-area.highlight {
             border-color: var(--active-color);
             background: rgba(0, 179, 152, 0.1);
         }
-        .file-info { font-size: 12px; color: #8e8e9e; margin-top: 5px; }
-
+        
+        .file-info {
+            font-size: 12px;
+            color: var(--menu-text-light);
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -445,93 +577,94 @@
             <h1 class="header-title">Генератор менюборда</h1>
 
             <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
-                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция"> Акция</button>
+                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню">Меню</button>
+                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция">Акция</button>
+                <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="2 в 1">2в1</button>
             </div>
 
             <div class="controls-content">
                 <div id="menu-controls">
                     <div class="control-group">
-                        <label>Загрузка данных (Excel):</label>
+                        <label>Загрузка данных:</label>
                         <div class="drop-area" id="menu-drop-area">
-                            Перетащите файл сюда или
+                            Перетащите файл Excel или
                             <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Выберите файл</button>
                             <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;">
+                            <input type="file" id="grid-image-upload" accept="image/*" style="display: none;">
                             <div class="file-info" id="menu-file-info">Файл не выбран</div>
                         </div>
                     </div>
                     
                     <div class="control-group">
-                        <label>Тип верстки:</label>
+                        <label for="layout-type-select">Тип верстки меню:</label>
                         <select id="layout-type-select" class="select">
-                            <option value="list">Список</option>
-                            <option value="grid">Сетка (4x4)</option>
+                            <option value="list" selected>Список</option>
+                            <option value="grid">Сетка (первые 16 позиций)</option>
                         </select>
                     </div>
 
                     <div class="control-group">
                         <label>Настройки отображения:</label>
                         <div class="checkbox-group">
-                            <input type="checkbox" id="show-description-checkbox" checked>
-                            <label for="show-description-checkbox">Показывать описание блюда</label>
+                            <input type="checkbox" id="multiple-prices-checkbox">
+                            <label for="multiple-prices-checkbox">Цены для объемов (S/M/L)</label>
                         </div>
                         <div class="checkbox-group">
-                            <input type="checkbox" id="multiple-prices-checkbox">
-                            <label for="multiple-prices-checkbox">Использовать цены для объемов (S/M/L)</label>
+                            <input type="checkbox" id="show-description-checkbox">
+                            <label for="show-description-checkbox">Показывать описание блюда</label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Фон:</label>
+                        <div class="bg-options">
+                            <button class="bg-option-btn active" data-type="color">Цвет</button>
+                            <button class="bg-option-btn" data-type="image">Изображение</button>
+                        </div>
+                        <div id="bg-color-container-menu">
+                            <input type="color" id="menu-bg-color-picker" value="#ffffff" style="width: 100%; height: 40px;">
+                        </div>
+                        <div id="bg-image-container-menu" style="display: none;">
+                            <button class="btn btn-secondary" onclick="document.getElementById('menu-bg-upload').click()">Загрузить фон</button>
+                            <input type="file" id="menu-bg-upload" accept="image/*" style="display: none;">
+                            <div class="file-info" id="menu-bg-file-info">Фон не загружен</div>
                         </div>
                     </div>
 
                     <div class="control-group">
                         <label>Шрифт категорий:</label>
                         <div class="setting-row">
-                            <select id="category-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                            </select>
+                            <select id="category-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Open Sans', sans-serif">Open Sans</option></select>
                             <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
                             <input type="color" id="category-color-picker" value="#00b398">
                         </div>
                     </div>
 
                     <div class="control-group">
-                        <label>Шрифт пунктов:</label>
+                        <label>Шрифт названий:</label>
                         <div class="setting-row">
-                            <select id="item-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                            </select>
+                            <select id="item-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
                             <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
                             <input type="color" id="item-color-picker" value="#667099">
                         </div>
                     </div>
 
-                    <div class="control-group" id="description-font-controls">
+                    <div class="control-group" id="description-font-controls" style="display:none;">
                         <label>Шрифт описания:</label>
                         <div class="setting-row">
-                            <select id="desc-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                            </select>
-                            <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
+                            <select id="desc-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
+                            <input type="number" id="desc-font-size" class="input" value="12" min="8" max="50">
                             <input type="color" id="desc-color-picker" value="#8e8e9e">
                         </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Фон меню:</label>
-                        <input type="color" id="menu-bg-color-picker" value="#ffffff" style="width: 100%; height: 40px;">
                     </div>
                 </div>
                 
                 <div id="promo-controls" style="display: none;">
                     <div class="control-group">
                         <label for="promo-title-input">Заголовок акции:</label>
-                        <input type="text" id="promo-title-input" class="input" placeholder="Супер Комбо">
+                        <input type="text" id="promo-title-input" class="input" placeholder="Например, КОМБО ОБЕД">
                         <div class="setting-row">
-                            <select id="promo-title-font-select" class="select"><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Oswald', sans-serif">Oswald</option></select>
+                            <select id="promo-title-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Oswald', sans-serif">Oswald</option><option value="'Playfair Display', serif">Playfair Display</option><option value="'Raleway', sans-serif">Raleway</option></select>
                             <input type="number" id="promo-title-size" class="input" value="60" min="10" max="150">
                             <input type="color" id="promo-title-color-picker" value="#ffffff">
                         </div>
@@ -539,9 +672,9 @@
                     
                     <div class="control-group">
                         <label for="promo-text-input">Текст акции:</label>
-                        <input type="text" id="promo-text-input" class="input" placeholder="Бургер + Картошка">
-                         <div class="setting-row">
-                            <select id="promo-text-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Lato', sans-serif">Lato</option></select>
+                        <input type="text" id="promo-text-input" class="input" placeholder="Например, бургер + картошка">
+                        <div class="setting-row">
+                            <select id="promo-text-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option><option value="'PT Sans', sans-serif">PT Sans</option></select>
                             <input type="number" id="promo-text-size" class="input" value="30" min="10" max="100">
                             <input type="color" id="promo-text-color-picker" value="#ffffff">
                         </div>
@@ -549,53 +682,59 @@
                     
                     <div class="control-group">
                         <label for="promo-price-input">Цена (₽):</label>
-                        <input type="number" id="promo-price-input" class="input" placeholder="399">
+                        <input type="number" id="promo-price-input" class="input" placeholder="Например, 299">
                         <div class="setting-row">
-                            <select id="promo-price-font-select" class="select"><option value="'Oswald', sans-serif">Oswald</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
-                            <input type="number" id="promo-price-size" class="input" value="50" min="10" max="150">
+                            <select id="promo-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Oswald', sans-serif">Oswald</option><option value="'Raleway', sans-serif">Raleway</option></select>
+                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="120">
                             <input type="color" id="promo-price-color-picker" value="#ffffff">
                         </div>
                     </div>
-                    
-                    <div class="control-group">
-                        <label>Фон акции:</label>
-                        <input type="color" id="bg-color-picker" value="#e74c3c" style="width: 100%; height: 40px;">
-                    </div>
 
                     <div class="control-group">
-                        <label>Изображение акции:</label>
-                         <div id="bg-generate-container">
-                            <input type="text" id="bg-prompt" class="input" placeholder="Опишите картинку для генерации (на англ.)">
-                            <button class="btn" id="generate-bg-btn">Сгенерировать (AI)</button>
-                        </div>
-                        <button class="btn btn-secondary" onclick="document.getElementById('promo-image-upload').click()">Или загрузить свое</button>
-                        <input type="file" id="promo-image-upload" accept="image/*" style="display: none;">
-                        <div class="file-info" id="promo-image-info">Изображение не выбрано</div>
+                        <label for="promo-align-select">Расположение текста:</label>
+                        <select id="promo-align-select" class="select">
+                            <option value="left" selected>Слева</option>
+                            <option value="center">По центру</option>
+                            <option value="right">Справа</option>
+                        </select>
                     </div>
                     
                     <div class="control-group">
-                        <label>Расположение картинки:</label>
-                        <select id="promo-image-position" class="select">
-                            <option value="right">Справа от текста</option>
-                            <option value="left">Слева от текста</option>
-                            <option value="center">Текст поверх картинки</option>
-                        </select>
+                        <label>Фон:</label>
+                        <div class="bg-options">
+                            <button class="bg-option-btn active" data-type="color">Цвет</button>
+                            <button class="bg-option-btn" data-type="image">Своё</button>
+                            <button class="bg-option-btn" data-type="generate">AI</button>
+                        </div>
+                        
+                        <div id="bg-color-container">
+                            <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
+                        </div>
+                        <div id="bg-image-container" style="display: none;">
+                            <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Загрузить фон</button>
+                            <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
+                            <div class="file-info" id="bg-file-info">Изображение не загружено</div>
+                        </div>
+                        <div id="bg-generate-container" style="display: none;">
+                            <input type="text" id="bg-prompt" class="prompt-input" placeholder="Опишите фон, например: сочный бургер">
+                            <button class="generate-btn" id="generate-bg-btn">Сгенерировать</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="preview-wrapper">
-            <div id="aspect-ratio-wrapper">
+            <div class="preview-container">
                 <div class="menu-preview" id="menu-preview">
-                    <div class="preview-placeholder">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
                         <h3>Здесь будет ваше меню</h3>
-                        <p>Загрузите данные и настройте параметры</p>
+                        <p>Настройте параметры слева и загрузите данные</p>
                     </div>
                 </div>
             </div>
             <div class="preview-actions">
-                <button class="btn" id="download-jpeg-btn">Сохранить в JPEG</button>
+                <button class="btn" id="download-png-btn">Сохранить в PNG</button>
                 <button class="btn btn-secondary" id="download-pdf-btn">Сохранить в PDF</button>
             </div>
         </div>
@@ -603,494 +742,554 @@
     
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <div id="loading-text">Генерация...</div>
+        <div id="loading-text">Генерация фона...</div>
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- DOM Elements ---
-        const controls = {
-            tabs: document.querySelectorAll('.tab-btn'),
-            menuControls: document.getElementById('menu-controls'),
-            promoControls: document.getElementById('promo-controls'),
-            // Menu
-            fileInput: document.getElementById('file-input'),
-            dropArea: document.getElementById('menu-drop-area'),
-            fileInfo: document.getElementById('menu-file-info'),
-            layoutSelect: document.getElementById('layout-type-select'),
-            showDescCheck: document.getElementById('show-description-checkbox'),
-            multiPriceCheck: document.getElementById('multiple-prices-checkbox'),
-            catFontSelect: document.getElementById('category-font-select'),
-            catFontSize: document.getElementById('category-font-size'),
-            catColor: document.getElementById('category-color-picker'),
-            itemFontSelect: document.getElementById('item-font-select'),
-            itemFontSize: document.getElementById('item-font-size'),
-            itemColor: document.getElementById('item-color-picker'),
-            descFontControls: document.getElementById('description-font-controls'),
-            descFontSelect: document.getElementById('desc-font-select'),
-            descFontSize: document.getElementById('desc-font-size'),
-            descColor: document.getElementById('desc-color-picker'),
-            menuBgColor: document.getElementById('menu-bg-color-picker'),
-            // Promo
-            promoTitle: document.getElementById('promo-title-input'),
-            promoText: document.getElementById('promo-text-input'),
-            promoPrice: document.getElementById('promo-price-input'),
-            promoTitleFont: document.getElementById('promo-title-font-select'),
-            promoTitleSize: document.getElementById('promo-title-size'),
-            promoTitleColor: document.getElementById('promo-title-color-picker'),
-            promoTextFont: document.getElementById('promo-text-font-select'),
-            promoTextSize: document.getElementById('promo-text-size'),
-            promoTextColor: document.getElementById('promo-text-color-picker'),
-            promoPriceFont: document.getElementById('promo-price-font-select'),
-            promoPriceSize: document.getElementById('promo-price-size'),
-            promoPriceColor: document.getElementById('promo-price-color-picker'),
-            promoBgColor: document.getElementById('bg-color-picker'),
-            promoImgUpload: document.getElementById('promo-image-upload'),
-            promoImgInfo: document.getElementById('promo-image-info'),
-            promoImgPosition: document.getElementById('promo-image-position'),
-            // AI
-            generateBtn: document.getElementById('generate-bg-btn'),
-            promptInput: document.getElementById('bg-prompt'),
-            // Preview & Download
-            menuPreview: document.getElementById('menu-preview'),
-            downloadJpegBtn: document.getElementById('download-jpeg-btn'),
-            downloadPdfBtn: document.getElementById('download-pdf-btn'),
-            // Loading
-            loadingOverlay: document.getElementById('loading-overlay'),
-            loadingText: document.getElementById('loading-text'),
-        };
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM Element Selection ---
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const menuControls = document.getElementById('menu-controls');
+            const promoControls = document.getElementById('promo-controls');
+            const fileInput = document.getElementById('file-input');
+            const menuDropArea = document.getElementById('menu-drop-area');
+            const menuFileInfo = document.getElementById('menu-file-info');
+            const multiplePricesCheckbox = document.getElementById('multiple-prices-checkbox');
+            const showDescriptionCheckbox = document.getElementById('show-description-checkbox');
+            const descriptionFontControls = document.getElementById('description-font-controls');
+            const menuPreview = document.getElementById('menu-preview');
+            const downloadPngBtn = document.getElementById('download-png-btn');
+            const downloadPdfBtn = document.getElementById('download-pdf-btn');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingText = document.getElementById('loading-text');
 
-        // --- State ---
-        let state = {
-            currentTab: 'menu',
-            excelData: null,
-            promoImage: null,
-            gridImages: {}, // { rowIndex: base64_data }
-        };
+            // Layout
+            const layoutTypeSelect = document.getElementById('layout-type-select');
+            const gridImageUploadInput = document.getElementById('grid-image-upload');
 
-        // --- Constants ---
-        const API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C'; 
-        const API_URL = 'https://api.fusionbrain.ai/web/api/v1/text2image';
+            // Menu Font Controls
+            const categoryFontSelect = document.getElementById('category-font-select');
+            const categoryFontSizeInput = document.getElementById('category-font-size');
+            const categoryColorPicker = document.getElementById('category-color-picker');
+            const itemFontSelect = document.getElementById('item-font-select');
+            const itemFontSizeInput = document.getElementById('item-font-size');
+            const itemColorPicker = document.getElementById('item-color-picker');
+            const descFontSelect = document.getElementById('desc-font-select');
+            const descFontSizeInput = document.getElementById('desc-font-size');
+            const descColorPicker = document.getElementById('desc-color-picker');
 
-        // --- Initialization ---
-        function init() {
-            setupEventListeners();
-            updateTab();
-            render();
-        }
+            // Menu BG Controls
+            const menuBgColorPicker = document.getElementById('menu-bg-color-picker');
+            const menuBgOptions = document.querySelectorAll('#menu-controls .bg-option-btn');
+            const menuBgColorContainer = document.getElementById('bg-color-container-menu');
+            const menuBgImageContainer = document.getElementById('bg-image-container-menu');
+            const menuBgUpload = document.getElementById('menu-bg-upload');
+            const menuBgFileInfo = document.getElementById('menu-bg-file-info');
 
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            // Tabs
-            controls.tabs.forEach(btn => btn.addEventListener('click', handleTabClick));
-            
-            // Drag & Drop
-            setupDropArea(controls.dropArea, controls.fileInput, controls.fileInfo);
+            // Promo Controls
+            const promoTitleInput = document.getElementById('promo-title-input');
+            const promoTextInput = document.getElementById('promo-text-input');
+            const promoPriceInput = document.getElementById('promo-price-input');
+            const promoTitleFontSelect = document.getElementById('promo-title-font-select');
+            const promoTextFontSelect = document.getElementById('promo-text-font-select');
+            const promoPriceFontSelect = document.getElementById('promo-price-font-select');
+            const promoTitleColorPicker = document.getElementById('promo-title-color-picker');
+            const promoTextColorPicker = document.getElementById('promo-text-color-picker');
+            const promoPriceColorPicker = document.getElementById('promo-price-color-picker');
+            const promoTitleSizeInput = document.getElementById('promo-title-size');
+            const promoTextSizeInput = document.getElementById('promo-text-size');
+            const promoPriceSizeInput = document.getElementById('promo-price-size');
+            const promoAlignSelect = document.getElementById('promo-align-select');
 
-            // General Controls - re-render on any change
-            const allControls = document.querySelectorAll('.controls-content .input, .controls-content .select, .controls-content input[type="checkbox"], .controls-content input[type="color"]');
-            allControls.forEach(el => el.addEventListener('input', render));
-            allControls.forEach(el => el.addEventListener('change', render));
+            // Promo BG Controls
+            const promoBgOptionBtns = document.querySelectorAll('#promo-controls .bg-option-btn');
+            const bgColorContainer = document.getElementById('bg-color-container');
+            const bgImageContainer = document.getElementById('bg-image-container');
+            const bgGenerateContainer = document.getElementById('bg-generate-container');
+            const promoBackgroundUpload = document.getElementById('promo-background-upload');
+            const bgFileInfo = document.getElementById('bg-file-info');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const bgPromptInput = document.getElementById('bg-prompt');
+            const generateBgBtn = document.getElementById('generate-bg-btn');
 
-            // File Uploads
-            controls.promoImgUpload.addEventListener('change', handlePromoImageUpload);
+            // --- State Variables ---
+            let currentTab = 'menu';
+            let excelData = null;
+            let currentPromoBgType = "color";
+            let currentMenuBgType = "color";
+            let promoBackgroundImage = null;
+            let menuBackgroundImage = null;
+            let userUploadedGridImages = {}; // To store user-uploaded images for the grid
+            let activeGridImageIndex = -1; // To track which grid item is being updated
 
-            // Buttons
-            controls.generateBtn.addEventListener('click', handleGenerateImage);
-            controls.downloadJpegBtn.addEventListener('click', () => download('jpeg'));
-            controls.downloadPdfBtn.addEventListener('click', () => download('pdf'));
-            
-            // Special cases
-            controls.showDescCheck.addEventListener('change', toggleDescriptionControls);
-        }
+            // --- Initialization ---
+            init();
 
-        function handleTabClick(e) {
-            state.currentTab = e.currentTarget.dataset.tab;
-            updateTab();
-            render();
-        }
+            function init() {
+                setupEventListeners();
+                updateTab();
+                render();
+            }
 
-        function toggleDescriptionControls() {
-            controls.descFontControls.style.display = controls.showDescCheck.checked ? 'block' : 'none';
-        }
-
-        function updateTab() {
-            controls.tabs.forEach(b => b.classList.remove('active'));
-            document.querySelector(`.tab-btn[data-tab="${state.currentTab}"]`).classList.add('active');
-            controls.menuControls.style.display = state.currentTab === 'menu' ? 'block' : 'none';
-            controls.promoControls.style.display = state.currentTab === 'promo' ? 'block' : 'none';
-        }
-
-        // --- Data Handling ---
-        function setupDropArea(dropArea, fileInput, fileInfo) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
-            });
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
-            });
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
-            });
-            dropArea.addEventListener('drop', e => {
-                fileInput.files = e.dataTransfer.files;
-                handleFile(fileInput.files[0]);
-            }, false);
-            fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-        }
-
-        function handleFile(file) {
-            if (!file) return;
-            controls.fileInfo.textContent = file.name;
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                    state.excelData = processExcelData(jsonData);
-                    state.gridImages = {}; // Reset custom images on new file
+            // --- Event Listeners Setup ---
+            function setupEventListeners() {
+                // Main Tabs
+                tabButtons.forEach(btn => btn.addEventListener('click', function() {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTab = this.dataset.tab;
+                    updateTab();
                     render();
-                } catch (err) {
-                    alert('Ошибка при чтении файла: ' + err.message);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
+                }));
+                
+                // File Upload
+                setupDropArea(menuDropArea, fileInput, menuFileInfo, handleExcelFile);
+                
+                // Menu Controls
+                [layoutTypeSelect, multiplePricesCheckbox, showDescriptionCheckbox, 
+                 categoryFontSelect, categoryFontSizeInput, categoryColorPicker, 
+                 itemFontSelect, itemFontSizeInput, itemColorPicker, 
+                 descFontSelect, descFontSizeInput, descColorPicker, 
+                 menuBgColorPicker].forEach(el => {
+                    const event = el.tagName === 'SELECT' || el.type === 'checkbox' ? 'change' : 'input';
+                    el.addEventListener(event, render);
+                });
 
-        function processExcelData(data) {
-            const nameKeys = ['название', 'наименование', 'item', 'name'];
-            const priceKeys = ['цена', 'стоимость', 'с ндс', 'price'];
-            const descKeys = ['описание', 'description', 'desc'];
-            const categoryKeys = ['категория', 'category', 'group'];
-            const imageKeys = ['фото', 'картинка', 'image', 'img', 'photo'];
-            const sKeys = ['s', 'small'];
-            const mKeys = ['m', 'medium'];
-            const lKeys = ['l', 'large'];
+                showDescriptionCheckbox.addEventListener('change', () => {
+                    descriptionFontControls.style.display = showDescriptionCheckbox.checked ? 'block' : 'none';
+                });
+                
+                // Menu BG Options
+                setupBgOptions(menuBgOptions, [menuBgColorContainer, menuBgImageContainer], type => {
+                    currentMenuBgType = type;
+                    render();
+                });
+                setupImageUpload(menuBgUpload, menuBgFileInfo, dataUrl => {
+                    menuBackgroundImage = dataUrl;
+                    render();
+                });
 
-            const findKey = (obj, keys) => {
-                const lowerCaseKeys = Object.keys(obj).reduce((acc, k) => { acc[k.toLowerCase()] = obj[k]; return acc; }, {});
-                for (const key of keys) {
-                    if (lowerCaseKeys[key] !== undefined) return lowerCaseKeys[key];
-                }
-                return null;
+                // Promo Controls
+                [promoTitleInput, promoTextInput, promoPriceInput, promoTitleFontSelect, 
+                 promoTextFontSelect, promoPriceFontSelect, promoTitleColorPicker, 
+                 promoTextColorPicker, promoPriceColorPicker, promoTitleSizeInput, 
+                 promoTextSizeInput, promoPriceSizeInput, promoAlignSelect, bgColorPicker].forEach(el => {
+                    const event = el.tagName === 'SELECT' ? 'change' : 'input';
+                    el.addEventListener(event, render);
+                });
+
+                // Promo BG Options
+                setupBgOptions(promoBgOptionBtns, [bgColorContainer, bgImageContainer, bgGenerateContainer], type => {
+                    currentPromoBgType = type;
+                    render();
+                });
+                setupImageUpload(promoBackgroundUpload, bgFileInfo, dataUrl => {
+                    promoBackgroundImage = dataUrl;
+                    render();
+                });
+                generateBgBtn.addEventListener('click', generateAIBg);
+
+                // Grid Image Upload
+                gridImageUploadInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0] && activeGridImageIndex !== -1) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            userUploadedGridImages[activeGridImageIndex] = event.target.result;
+                            render();
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+
+                // Download Buttons
+                downloadPngBtn.addEventListener('click', downloadAsPNG);
+                downloadPdfBtn.addEventListener('click', downloadAsPDF);
             }
 
-            return data.map(row => ({
-                name: findKey(row, nameKeys),
-                price: findKey(row, priceKeys),
-                description: findKey(row, descKeys),
-                category: findKey(row, categoryKeys) || 'Основное меню',
-                image: findKey(row, imageKeys),
-                S: findKey(row, sKeys),
-                M: findKey(row, mKeys),
-                L: findKey(row, lKeys),
-            }));
-        }
-        
-        // --- Image Handling ---
-        function handlePromoImageUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = event => {
-                state.promoImage = event.target.result;
-                controls.promoImgInfo.textContent = file.name;
-                render();
-            };
-            reader.readAsDataURL(file);
-        }
+            // --- Helper Functions ---
 
-        function handleGridImageUpload(e, index) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = event => {
-                state.gridImages[index] = event.target.result;
-                render();
-            };
-            reader.readAsDataURL(file);
-        }
+            function setupDropArea(dropArea, input, info, fileHandler) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+                });
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+                });
+                
+                dropArea.addEventListener('drop', e => {
+                    if (e.dataTransfer.files.length) {
+                        input.files = e.dataTransfer.files;
+                        fileHandler(input.files[0], info);
+                    }
+                }, false);
+                
+                input.addEventListener('change', () => {
+                    if (input.files.length) {
+                        fileHandler(input.files[0], info);
+                    }
+                });
+            }
 
-        // --- AI Image Generation ---
-        async function handleGenerateImage() {
-            const prompt = controls.promptInput.value.trim();
-            if (!prompt) {
-                alert('Введите описание для генерации изображения.');
-                return;
+            function setupImageUpload(uploadInput, fileInfoElem, callback) {
+                uploadInput.addEventListener('change', e => {
+                    if (e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        fileInfoElem.textContent = file.name;
+                        const reader = new FileReader();
+                        reader.onload = event => callback(event.target.result);
+                        reader.readAsDataURL(file);
+                    }
+                });
             }
             
-            showLoading('Запускаем нейросеть...');
-
-            try {
-                const params = {
-                    type: "GENERATE",
-                    style: "DEFAULT",
-                    width: 1024,
-                    height: 1024,
-                    generateParams: { query: prompt }
-                };
-
-                const modelResponse = await fetch(`${API_URL}/models`, {
-                    method: 'GET',
-                    headers: { 'X-Key': `Key ${API_KEY}` }
-                });
-                const models = await modelResponse.json();
-                const modelId = models[0].id;
-
-                const runResponse = await fetch(`${API_URL}/run`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Key': `Key ${API_KEY}`,
-                        'X-Secret': `Secret ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ model_id: modelId, ...params })
-                });
-
-                const runData = await runResponse.json();
-                if (runData.error || runData.status === 'FAILED') {
-                    throw new Error(runData.message || 'Failed to start generation');
-                }
-                const uuid = runData.uuid;
-                
-                showLoading('Генерация изображения... Это может занять минуту.');
-
-                // Polling for result
-                for (let i = 0; i < 30; i++) {
-                    await new Promise(resolve => setTimeout(resolve, 4000)); // Wait 4 seconds
-                    const statusResponse = await fetch(`${API_URL}/status/${uuid}`, {
-                         headers: { 'X-Key': `Key ${API_KEY}`, 'X-Secret': `Secret ${API_KEY}` }
+            function setupBgOptions(buttons, containers, callback) {
+                buttons.forEach((btn, index) => {
+                    btn.addEventListener('click', function() {
+                        buttons.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        containers.forEach(c => c.style.display = 'none');
+                        if (containers[index]) {
+                            containers[index].style.display = 'block';
+                        }
+                        callback(this.dataset.type);
                     });
-                    const statusData = await statusResponse.json();
-                    
-                    if (statusData.status === 'DONE') {
-                        state.promoImage = `data:image/jpeg;base64,${statusData.images[0]}`;
-                        controls.promoImgInfo.textContent = `Сгенерировано: "${prompt}"`;
-                        hideLoading();
+                });
+            }
+
+            function handleExcelFile(file, infoElement) {
+                if (!file) return;
+                infoElement.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        excelData = XLSX.utils.sheet_to_json(worksheet);
+                        userUploadedGridImages = {}; // Reset uploaded images on new file
                         render();
-                        return;
+                    } catch (error) {
+                        alert('Ошибка при чтении файла: ' + error.message);
                     }
-                    if (statusData.status === 'FAILED') {
-                         throw new Error('Генерация не удалась.');
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            function updateTab() {
+                menuControls.style.display = (currentTab === 'menu' || currentTab === 'combined') ? 'block' : 'none';
+                promoControls.style.display = (currentTab === 'promo' || currentTab === 'combined') ? 'block' : 'none';
+            }
+
+            function getItemProp(item, keys) {
+                for (const key of keys) {
+                    if (item[key]) return item[key];
+                }
+                return '';
+            }
+
+            function formatPrice(price) {
+                if (!price) return '';
+                const num = parseFloat(String(price).replace(',', '.'));
+                return isNaN(num) ? price : num.toFixed(0) + ' ₽';
+            }
+
+            // --- FusionBrain API ---
+            const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C'; // Your key
+            const API_URL_RUN = 'https://api.fusionbrain.ai/web/api/v1/text2image/run?model_id=1';
+            const API_URL_STATUS = 'https://api.fusionbrain.ai/web/api/v1/text2image/status/';
+
+            class FusionBrainAPI {
+                constructor(apiKey) {
+                    this.headers = { 'X-Key': `Key ${apiKey}` };
+                }
+
+                async generate(prompt) {
+                    const formData = new FormData();
+                    formData.append('prompt', prompt);
+                    formData.append('width', 1280);
+                    formData.append('height', 720);
+
+                    const response = await fetch(API_URL_RUN, {
+                        method: 'POST',
+                        headers: this.headers,
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.uuid) {
+                        return this.checkStatus(data.uuid);
+                    } else {
+                        throw new Error(data.message || 'Failed to start generation');
                     }
                 }
-                throw new Error('Время ожидания истекло.');
 
-            } catch (error) {
-                console.error('AI Error:', error);
-                alert('Ошибка генерации: ' + error.message);
-                hideLoading();
+                async checkStatus(uuid) {
+                    return new Promise((resolve, reject) => {
+                        const interval = setInterval(async () => {
+                            try {
+                                const response = await fetch(API_URL_STATUS + uuid, { headers: this.headers });
+                                const data = await response.json();
+                                
+                                if (data.status === 'DONE') {
+                                    clearInterval(interval);
+                                    resolve(`data:image/jpeg;base64,${data.images[0]}`);
+                                } else if (data.status === 'FAIL') {
+                                    clearInterval(interval);
+                                    reject(new Error(data.error_description || 'Generation failed'));
+                                }
+                            } catch (error) {
+                                clearInterval(interval);
+                                reject(error);
+                            }
+                        }, 5000); // Poll every 5 seconds
+                    });
+                }
             }
-        }
-        
-        // --- Rendering Engine ---
-        function render() {
-            if (state.currentTab === 'menu') {
-                renderMenu();
-            } else if (state.currentTab === 'promo') {
-                renderPromo();
-            }
-        }
 
-        function renderPlaceholder(title, text) {
-            controls.menuPreview.innerHTML = `
-                <div class="preview-placeholder">
-                    <h3>${title}</h3><p>${text}</p>
-                </div>`;
-        }
-        
-        // MENU RENDER
-        function renderMenu() {
-            if (!state.excelData) {
-                return renderPlaceholder('Сейчас здесь будет ваше меню', 'Загрузите Excel-файл с данными.');
-            }
-            if (controls.layoutSelect.value === 'list') {
-                renderMenuList();
-            } else {
-                renderMenuGrid();
-            }
-        }
+            const api = new FusionBrainAPI(FUSION_BRAIN_API_KEY);
 
-        function renderMenuList() {
-            const useMultiPrice = controls.multiPriceCheck.checked;
-            const showDesc = controls.showDescCheck.checked;
-            const categories = [...new Set(state.excelData.map(item => item.category))];
-            
-            let html = '';
-            categories.forEach(category => {
-                html += `<div class="menu-section">
-                    <div class="section-title" style="font-family:${controls.catFontSelect.value}; font-size:${controls.catFontSize.value}px; color:${controls.catColor.value};">${category}</div>`;
+            async function generateAIBg() {
+                const prompt = bgPromptInput.value.trim();
+                if (!prompt) {
+                    alert('Введите описание для генерации фона (промпт)');
+                    return;
+                }
                 
-                state.excelData.filter(item => item.category === category).forEach(item => {
-                    const priceHtml = useMultiPrice && (item.S || item.M || item.L)
-                        ? `${item.S ? `S:${formatPrice(item.S)} ` : ''}${item.M ? `M:${formatPrice(item.M)} ` : ''}${item.L ? `L:${formatPrice(item.L)}` : ''}`
-                        : formatPrice(item.price);
-
-                    html += `
-                    <div class="menu-item">
-                        <div class="item-content">
-                            <div class="item-name" style="font-family:${controls.itemFontSelect.value}; font-size:${controls.itemFontSize.value}px; color:${controls.itemColor.value};">${item.name || ''}</div>
-                            ${showDesc && item.description ? `<div class="item-description" style="font-family:${controls.descFontSelect.value}; font-size:${controls.descFontSize.value}px; color:${controls.descColor.value};">${item.description}</div>` : ''}
-                        </div>
-                        <div class="item-price" style="font-family:${controls.itemFontSelect.value}; font-size:${controls.itemFontSize.value}px; color:${controls.itemColor.value};">
-                            ${priceHtml}
-                        </div>
-                    </div>`;
-                });
-                html += `</div>`;
-            });
-            
-            const totalItems = state.excelData.length;
-            const useTwoColumns = totalItems > 12; // Threshold for two columns
-
-            controls.menuPreview.innerHTML = `
-                <div class="menu-list-content" style="background-color: ${controls.menuBgColor.value};">
-                    <div class="menu-items-container ${useTwoColumns ? 'two-columns' : ''}">${html}</div>
-                </div>`;
-        }
-
-        function renderMenuGrid() {
-            let html = '';
-            for (let i = 0; i < 16; i++) {
-                const item = state.excelData[i];
-                if (item) {
-                    const itemImage = state.gridImages[i] || item.image;
-                    const showDesc = controls.showDescCheck.checked;
-                    html += `
-                    <div class="grid-item">
-                        <div class="grid-item-content">
-                            <div class="item-name" style="font-family:${controls.itemFontSelect.value}; font-size:${controls.itemFontSize.value}px; color:${controls.itemColor.value};">${item.name || ''}</div>
-                            ${showDesc && item.description ? `<div class="item-description" style="font-family:${controls.descFontSelect.value}; font-size:${controls.descFontSize.value}px; color:${controls.descColor.value};">${item.description}</div>` : ''}
-                             <div class="item-price" style="font-family:${controls.itemFontSelect.value}; font-size:${controls.itemFontSize.value}px; color:${controls.itemColor.value};">${formatPrice(item.price)}</div>
-                        </div>
-                        <div class="grid-item-image-container">
-                            ${itemImage ? `<img src="${itemImage}" class="grid-item-image">` : ''}
-                            <button class="add-image-btn" data-index="${i}">+</button>
-                            <input type="file" class="grid-image-upload" data-index="${i}" accept="image/*" style="display: none;">
-                        </div>
-                    </div>`;
-                } else {
-                    html += `<div class="grid-item"></div>`; // Empty cell
-                }
-            }
-             controls.menuPreview.innerHTML = `
-                <div class="menu-grid-content" style="background-color: ${controls.menuBgColor.value};">
-                    <div class="menu-grid-container">${html}</div>
-                </div>`;
-
-            // Add event listeners for the new buttons
-            document.querySelectorAll('.add-image-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = e.currentTarget.dataset.index;
-                    document.querySelector(`.grid-image-upload[data-index="${index}"]`).click();
-                });
-            });
-            document.querySelectorAll('.grid-image-upload').forEach(input => {
-                 input.addEventListener('change', (e) => handleGridImageUpload(e, e.currentTarget.dataset.index));
-            });
-        }
-
-
-        // PROMO RENDER
-        function renderPromo() {
-            const title = controls.promoTitle.value;
-            const text = controls.promoText.value;
-            const price = controls.promoPrice.value;
-
-            if (!title && !text && !price && !state.promoImage) {
-                return renderPlaceholder('Сейчас здесь будет ваша акция', 'Заполните поля в панели управления.');
-            }
-            
-            const imagePosition = controls.promoImgPosition.value;
-
-            const textHtml = `
-                <div class="promo-text-wrapper">
-                    ${title ? `<div class="promo-title" style="font-family:${controls.promoTitleFont.value}; font-size:${controls.promoTitleSize.value}px; color:${controls.promoTitleColor.value};">${title}</div>` : ''}
-                    ${text ? `<div class="promo-text" style="font-family:${controls.promoTextFont.value}; font-size:${controls.promoTextSize.value}px; color:${controls.promoTextColor.value};">${text}</div>` : ''}
-                    ${price ? `<div class="promo-price" style="font-family:${controls.promoPriceFont.value}; font-size:${controls.promoPriceSize.value}px; color:${controls.promoPriceColor.value};">${formatPrice(price)}</div>` : ''}
-                </div>`;
-            
-            const imageHtml = state.promoImage ? `
-                <div class="promo-image-wrapper">
-                    <img src="${state.promoImage}" class="promo-image" alt="Promotion Image">
-                </div>` : '';
-
-            controls.menuPreview.innerHTML = `
-            <div class="promo-template">
-                <div class="promo-background" style="background-color:${controls.promoBgColor.value};"></div>
-                <div class="promo-content img-${imagePosition}">
-                    ${textHtml}
-                    ${imageHtml}
-                </div>
-            </div>`;
-        }
-
-        // --- Utilities ---
-        function formatPrice(price) {
-            if (!price) return '';
-            const num = parseFloat(price);
-            return isNaN(num) ? price : num.toFixed(0) + ' ₽';
-        }
-
-        function showLoading(text) {
-            controls.loadingText.textContent = text;
-            controls.loadingOverlay.style.display = 'flex';
-        }
-
-        function hideLoading() {
-            controls.loadingOverlay.style.display = 'none';
-        }
-
-        // --- Exporting ---
-        function download(format) {
-            showLoading(`Сохранение в ${format.toUpperCase()}...`);
-            // Temporarily set a fixed size for high-res capture, respecting aspect ratio
-            const previewEl = controls.menuPreview;
-            const originalWidth = previewEl.style.width;
-            const originalHeight = previewEl.style.height;
-
-            previewEl.style.width = '1920px';
-            previewEl.style.height = '1080px';
-            previewEl.style.borderRadius = '0'; // Ensure no rounded corners in capture
-
-            html2canvas(previewEl, { 
-                backgroundColor: null, 
-                scale: 1, // Capture at the fixed size
-                logging: false,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                // Restore original styles
-                previewEl.style.width = originalWidth;
-                previewEl.style.height = originalHeight;
-                previewEl.style.borderRadius = ''; 
-
-                if (format === 'jpeg') {
-                    canvas.toBlob(blob => {
-                        saveAs(blob, 'menuboard.jpeg');
-                        hideLoading();
-                    }, 'image/jpeg', 0.95);
-                } else if (format === 'pdf') {
-                    const { jsPDF } = window.jspdf;
-                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [297, 167] }); // A4-width 16:9
+                loadingOverlay.style.display = 'flex';
+                loadingText.textContent = 'Отправляем запрос...';
+                
+                try {
+                    const generationPromise = api.generate(prompt);
+                    loadingText.textContent = 'Нейросеть рисует. Это может занять до минуты...';
                     
-                    pdf.addImage(imgData, 'JPEG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-                    pdf.save('menuboard.pdf');
-                    hideLoading();
+                    promoBackgroundImage = await generationPromise;
+                    bgFileInfo.textContent = `Сгенерировано по запросу: "${prompt}"`;
+                    render();
+                } catch (error) {
+                    console.error('Ошибка генерации фона:', error);
+                    alert('Произошла ошибка при генерации фона: ' + error.message);
+                } finally {
+                    loadingOverlay.style.display = 'none';
                 }
-            }).catch(err => {
-                console.error("Download Error:", err);
-                alert("Ошибка сохранения. Попробуйте снова.");
-                hideLoading();
-            });
-        }
+            }
 
-        // --- Run App ---
-        init();
-    });
+            // --- Rendering Engine ---
+            function render() {
+                // Apply global styles from controls
+                const root = document.documentElement;
+                root.style.setProperty('--category-font-size', categoryFontSizeInput.value + 'px');
+                root.style.setProperty('--category-font-color', categoryColorPicker.value);
+                root.style.setProperty('--font-category', categoryFontSelect.value);
+                root.style.setProperty('--item-font-size', itemFontSizeInput.value + 'px');
+                root.style.setProperty('--item-font-color', itemColorPicker.value);
+                root.style.setProperty('--font-item', itemFontSelect.value);
+                root.style.setProperty('--item-desc-font-size', descFontSizeInput.value + 'px');
+                root.style.setProperty('--font-desc', descFontSelect.value);
+                
+                root.style.setProperty('--promo-title-font-size', promoTitleSizeInput.value + 'px');
+                root.style.setProperty('--promo-text-font-size', promoTextSizeInput.value + 'px');
+                root.style.setProperty('--promo-price-font-size', promoPriceSizeInput.value + 'px');
+                root.style.setProperty('--promo-text-align', promoAlignSelect.value);
+
+                // Clear previous content
+                menuPreview.innerHTML = '';
+                
+                // Route to the correct render function based on tab
+                if (currentTab === 'menu') {
+                    renderMenuTemplate();
+                } else if (currentTab === 'promo') {
+                    renderPromoTemplate();
+                } else if (currentTab === 'combined') {
+                    renderCombinedTemplate();
+                }
+            }
+
+            function buildMenuHtml() {
+                if (!excelData) return '<h3>Загрузите файл с меню</h3>';
+                
+                let html = '';
+                const categories = [...new Set(excelData.map(item => getItemProp(item, ['Категория', 'category']) || 'Основное меню'))];
+                
+                categories.forEach(category => {
+                    html += `<div class="menu-section"><div class="section-title">${category}</div>`;
+                    
+                    excelData.filter(item => (getItemProp(item, ['Категория', 'category']) || 'Основное меню') === category).forEach(item => {
+                        const name = getItemProp(item, ['Название', 'Наименование']);
+                        const description = getItemProp(item, ['Описание', 'description']);
+                        const price = getItemProp(item, ['Цена', 'стоимость', 'с ндс']);
+                        const showDesc = showDescriptionCheckbox.checked && description;
+
+                        html += `
+                        <div class="menu-item">
+                            <div class="item-content">
+                                <div class="item-name">${name}</div>
+                                ${showDesc ? `<div class="item-description" style="color:${descColorPicker.value}">${description}</div>` : ''}
+                            </div>
+                            <div class="item-price">${formatPrice(price)}</div>
+                        </div>`;
+                    });
+                    
+                    html += `</div>`;
+                });
+                return html;
+            }
+
+            function renderMenuTemplate() {
+                const layout = layoutTypeSelect.value;
+                const menuContainer = document.createElement('div');
+                
+                if (layout === 'list') {
+                    menuContainer.className = 'menu-content';
+                    const menuScroll = document.createElement('div');
+                    menuScroll.className = 'menu-items-scroll';
+                    menuScroll.innerHTML = buildMenuHtml();
+                    menuContainer.appendChild(menuScroll);
+                } else { // grid
+                    menuContainer.className = 'menu-grid-container';
+                    if (!excelData) {
+                        menuContainer.innerHTML = '<h3 style="grid-column: 1 / -1; text-align: center; color: #a3a9c2;">Загрузите файл Excel</h3>';
+                    } else {
+                        const gridItems = excelData.slice(0, 16);
+                        gridItems.forEach((item, index) => {
+                            const name = getItemProp(item, ['Название', 'Наименование']);
+                            const description = getItemProp(item, ['Описание', 'description']);
+                            const price = getItemProp(item, ['Цена', 'стоимость', 'с ндс']);
+                            const imageUrl = userUploadedGridImages[index] || getItemProp(item, ['Фото', 'photo']);
+
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'menu-grid-item';
+                            itemDiv.innerHTML = `
+                                <div class="grid-item-content">
+                                    <div class="item-name">${name}</div>
+                                    ${showDescriptionCheckbox.checked && description ? `<div class="item-description" style="color:${descColorPicker.value}">${description}</div>` : ''}
+                                    <div class="item-price">${formatPrice(price)}</div>
+                                </div>
+                                <div class="grid-item-image-wrapper">
+                                    ${imageUrl 
+                                        ? `<img src="${imageUrl}" class="grid-item-image" alt="${name}">`
+                                        : `<button class="upload-image-btn" data-index="${index}">+</button>`
+                                    }
+                                </div>
+                            `;
+                            menuContainer.appendChild(itemDiv);
+                        });
+                        
+                        // Add event listeners for upload buttons
+                        menuContainer.querySelectorAll('.upload-image-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                activeGridImageIndex = parseInt(btn.dataset.index);
+                                gridImageUploadInput.click();
+                            });
+                        });
+                    }
+                }
+                
+                if (currentMenuBgType === 'color') {
+                    menuContainer.style.backgroundColor = menuBgColorPicker.value;
+                } else if (currentMenuBgType === 'image' && menuBackgroundImage) {
+                    menuContainer.style.backgroundImage = `url(${menuBackgroundImage})`;
+                    menuContainer.style.backgroundSize = 'cover';
+                    menuContainer.style.backgroundPosition = 'center';
+                }
+                
+                menuPreview.appendChild(menuContainer);
+            }
+
+            function buildPromoHtml() {
+                 return `
+                    ${promoTitleInput.value ? `<div class="promo-title" style="font-family: ${promoTitleFontSelect.value}; color: ${promoTitleColorPicker.value}">${promoTitleInput.value}</div>` : ''}
+                    ${promoTextInput.value ? `<div class="promo-text" style="font-family: ${promoTextFontSelect.value}; color: ${promoTextColorPicker.value}">${promoTextInput.value}</div>` : ''}
+                    ${promoPriceInput.value ? `<div class="promo-price" style="font-family: ${promoPriceFontSelect.value}; color: ${promoPriceColorPicker.value}">${formatPrice(promoPriceInput.value)}</div>` : ''}
+                `;
+            }
+
+            function renderPromoTemplate() {
+                const promoContainer = document.createElement('div');
+                promoContainer.className = 'promo-template';
+
+                if (currentPromoBgType === 'color') {
+                    promoContainer.style.backgroundColor = bgColorPicker.value;
+                } else if ((currentPromoBgType === 'image' || currentPromoBgType === 'generate') && promoBackgroundImage) {
+                    promoContainer.style.backgroundImage = `url(${promoBackgroundImage})`;
+                }
+                
+                const content = document.createElement('div');
+                content.className = 'promo-content';
+                content.innerHTML = buildPromoHtml();
+                promoContainer.appendChild(content);
+                menuPreview.appendChild(promoContainer);
+            }
+
+            function renderCombinedTemplate() {
+                const combinedContainer = document.createElement('div');
+                combinedContainer.className = 'combined-template';
+
+                // Menu Part
+                const menuPart = document.createElement('div');
+                menuPart.className = 'combined-menu-part';
+                 if (currentMenuBgType === 'color') {
+                    menuPart.style.backgroundColor = menuBgColorPicker.value;
+                } else if (currentMenuBgType === 'image' && menuBackgroundImage) {
+                    menuPart.style.backgroundImage = `url(${menuBackgroundImage})`;
+                }
+                const menuScroll = document.createElement('div');
+                menuScroll.className = 'combined-menu-scroll';
+                menuScroll.innerHTML = buildMenuHtml();
+                menuPart.appendChild(menuScroll);
+                
+                // Promo Part
+                const promoPart = document.createElement('div');
+                promoPart.className = 'combined-promo-part';
+                if (currentPromoBgType === 'color') {
+                    promoPart.style.backgroundColor = bgColorPicker.value;
+                } else if ((currentPromoBgType === 'image' || currentPromoBgType === 'generate') && promoBackgroundImage) {
+                    promoPart.style.backgroundImage = `url(${promoBackgroundImage})`;
+                }
+                const promoContent = document.createElement('div');
+                promoContent.className = 'combined-promo-content';
+                promoContent.innerHTML = buildPromoHtml();
+                promoPart.appendChild(promoContent);
+                
+                combinedContainer.appendChild(menuPart);
+                combinedContainer.appendChild(promoPart);
+                menuPreview.appendChild(combinedContainer);
+            }
+
+            // --- Export Functions ---
+            function downloadAsPNG() {
+                html2canvas(menuPreview, { backgroundColor: null, scale: 2 }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        saveAs(blob, 'menuboard.png');
+                    }, 'image/png', 1.0);
+                });
+            }
+            
+            function downloadAsPDF() {
+                const { jsPDF } = window.jspdf;
+                
+                html2canvas(menuPreview, { backgroundColor: null, scale: 2 }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    // Create a PDF with a 16:9 aspect ratio page
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: [297, 167.06] // A4 width (297mm) with 16:9 height
+                    });
+                    
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('menuboard.pdf');
+                });
+            }
+        });
     </script>
 </body>
 </html>
