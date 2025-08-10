@@ -32,6 +32,9 @@
             /* Grid specific */
             --grid-bg-color: #f5f5f5;
             --cell-bg-color: rgba(255, 255, 255, 0.85);
+
+            /* Default menu background color */
+            --menu-bg-color: #eeeeee;
         }
         
         * {
@@ -284,10 +287,10 @@
         .item-content { flex-grow: 1; }
         
         .item-name {
-            font-family: var(--item-font-family);
+            font-family: var(--item-name-font-family);
             font-weight: 500;
-            font-size: var(--item-font-size);
-            color: var(--item-font-color);
+            font-size: var(--item-name-font-size);
+            color: var(--item-name-font-color);
             margin-bottom: 5px;
         }
         
@@ -297,13 +300,16 @@
             color: var(--desc-font-color);
             margin-bottom: 5px;
             font-weight: 300;
+            white-space: nowrap; /* Prevent description from wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .item-price {
-            font-family: var(--item-font-family);
+            font-family: var(--item-price-font-family);
             font-weight: 700;
-            font-size: var(--item-font-size);
-            color: var(--item-font-color);
+            font-size: var(--item-price-font-size);
+            color: var(--item-price-font-color);
             white-space: nowrap;
             margin-left: 20px;
             text-align: right;
@@ -328,15 +334,38 @@
             border-radius: 8px;
             padding: 15px;
             display: grid;
-            grid-template-columns: 1fr 50%;
-            grid-template-rows: auto 1fr auto;
+            grid-template-columns: 1fr 50%; /* Left text, right image */
+            grid-template-rows: auto 1fr auto; /* Name, Description, Price */
             gap: 5px 15px;
             position: relative;
             overflow: hidden;
         }
-        .grid-cell .item-name { grid-area: 1 / 1 / 2 / 2; font-weight: 700;}
-        .grid-cell .item-description { grid-area: 2 / 1 / 3 / 2; align-self: start; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .grid-cell .item-price { grid-area: 3 / 1 / 4 / 2; align-self: end; text-align: left; margin-left: 0; }
+        .grid-cell .item-name { 
+            grid-area: 1 / 1 / 2 / 2; 
+            font-weight: 700;
+            font-family: var(--item-name-font-family);
+            font-size: var(--item-name-font-size);
+            color: var(--item-name-font-color);
+        }
+        .grid-cell .item-description { 
+            grid-area: 2 / 1 / 3 / 2; 
+            align-self: start; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            font-family: var(--desc-font-family);
+            font-size: var(--desc-font-size);
+            color: var(--desc-font-color);
+        }
+        .grid-cell .item-price { 
+            grid-area: 3 / 1 / 4 / 2; 
+            align-self: end; 
+            text-align: left; 
+            margin-left: 0; 
+            font-family: var(--item-price-font-family);
+            font-size: var(--item-price-font-size);
+            color: var(--item-price-font-color);
+        }
         .grid-cell .item-photo-container {
             grid-area: 1 / 2 / 4 / 3;
             position: relative;
@@ -417,7 +446,15 @@
             overflow: hidden;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
+
+        /* Specific styles for promo part in 2x2 combined layout */
+        .combined-template.grid-layout .combined-promo-part {
+            background-size: 90% 90%; /* Promo image covers 90% of area */
+            background-position: center;
+        }
+
         .combined-promo-content {
             position: relative;
             z-index: 2;
@@ -427,6 +464,7 @@
             flex-direction: column;
             text-align: left;
             color: white;
+            background: none; /* Ensure no background on content itself */
         }
         
         .loading-overlay {
@@ -452,6 +490,17 @@
             background: rgba(0, 179, 152, 0.1);
         }
         .file-info { font-size: 12px; color: #8e8e9e; margin-top: 5px; }
+
+        .info-message {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -468,6 +517,7 @@
                 <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
                 <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция"> Акция</button>
                 <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="2 в 1"> 2в1</button>
+                <button class="tab-btn" data-tab="style"><img src="style.svg" alt="Стиль"> Стиль меню</button>
             </div>
 
             <div class="controls-content">
@@ -525,11 +575,20 @@
                     </div>
                     
                     <div class="control-group">
-                        <label>Шрифт пунктов:</label>
+                        <label>Шрифт названия блюд:</label>
                         <div class="setting-row">
-                            <select id="item-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
-                            <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
-                            <input type="color" id="item-color-picker" value="#3d435c">
+                            <select id="item-name-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
+                            <input type="number" id="item-name-font-size" class="input" value="16" min="10" max="100">
+                            <input type="color" id="item-name-color-picker" value="#3d435c">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Шрифт цены блюд:</label>
+                        <div class="setting-row">
+                            <select id="item-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
+                            <input type="number" id="item-price-font-size" class="input" value="16" min="10" max="100">
+                            <input type="color" id="item-price-color-picker" value="#3d435c">
                         </div>
                     </div>
 
@@ -549,7 +608,7 @@
                         <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок">
                         <div class="setting-row">
                             <select id="promo-title-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Oswald', sans-serif">Oswald</option></select>
-                            <input type="number" id="promo-title-size" class="input" value="60" min="10" max="180">
+                            <input type="number" id="promo-title-size" class="input" value="100" min="10" max="180">
                             <input type="color" id="promo-title-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -569,7 +628,7 @@
                         <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
                         <div class="setting-row">
                             <select id="promo-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
-                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="180">
+                            <input type="number" id="promo-price-size" class="input" value="180" min="10" max="180">
                             <input type="color" id="promo-price-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -603,6 +662,29 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="combined-controls" style="display: none;">
+                    <div class="info-message">
+                        Настройки для комбинированного варианта находятся в разделах "Меню" и "Акция".
+                        Пожалуйста, переключитесь на соответствующие вкладки для изменения параметров.
+                    </div>
+                </div>
+
+                <div id="style-controls" style="display: none;">
+                    <div class="control-group">
+                        <label>Загрузить изображение для анализа стиля:</label>
+                        <div class="drop-area" id="style-drop-area">
+                            Перетащите файл изображения или
+                            <button class="btn btn-secondary" style="width: auto; padding: 5px 10px; margin: 5px 0 0 0;" onclick="document.getElementById('style-image-input').click()">Выберите файл</button>
+                            <input type="file" id="style-image-input" accept="image/*" style="display: none;">
+                            <div class="file-info" id="style-file-info">Изображение не выбрано</div>
+                        </div>
+                        <div class="info-message">
+                            **Внимание:** Функция автоматического подбора шрифтов и цветов на основе загруженного изображения (AI-анализ) в данный момент не реализована из-за отсутствия подходящего API для анализа изображений.
+                            Вы можете загрузить изображение для справки, но подбор параметров осуществляется вручную.
+                        </div>
+                    </div>
+                    </div>
             </div>
         </div>
         
@@ -636,6 +718,8 @@
                 tabButtons: document.querySelectorAll('.tab-btn'),
                 menuControls: getEl('menu-controls'),
                 promoControls: getEl('promo-controls'),
+                combinedControls: getEl('combined-controls'),
+                styleControls: getEl('style-controls'), // New
                 fileInput: getEl('file-input'),
                 menuDropArea: getEl('menu-drop-area'),
                 menuFileInfo: getEl('menu-file-info'),
@@ -649,9 +733,14 @@
                 categoryFont: getEl('category-font-select'),
                 categorySize: getEl('category-font-size'),
                 categoryColor: getEl('category-color-picker'),
-                itemFont: getEl('item-font-select'),
-                itemSize: getEl('item-font-size'),
-                itemColor: getEl('item-color-picker'),
+                // Split item fonts
+                itemNameFont: getEl('item-name-font-select'),
+                itemNameSize: getEl('item-name-font-size'),
+                itemNameColor: getEl('item-name-color-picker'),
+                itemPriceFont: getEl('item-price-font-select'),
+                itemPriceSize: getEl('item-price-font-size'),
+                itemPriceColor: getEl('item-price-color-picker'),
+                // End split item fonts
                 descFont: getEl('desc-font-select'),
                 descSize: getEl('desc-font-size'),
                 descColor: getEl('desc-color-picker'),
@@ -684,6 +773,9 @@
                 downloadPdfBtn: getEl('download-pdf-btn'),
                 loadingOverlay: getEl('loading-overlay'),
                 loadingText: getEl('loading-text'),
+                styleDropArea: getEl('style-drop-area'), // New
+                styleImageInput: getEl('style-image-input'), // New
+                styleFileInfo: getEl('style-file-info'), // New
             };
 
             // State
@@ -715,13 +807,21 @@
                     render();
                 }));
 
-                // Drag & Drop
-                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo);
+                // Drag & Drop for Menu
+                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo, handleExcelFile);
+                // Drag & Drop for Style (dummy for now)
+                setupDropArea(controls.styleDropArea, controls.styleImageInput, controls.styleFileInfo, (file) => {
+                    controls.styleFileInfo.textContent = file.name;
+                    // No actual AI analysis implemented here. Inform user.
+                });
 
                 // Menu Controls
                 [controls.layoutSelect, controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
                  controls.categoryFont, controls.categorySize, controls.categoryColor,
-                 controls.itemFont, controls.itemSize, controls.itemColor,
+                 // Item Name Font
+                 controls.itemNameFont, controls.itemNameSize, controls.itemNameColor,
+                 // Item Price Font
+                 controls.itemPriceFont, controls.itemPriceSize, controls.itemPriceColor,
                  controls.descFont, controls.descSize, controls.descColor,
                  controls.gridBgColorPicker, controls.cellBgColorPicker].forEach(el => {
                     el.addEventListener('input', render);
@@ -730,6 +830,7 @@
                 
                 controls.layoutSelect.addEventListener('change', () => {
                     controls.gridColorsGroup.style.display = controls.layoutSelect.value === 'grid' ? 'block' : 'none';
+                    render(); // Re-render to apply grid settings if changed
                 });
 
                 // Promo Controls
@@ -756,9 +857,24 @@
 
             // --- UI UPDATE FUNCTIONS ---
             function updateTabVisibility() {
-                controls.menuControls.style.display = (state.currentTab === 'menu' || state.currentTab === 'combined') ? 'block' : 'none';
-                controls.promoControls.style.display = (state.currentTab === 'promo' || state.currentTab === 'combined') ? 'block' : 'none';
-                controls.gridColorsGroup.style.display = (state.currentTab === 'menu' || state.currentTab === 'combined') && controls.layoutSelect.value === 'grid' ? 'block' : 'none';
+                controls.menuControls.style.display = 'none';
+                controls.promoControls.style.display = 'none';
+                controls.combinedControls.style.display = 'none';
+                controls.styleControls.style.display = 'none';
+                controls.gridColorsGroup.style.display = 'none'; // Hide by default, show if menu and grid are active
+
+                if (state.currentTab === 'menu') {
+                    controls.menuControls.style.display = 'block';
+                    if (controls.layoutSelect.value === 'grid') {
+                        controls.gridColorsGroup.style.display = 'block';
+                    }
+                } else if (state.currentTab === 'promo') {
+                    controls.promoControls.style.display = 'block';
+                } else if (state.currentTab === 'combined') {
+                    controls.combinedControls.style.display = 'block';
+                } else if (state.currentTab === 'style') {
+                    controls.styleControls.style.display = 'block';
+                }
             }
             
             function updatePromoBgControls() {
@@ -771,7 +887,7 @@
             }
 
             // --- DATA HANDLING ---
-            function setupDropArea(dropArea, fileInput, fileInfo) {
+            function setupDropArea(dropArea, fileInput, fileInfo, handleFileCallback) {
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                     dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
                 });
@@ -781,36 +897,36 @@
                 dropArea.addEventListener('drop', e => {
                     if (e.dataTransfer.files.length) {
                         fileInput.files = e.dataTransfer.files;
-                        handleExcelFile(e.dataTransfer.files[0]);
+                        handleFileCallback(e.dataTransfer.files[0]);
                     }
                 });
-                fileInput.addEventListener('change', e => { if (e.target.files.length) handleExcelFile(e.target.files[0]) });
+                fileInput.addEventListener('change', e => { if (e.target.files.length) handleFileCallback(e.target.files[0]) });
+            }
 
-                function handleExcelFile(file) {
-                    fileInfo.textContent = file.name;
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const data = new Uint8Array(e.target.result);
-                            const workbook = XLSX.read(data, { type: 'array' });
-                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                            
-                            // Normalize keys
-                            state.excelData = jsonData.map(row => ({
-                                name: row['Название'] || row['Наименование'] || '',
-                                description: row['Описание'] || '',
-                                price: row['Цена'] || row['Стоимость'] || row['с ндс'] || '',
-                                photo: row['Фото'] || '',
-                                category: row['Категория'] || 'Основное меню',
-                                S: row['S'] || '', M: row['M'] || '', L: row['L'] || ''
-                            }));
-                            state.gridImages = {}; // Reset images on new file
-                            render();
-                        } catch (error) { alert('Ошибка при чтении файла: ' + error.message); }
-                    };
-                    reader.readAsArrayBuffer(file);
-                }
+            function handleExcelFile(file) {
+                controls.menuFileInfo.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        
+                        // Normalize keys
+                        state.excelData = jsonData.map(row => ({
+                            name: row['Название'] || row['Наименование'] || '',
+                            description: row['Описание'] || '',
+                            price: row['Цена'] || row['Стоимость'] || row['с ндс'] || '',
+                            photo: row['Фото'] || '',
+                            category: row['Категория'] || 'Основное меню',
+                            S: row['S'] || '', M: row['M'] || '', L: row['L'] || ''
+                        }));
+                        state.gridImages = {}; // Reset images on new file
+                        render();
+                    } catch (error) { alert('Ошибка при чтении файла: ' + error.message); }
+                };
+                reader.readAsArrayBuffer(file);
             }
 
             function formatPrice(price) {
@@ -863,9 +979,15 @@
                 root.setProperty('--category-font-family', controls.categoryFont.value);
                 root.setProperty('--category-font-size', controls.categorySize.value + 'px');
                 root.setProperty('--category-font-color', controls.categoryColor.value);
-                root.setProperty('--item-font-family', controls.itemFont.value);
-                root.setProperty('--item-font-size', controls.itemSize.value + 'px');
-                root.setProperty('--item-font-color', controls.itemColor.value);
+                // Item Name Font
+                root.setProperty('--item-name-font-family', controls.itemNameFont.value);
+                root.setProperty('--item-name-font-size', controls.itemNameSize.value + 'px');
+                root.setProperty('--item-name-font-color', controls.itemNameColor.value);
+                // Item Price Font
+                root.setProperty('--item-price-font-family', controls.itemPriceFont.value);
+                root.setProperty('--item-price-font-size', controls.itemPriceSize.value + 'px');
+                root.setProperty('--item-price-font-color', controls.itemPriceColor.value);
+
                 root.setProperty('--desc-font-family', controls.descFont.value);
                 root.setProperty('--desc-font-size', controls.descSize.value + 'px');
                 root.setProperty('--desc-font-color', controls.descColor.value);
@@ -918,7 +1040,13 @@
 
             function renderGridMenu() {
                 let html = '';
-                const itemsToDisplay = state.excelData.slice(0, 4);
+                const itemsToDisplay = state.excelData ? state.excelData.slice(0, 4) : [];
+
+                if (itemsToDisplay.length === 0) {
+                     return `<div class="menu-grid-template" style="display: flex; justify-content: center; align-items: center; color: #a3a9c2;">
+                        <h3>Нет данных для сетки.</h3>
+                    </div>`;
+                }
 
                 itemsToDisplay.forEach((item, index) => {
                     const imgSrc = state.gridImages[index] || item.photo;
@@ -935,11 +1063,17 @@
                 return `<div class="menu-grid-template">${html}</div>`;
             }
 
-            function renderPromoHTML() {
+            function renderPromoHTMLContent() {
                 const title = controls.promoTitle.value;
                 const text = controls.promoText.value;
                 const price = controls.promoPrice.value;
-                if (!title && !text && !price) return '';
+                
+                if (!title && !text && !price) {
+                     return `<div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                        <h3>Здесь будет ваша акция</h3>
+                        <p>Настройте параметры акции</p>
+                    </div>`;
+                }
 
                 return `
                     <div class="promo-content">
@@ -954,10 +1088,10 @@
                 applyStyles();
                 let html = '';
                 
-                // Show initial placeholder if no data
+                // Show initial placeholder if no data or no tab selected
                 if ( (state.currentTab === 'menu' && !state.excelData) ||
-                     (state.currentTab === 'promo' && !controls.promoTitle.value && !controls.promoText.value) ||
-                     (state.currentTab === 'combined' && !state.excelData && (!controls.promoTitle.value && !controls.promoText.value))
+                     (state.currentTab === 'promo' && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)) ||
+                     (state.currentTab === 'combined' && (!state.excelData && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)))
                 ) {
                     controls.menuPreview.innerHTML = `
                     <div style="text-align: center; color: #a3a9c2; padding: 40px;">
@@ -971,40 +1105,58 @@
                 if (state.currentTab === 'menu') {
                     html = renderMenuHTML();
                     controls.menuPreview.style.backgroundImage = 'none';
+                    controls.menuPreview.style.backgroundColor = controls.menuBgPicker.value;
                 } else if (state.currentTab === 'promo') {
                     const promoContainer = document.createElement('div');
                     promoContainer.className = 'promo-template';
-                    promoContainer.innerHTML = renderPromoHTML();
-                    setPromoBackground(promoContainer);
+                    promoContainer.innerHTML = renderPromoHTMLContent();
+                    setPromoBackground(promoContainer, controls.promoBgType.value, controls.promoBgPos.value, state.promoBgImage, controls.bgColorPicker.value);
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
+                    const combinedTemplate = document.createElement('div');
+                    combinedTemplate.className = 'combined-template';
+
+                    const menuLayoutIsGrid = controls.layoutSelect.value === 'grid';
+                    if (menuLayoutIsGrid) {
+                        combinedTemplate.classList.add('grid-layout'); // Add class for specific combined grid styling
+                    }
+
                     const menuPart = document.createElement('div');
                     menuPart.className = 'combined-menu-part';
                     menuPart.innerHTML = renderMenuHTML();
                     
                     const promoPart = document.createElement('div');
                     promoPart.className = 'combined-promo-part';
-                    promoPart.innerHTML = renderPromoHTML();
-                    setPromoBackground(promoPart);
+                    promoPart.innerHTML = renderPromoHTMLContent();
+                    setPromoBackground(promoPart, controls.promoBgType.value, controls.promoBgPos.value, state.promoBgImage, controls.bgColorPicker.value);
 
-                    html = `<div class="combined-template">${menuPart.outerHTML}${promoPart.outerHTML}</div>`;
+                    combinedTemplate.appendChild(menuPart);
+                    combinedTemplate.appendChild(promoPart);
+                    html = combinedTemplate.outerHTML;
+                } else if (state.currentTab === 'style') {
+                    html = `
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                        <h3>Анализ стиля</h3>
+                        <p>Загрузите изображение для анализа.</p>
+                        <p><strong>Примечание:</strong> В текущей версии автоматический подбор стилей не поддерживается.</p>
+                    </div>`;
+                    controls.menuPreview.style.backgroundImage = 'none';
+                    controls.menuPreview.style.backgroundColor = '#f5f5f5'; // Default light background for style tab
                 }
                 
                 controls.menuPreview.innerHTML = html;
             }
 
-            function setPromoBackground(element) {
-                const type = controls.promoBgType.value;
-                const position = controls.promoBgPos.value;
+            function setPromoBackground(element, type, position, imageSrc, color) {
                 element.style.backgroundPosition = position;
                 if (type === 'color') {
-                    element.style.backgroundColor = controls.bgColorPicker.value;
+                    element.style.backgroundColor = color;
                     element.style.backgroundImage = 'none';
-                } else if ((type === 'image' || type === 'generate') && state.promoBgImage) {
-                    element.style.backgroundImage = `url(${state.promoBgImage})`;
+                } else if ((type === 'image' || type === 'generate') && imageSrc) {
+                    element.style.backgroundImage = `url(${imageSrc})`;
                     element.style.backgroundColor = '';
                 } else {
-                    element.style.backgroundColor = controls.bgColorPicker.value;
+                    element.style.backgroundColor = color; // Fallback to color if image not available
                     element.style.backgroundImage = 'none';
                 }
             }
@@ -1068,14 +1220,17 @@
 
             function download(generator, filename) {
                 const target = controls.menuPreview.children[0];
-                if (!target) return;
+                if (!target) {
+                    alert('Нет содержимого для сохранения. Загрузите данные или настройте меню/акцию.');
+                    return;
+                }
                 
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
 
                 html2canvas(target, { 
                     backgroundColor: null, 
-                    scale: 2,
+                    scale: 2, // Capture at higher resolution for better quality
                     width: 1920,
                     height: 1080 
                 }).then(canvas => {
@@ -1083,14 +1238,14 @@
                     controls.loadingOverlay.style.display = 'none';
                 }).catch(err => {
                     console.error('Download error:', err);
-                    alert('Ошибка сохранения файла.');
+                    alert('Ошибка сохранения файла: ' + err.message);
                     controls.loadingOverlay.style.display = 'none';
                 });
             }
 
             function downloadAsPNG() {
                 download((canvas, filename) => {
-                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
+                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg'); // Changed to JPEG as per request
                 }, 'menuboard.jpeg');
             }
             
