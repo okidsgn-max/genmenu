@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -29,6 +28,10 @@
             --accent-color: #e74c3c;
             --bg-color: #fff;
             --divider-color: #eee;
+
+            /* Grid specific */
+            --grid-bg-color: #f5f5f5;
+            --cell-bg-color: rgba(255, 255, 255, 0.85);
         }
         
         * {
@@ -316,22 +319,23 @@
             grid-template-rows: 1fr 1fr;
             gap: 15px;
             padding: 15px;
+            background-color: var(--grid-bg-color);
         }
 
         .grid-cell {
-            background: rgba(255, 255, 255, 0.85);
+            background-color: var(--cell-bg-color);
             backdrop-filter: blur(5px);
             border-radius: 8px;
             padding: 15px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 50%;
             grid-template-rows: auto 1fr auto;
             gap: 5px 15px;
             position: relative;
             overflow: hidden;
         }
         .grid-cell .item-name { grid-area: 1 / 1 / 2 / 2; font-weight: 700;}
-        .grid-cell .item-description { grid-area: 2 / 1 / 3 / 2; align-self: start; }
+        .grid-cell .item-description { grid-area: 2 / 1 / 3 / 2; align-self: start; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .grid-cell .item-price { grid-area: 3 / 1 / 4 / 2; align-self: end; text-align: left; margin-left: 0; }
         .grid-cell .item-photo-container {
             grid-area: 1 / 2 / 4 / 3;
@@ -341,6 +345,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100%;
         }
         .grid-cell .item-photo { width: 100%; height: 100%; object-fit: cover; }
         .grid-cell .upload-photo-btn {
@@ -405,8 +410,7 @@
         .combined-menu-part {
             overflow: hidden;
             position: relative;
-            background-size: cover;
-            background-position: center;
+            background-color: var(--menu-bg-color);
         }
         .combined-promo-part {
             position: relative;
@@ -495,8 +499,20 @@
                     </div>
                     
                     <div class="control-group">
-                        <label>Фон меню:</label>
+                        <label>Цвет фона:</label>
                         <input type="color" id="menu-bg-color-picker" value="#eeeeee" style="width: 100%; height: 40px;">
+                    </div>
+
+                    <div class="control-group" id="grid-colors-group" style="display:none;">
+                        <label>Цвета сетки:</label>
+                        <div class="setting-row" style="grid-template-columns: 1fr 1fr;">
+                            <label>Фон всей сетки</label>
+                            <input type="color" id="grid-bg-color-picker" value="#f5f5f5">
+                        </div>
+                        <div class="setting-row" style="grid-template-columns: 1fr 1fr;">
+                            <label>Фон ячейки</label>
+                            <input type="color" id="cell-bg-color-picker" value="#ffffff">
+                        </div>
                     </div>
 
                     <div class="control-group">
@@ -627,6 +643,9 @@
                 showDescCheck: getEl('show-description-checkbox'),
                 multiPriceCheck: getEl('multiple-prices-checkbox'),
                 menuBgPicker: getEl('menu-bg-color-picker'),
+                gridBgColorPicker: getEl('grid-bg-color-picker'),
+                cellBgColorPicker: getEl('cell-bg-color-picker'),
+                gridColorsGroup: getEl('grid-colors-group'),
                 categoryFont: getEl('category-font-select'),
                 categorySize: getEl('category-font-size'),
                 categoryColor: getEl('category-color-picker'),
@@ -678,7 +697,7 @@
             
             // --- API KEYS ---
             const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
-            const FUSION_BRAIN_SECRET_KEY = 'YOUR_SECRET_KEY'; // Usually required, add if you have one.
+            const FUSION_BRAIN_SECRET_KEY = ''; // Leave blank if not required
 
             function init() {
                 setupEventListeners();
@@ -703,11 +722,16 @@
                 [controls.layoutSelect, controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
                  controls.categoryFont, controls.categorySize, controls.categoryColor,
                  controls.itemFont, controls.itemSize, controls.itemColor,
-                 controls.descFont, controls.descSize, controls.descColor].forEach(el => {
+                 controls.descFont, controls.descSize, controls.descColor,
+                 controls.gridBgColorPicker, controls.cellBgColorPicker].forEach(el => {
                     el.addEventListener('input', render);
                     el.addEventListener('change', render);
                  });
                 
+                controls.layoutSelect.addEventListener('change', () => {
+                    controls.gridColorsGroup.style.display = controls.layoutSelect.value === 'grid' ? 'block' : 'none';
+                });
+
                 // Promo Controls
                 [controls.promoTitle, controls.promoText, controls.promoPrice, controls.promoTitleFont,
                  controls.promoTitleSize, controls.promoTitleColor, controls.promoTextFont, controls.promoTextSize,
@@ -734,9 +758,7 @@
             function updateTabVisibility() {
                 controls.menuControls.style.display = (state.currentTab === 'menu' || state.currentTab === 'combined') ? 'block' : 'none';
                 controls.promoControls.style.display = (state.currentTab === 'promo' || state.currentTab === 'combined') ? 'block' : 'none';
-                if (state.currentTab === 'combined') {
-                    controls.promoControls.style.display = 'block';
-                }
+                controls.gridColorsGroup.style.display = (state.currentTab === 'menu' || state.currentTab === 'combined') && controls.layoutSelect.value === 'grid' ? 'block' : 'none';
             }
             
             function updatePromoBgControls() {
@@ -745,6 +767,7 @@
                 controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
                 controls.bgGenerateContainer.style.display = type === 'generate' ? 'block' : 'none';
                 controls.bgPositionContainer.style.display = (type === 'image' || type === 'generate') ? 'block' : 'none';
+                render();
             }
 
             // --- DATA HANDLING ---
@@ -835,6 +858,8 @@
             function applyStyles() {
                 const root = document.documentElement.style;
                 root.setProperty('--menu-bg-color', controls.menuBgPicker.value);
+                root.setProperty('--grid-bg-color', controls.gridBgColorPicker.value);
+                root.setProperty('--cell-bg-color', controls.cellBgColorPicker.value);
                 root.setProperty('--category-font-family', controls.categoryFont.value);
                 root.setProperty('--category-font-size', controls.categorySize.value + 'px');
                 root.setProperty('--category-font-color', controls.categoryColor.value);
@@ -932,7 +957,7 @@
                 // Show initial placeholder if no data
                 if ( (state.currentTab === 'menu' && !state.excelData) ||
                      (state.currentTab === 'promo' && !controls.promoTitle.value && !controls.promoText.value) ||
-                     (state.currentTab === 'combined' && !state.excelData)
+                     (state.currentTab === 'combined' && !state.excelData && (!controls.promoTitle.value && !controls.promoText.value))
                 ) {
                     controls.menuPreview.innerHTML = `
                     <div style="text-align: center; color: #a3a9c2; padding: 40px;">
@@ -953,14 +978,16 @@
                     setPromoBackground(promoContainer);
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
-                    const menuPart = `<div class="combined-menu-part" style="background-color: ${controls.menuBgPicker.value};">${renderMenuHTML()}</div>`;
+                    const menuPart = document.createElement('div');
+                    menuPart.className = 'combined-menu-part';
+                    menuPart.innerHTML = renderMenuHTML();
                     
                     const promoPart = document.createElement('div');
                     promoPart.className = 'combined-promo-part';
                     promoPart.innerHTML = renderPromoHTML();
                     setPromoBackground(promoPart);
 
-                    html = `<div class="combined-template">${menuPart}${promoPart.outerHTML}</div>`;
+                    html = `<div class="combined-template">${menuPart.outerHTML}${promoPart.outerHTML}</div>`;
                 }
                 
                 controls.menuPreview.innerHTML = html;
@@ -992,15 +1019,20 @@
                 
                 try {
                     // Step 1: Request generation
-                    const modelId = 4; // Kandinsky 2.2
-                    const params = new FormData();
-                    params.append('model_id', modelId);
-                    params.append('prompt', prompt);
-
                     const runResponse = await fetch('https://api-key.fusionbrain.ai/key/api/v1/text2image/run', {
                         method: 'POST',
-                        headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`, 'X-Secret': `Secret ${FUSION_BRAIN_SECRET_KEY}`},
-                        body: params
+                        headers: { 
+                            'X-Key': `Key ${FUSION_BRAIN_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "model_id": 4, // Kandinsky 2.2
+                            "prompt": prompt,
+                            "negative_prompt": "",
+                            "styles": [],
+                            "width": 1920,
+                            "height": 1080
+                        })
                     });
                     const runData = await runResponse.json();
                     if (!runData.uuid) throw new Error(runData.message || 'Failed to start generation');
@@ -1012,7 +1044,7 @@
                     for (let i = 0; i < 30; i++) {
                         await new Promise(resolve => setTimeout(resolve, 4000)); // wait 4 seconds
                         const statusResponse = await fetch(`https://api-key.fusionbrain.ai/key/api/v1/text2image/status/${uuid}`, {
-                           headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`, 'X-Secret': `Secret ${FUSION_BRAIN_SECRET_KEY}`}
+                           headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`}
                         });
                         const statusData = await statusResponse.json();
                         
@@ -1041,7 +1073,12 @@
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
 
-                html2canvas(target, { backgroundColor: null, scale: 2 }).then(canvas => {
+                html2canvas(target, { 
+                    backgroundColor: null, 
+                    scale: 2,
+                    width: 1920,
+                    height: 1080 
+                }).then(canvas => {
                     generator(canvas, filename);
                     controls.loadingOverlay.style.display = 'none';
                 }).catch(err => {
@@ -1053,16 +1090,16 @@
 
             function downloadAsPNG() {
                 download((canvas, filename) => {
-                    canvas.toBlob(blob => saveAs(blob, filename), 'image/png');
-                }, 'menuboard.png');
+                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
+                }, 'menuboard.jpeg');
             }
             
             function downloadAsPDF() {
                  download((canvas, filename) => {
                     const { jsPDF } = window.jspdf;
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                    const imgData = canvas.toDataURL('image/jpeg');
+                    const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1920, 1080] });
+                    pdf.addImage(imgData, 'JPEG', 0, 0, 1920, 1080);
                     pdf.save(filename);
                 }, 'menuboard.pdf');
             }
