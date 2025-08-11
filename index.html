@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор менюборда</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -25,1250 +18,159 @@
             --active-color: #008f79;
             --input-bg: #f6f6f9;
             --input-border: hsl(228, 20%, 97%);
-            --accent-color: #e74c3c;
-            --bg-color: #fff;
-            --divider-color: #eee;
-
-            /* Grid specific */
             --grid-bg-color: #f5f5f5;
             --cell-bg-color: rgba(255, 255, 255, 0.85);
-
-            /* Default menu background color */
-            --menu-bg-color: #eeeeee;
         }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            color: var(--text-color);
-            background-color: #f5f5f5;
-            padding: 20px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            padding-bottom: 15px;
-        }
-        
-        .header-logo {
-            width: 85px;
-            height: 22px;
-            margin-right:20px;
-            object-fit: initial;
-        }
-        
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #3d435c;
-            margin: 0;
-            margin-bottom: 15px;
-        }
-        
-        .main-container {
-            display: flex;
-            flex: 1;
-            gap: 20px;
-            overflow: hidden;
-            height: calc(100% - 120px);
-        }
-        
-        .controls-panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 380px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .controls-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        
-        .controls-footer {
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            margin-top: auto;
-        }
-        
-        .tab-buttons {
-            display: flex;
-            margin-bottom: 10px;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
-        
-        .tab-btn {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            color: var(--text-color);
-        }
-
-        .tab-btn img {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-        }
-        
-        .tab-btn.active {
-            color: var(--active-color);
-        }
-        
-        .control-group {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .control-group:last-child { border-bottom: none; }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 14px;
-            color: var(--text-color);
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .checkbox-group input { margin-right: 10px; }
-        .checkbox-group label { margin-bottom: 0; }
-        
-        .btn {
-            background: var(--button-color);
-            color: var(--button-text);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 14px;
-            transition: background 0.3s;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        
-        .btn:hover { background: var(--button-hover); }
-        
-        .btn-secondary {
-            background: none;
-            color: var(--text-color);
-            border: 1px solid #ddd;
-        }
-        
-        .btn-secondary:hover { background: #e0e0e0; }
-        
-        .input, .select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--input-border);
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-            margin-bottom: 10px;
-            background-color: var(--input-bg);
-        }
-        
-        .setting-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 30px;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .setting-row label { grid-column: 1 / -1; }
-
-        .preview-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .preview-container {
-            width: 100%;
-            background: transparent;
-            border-radius: 8px;
-            aspect-ratio: 16 / 9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-                
-        .preview-actions {
-            padding: 15px 0 0 0;
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 600px;
-        }
-        
-        .menu-preview {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: var(--menu-bg-color, #eeeeee);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        
-        /* Стили для шаблона списка */
-        .menu-list-template {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 30px;
-            overflow: hidden;
-        }
-        
-        .menu-items-container {
-            flex: 1;
-            overflow: hidden;
-            display: grid;
-            gap: 20px 40px;
-        }
-
-        .menu-items-container.two-columns { grid-template-columns: 1fr 1fr; }
-        
-        .menu-section { margin-bottom: 30px; }
-        
-        .section-title {
-            font-family: var(--category-font-family);
-            font-size: var(--category-font-size);
-            font-weight: 700;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--divider-color);
-            color: var(--category-font-color);
-        }
-        
-        .menu-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed var(--divider-color);
-        }
-        
-        .item-content { flex-grow: 1; }
-        
-        .item-name {
-            font-family: var(--item-name-font-family);
-            font-weight: 500;
-            font-size: var(--item-name-font-size);
-            color: var(--item-name-font-color);
-            margin-bottom: 5px;
-        }
-        
-        .item-description {
-            font-family: var(--desc-font-family);
-            font-size: var(--desc-font-size);
-            color: var(--desc-font-color);
-            margin-bottom: 5px;
-            font-weight: 300;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .item-price {
-            font-family: var(--item-price-font-family);
-            font-weight: 700;
-            font-size: var(--item-price-font-size);
-            color: var(--item-price-font-color);
-            white-space: nowrap;
-            margin-left: 20px;
-            text-align: right;
-            min-width: 80px;
-        }
-        
-        /* Стили для шаблона сетки */
-        .menu-grid-template {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 15px;
-            padding: 15px;
-            background-color: var(--grid-bg-color);
-        }
-
-        .grid-cell {
-            background-color: var(--cell-bg-color);
-            backdrop-filter: blur(5px);
-            border-radius: 8px;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr 50%;
-            grid-template-rows: auto 1fr auto;
-            gap: 5px 15px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .grid-cell.promo-cell {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: flex-start;
-            padding: 20px;
-            background-size: 90% 90%;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: transparent;
-        }
-        
-        .grid-cell.promo-cell .promo-content {
-            z-index: 2;
-            position: relative;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            width: 100%;
-        }
-
-        .grid-cell .item-name { 
-            grid-area: 1 / 1 / 2 / 2; 
-            font-weight: 700;
-            font-family: var(--item-name-font-family);
-            font-size: var(--item-name-font-size);
-            color: var(--item-name-font-color);
-        }
-        .grid-cell .item-description { 
-            grid-area: 2 / 1 / 3 / 2; 
-            align-self: start; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            font-family: var(--desc-font-family);
-            font-size: var(--desc-font-size);
-            color: var(--desc-font-color);
-        }
-        .grid-cell .item-price { 
-            grid-area: 3 / 1 / 4 / 2; 
-            align-self: end; 
-            text-align: left; 
-            margin-left: 0; 
-            font-family: var(--item-price-font-family);
-            font-size: var(--item-price-font-size);
-            color: var(--item-price-font-color);
-        }
-        .grid-cell .item-photo-container {
-            grid-area: 1 / 2 / 4 / 3;
-            position: relative;
-            background: #f0f0f0;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-        .grid-cell .item-photo { width: 100%; height: 100%; object-fit: cover; }
-        .grid-cell .upload-photo-btn {
-            font-size: 30px;
-            cursor: pointer;
-            border: none;
-            background: #e0e0e0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            color: #888;
-        }
-
-        /* Стили для шаблона "Акция" */
-        .promo-template {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .promo-content {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            box-sizing: border-box;
-            text-align: left;
-            color: white;
-        }
-        .promo-title {
-            font-size: var(--promo-title-font-size);
-            font-family: var(--promo-title-font-family);
-            color: var(--promo-title-font-color);
-            font-weight: 700; margin-bottom: 20px; line-height: 1.1;
-        }
-        .promo-text {
-            font-size: var(--promo-text-font-size);
-            font-family: var(--promo-text-font-family);
-            color: var(--promo-text-color);
-            margin-bottom: 30px; line-height: 1.3;
-        }
-        .promo-price {
-            font-size: var(--promo-price-font-size);
-            font-family: var(--promo-price-font-family);
-            color: var(--promo-price-font-color);
-            font-weight: bold; margin-top: auto;
-        }
-        
-        /* Стили для комбинированного шаблона */
-        .combined-template {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        .combined-menu-part {
-            overflow: hidden;
-            position: relative;
-            background-color: var(--menu-bg-color);
-        }
-        .combined-promo-part {
-            position: relative;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* Specific styles for promo part in 2x2 combined layout */
-        .combined-template.grid-layout .combined-promo-part {
-            background-size: 90% 90%;
-            background-position: center;
-        }
-
-        .combined-promo-content {
-            position: relative;
-            z-index: 2;
-            padding: 30px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            color: white;
-            background: none;
-        }
-        
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7); display: none;
-            justify-content: center; align-items: center; z-index: 1000;
-            color: white; font-size: 24px; flex-direction: column; text-align: center;
-        }
-        .spinner {
-            border: 5px solid #f3f3f3; border-top: 5px solid var(--active-color);
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .drop-area {
-            border: 2px dashed #ccc; border-radius: 8px;
-            padding: 20px; text-align: center; margin-bottom: 15px;
-            cursor: pointer; transition: all 0.3s; background-color: var(--input-bg);
-        }
-        .drop-area:hover, .drop-area.highlight {
-            border-color: var(--active-color);
-            background: rgba(0, 179, 152, 0.1);
-        }
-        .file-info { font-size: 12px; color: #8e8e9e; margin-top: 5px; }
-
-        .info-message {
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #555;
-            font-size: 14px;
-        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Roboto',sans-serif;color:var(--text-color);background-color:#f5f5f5;padding:20px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        .header{display:flex;align-items:center;margin-bottom:5px;padding-bottom:15px}
+        .header-logo{width:85px;height:22px;margin-right:20px}
+        .main-container{display:flex;flex:1;gap:20px;overflow:hidden;height:calc(100% - 120px)}
+        .controls-panel{background:white;padding:20px;border-radius:8px;width:380px;display:flex;flex-direction:column;height:100%}
+        .controls-content{flex:1;overflow-y:auto;padding-right:10px}
+        .tab-buttons{display:flex;margin-bottom:10px;position:sticky;top:0;background:white;z-index:10}
+        .tab-btn{display:flex;align-items:center;padding:10px;background:none;border:none;cursor:pointer;font-weight:600;transition:all 0.3s;color:var(--text-color)}
+        .tab-btn img{width:20px;height:20px;margin-right:8px}
+        .tab-btn.active{color:var(--active-color)}
+        .control-group{margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+        label{display:block;margin-bottom:8px;font-weight:500;font-size:14px}
+        .layout-buttons{display:flex;gap:10px;margin-bottom:10px}
+        .layout-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:12px}
+        .layout-btn.active{border-color:var(--active-color);color:var(--active-color)}
+        .layout-btn img{width:24px;height:24px}
+        .colors-inline{display:flex;gap:10px;align-items:center}
+        .menu-grid-template{display:grid;gap:15px;padding:15px;background-color:var(--grid-bg-color)}
+        .menu-grid-template.grid-2x2{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+        .menu-grid-template.grid-3x3{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}
+        .grid-cell{background-color:var(--cell-bg-color);border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start;overflow:hidden;position:relative}
+        .grid-cell .item-name{font-weight:700;flex:0 0 60%}
+        .grid-cell .item-description{flex:0 0 60%;white-space:normal;overflow:visible}
+        .grid-cell .item-price{flex:0 0 40%;text-align:right}
+        .grid-cell .item-photo-container{position:absolute;top:5%;left:5%;width:90%;height:90%;z-index:-1}
+        .grid-cell .item-photo{width:100%;height:100%;object-fit:cover;border-radius:6px}
+        .grid-cell .upload-photo-btn{font-size:30px;cursor:pointer;border:none;background:#e0e0e0;width:40px;height:40px;border-radius:50%;color:#888}
+        .preview-wrapper{flex:1;display:flex;flex-direction:column;align-items:center}
+        .preview-container{width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden}
+        .menu-preview{width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#eee}
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="logo.png" alt="Логотип" class="header-logo">
+<div class="header"><img src="logo.png" class="header-logo"></div>
+<div class="main-container">
+<div class="controls-panel">
+    <h1>Генератор менюборда</h1>
+    <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="menu"><img src="menu.svg">Меню</button>
+        <button class="tab-btn" data-tab="promo"><img src="acii.svg">Акция</button>
+        <button class="tab-btn" data-tab="combined"><img src="2v1.svg">2в1</button>
     </div>
-    
-    <div class="main-container">
-
-        <div class="controls-panel">
-            <h1 class="header-title">Генератор менюборда</h1>
-
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
-                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция"> Акция</button>
-                <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="2 в 1"> 2в1</button>
-                <button class="tab-btn" data-tab="style"><img src="style.svg" alt="Стиль"> Стиль меню</button>
+    <div class="controls-content">
+        <div id="menu-controls">
+            <div class="control-group">
+                <label>Загрузка данных:</label>
+                <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
             </div>
-
-            <div class="controls-content">
-                <div id="menu-controls">
-                    <div class="control-group">
-                        <label>Загрузка данных:</label>
-                        <div class="drop-area" id="menu-drop-area">
-                            Перетащите файл Excel или
-                            <button class="btn btn-secondary" style="width: auto; padding: 5px 10px; margin: 5px 0 0 0;" onclick="document.getElementById('file-input').click()">Выберите файл</button>
-                            <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;">
-                            <div class="file-info" id="menu-file-info">Файл не выбран</div>
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Настройки верстки:</label>
-                        <select id="layout-type-select" class="select">
-                            <option value="list">Список</option>
-                            <option value="grid">Сетка 2x2</option>
-                        </select>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="show-description-checkbox" checked>
-                            <label for="show-description-checkbox">Показывать описание блюд</label>
-                        </div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="multiple-prices-checkbox">
-                            <label for="multiple-prices-checkbox">Использовать цены для объемов (S/M/L)</label>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Цвет фона:</label>
-                        <input type="color" id="menu-bg-color-picker" value="#eeeeee" style="width: 100%; height: 40px;">
-                    </div>
-
-                    <div class="control-group" id="grid-colors-group" style="display:none;">
-                        <label>Цвета сетки:</label>
-                        <div class="setting-row" style="grid-template-columns: 1fr 1fr;">
-                            <label>Фон всей сетки</label>
-                            <input type="color" id="grid-bg-color-picker" value="#f5f5f5">
-                        </div>
-                        <div class="setting-row" style="grid-template-columns: 1fr 1fr;">
-                            <label>Фон ячейки</label>
-                            <input type="color" id="cell-bg-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Шрифт категорий:</label>
-                        <div class="setting-row">
-                            <select id="category-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Open Sans', sans-serif">Open Sans</option></select>
-                            <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
-                            <input type="color" id="category-color-picker" value="#00b398">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Шрифт названия блюд:</label>
-                        <div class="setting-row">
-                            <select id="item-name-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
-                            <input type="number" id="item-name-font-size" class="input" value="16" min="10" max="100">
-                            <input type="color" id="item-name-color-picker" value="#3d435c">
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Шрифт цены блюд:</label>
-                        <div class="setting-row">
-                            <select id="item-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
-                            <input type="number" id="item-price-font-size" class="input" value="16" min="10" max="100">
-                            <input type="color" id="item-price-color-picker" value="#3d435c">
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Шрифт описания:</label>
-                        <div class="setting-row">
-                            <select id="desc-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option><option value="'Lato', sans-serif">Lato</option></select>
-                            <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
-                            <input type="color" id="desc-color-picker" value="#667099">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="promo-controls" style="display: none;">
-                    <div class="control-group">
-                        <label>Заголовок акции:</label>
-                        <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок">
-                        <div class="setting-row">
-                            <select id="promo-title-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option><option value="'Oswald', sans-serif">Oswald</option></select>
-                            <input type="number" id="promo-title-size" class="input" value="100" min="10" max="180">
-                            <input type="color" id="promo-title-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Текст акции:</label>
-                        <input type="text" id="promo-text-input" class="input" placeholder="Введите текст">
-                        <div class="setting-row">
-                            <select id="promo-text-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Open Sans', sans-serif">Open Sans</option></select>
-                            <input type="number" id="promo-text-size" class="input" value="30" min="10" max="100">
-                            <input type="color" id="promo-text-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Цена:</label>
-                        <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
-                        <div class="setting-row">
-                            <select id="promo-price-font-select" class="select"><option value="'Roboto', sans-serif">Roboto</option><option value="'Montserrat', sans-serif">Montserrat</option></select>
-                            <input type="number" id="promo-price-size" class="input" value="180" min="10" max="180">
-                            <input type="color" id="promo-price-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Фон:</label>
-                         <select id="promo-bg-type-select" class="select">
-                            <option value="color">Сплошной цвет</option>
-                            <option value="image">Загрузить изображение</option>
-                            <option value="generate">Сгенерировать (AI)</option>
-                        </select>
-                         <div id="bg-position-container" style="display: none;">
-                            <label>Расположение картинки:</label>
-                            <select id="promo-bg-position-select" class="select">
-                                <option value="center">По центру</option>
-                                <option value="left">Слева</option>
-                                <option value="right">Справа</option>
-                            </select>
-                        </div>
-                        <div id="bg-color-container">
-                            <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
-                        </div>
-                        <div id="bg-image-container" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Выберите файл</button>
-                            <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
-                            <div class="file-info" id="bg-file-info">Изображение не загружено</div>
-                        </div>
-                        <div id="bg-generate-container" style="display: none;">
-                            <input type="text" id="bg-prompt" class="input" placeholder="Опишите фон для генерации...">
-                            <button class="btn" id="generate-bg-btn" style="background:var(--accent-color)">Сгенерировать</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="combined-controls" style="display: none;">
-                    <div class="info-message">
-                        Настройки для комбинированного варианта находятся в разделах "Меню" и "Акция".
-                        Пожалуйста, переключитесь на соответствующие вкладки для изменения параметров.
-                    </div>
-                </div>
-
-                <div id="style-controls" style="display: none;">
-                    <div class="control-group">
-                        <label>Загрузить изображение для анализа стиля:</label>
-                        <div class="drop-area" id="style-drop-area">
-                            Перетащите файл изображения или
-                            <button class="btn btn-secondary" style="width: auto; padding: 5px 10px; margin: 5px 0 0 0;" onclick="document.getElementById('style-image-input').click()">Выберите файл</button>
-                            <input type="file" id="style-image-input" accept="image/*" style="display: none;">
-                            <div class="file-info" id="style-file-info">Изображение не выбрано</div>
-                        </div>
-                        <div class="info-message">
-                            **Внимание:** Функция автоматического подбора шрифтов и цветов на основе загруженного изображения (AI-анализ) в данный момент не реализована из-за отсутствия подходящего API для анализа изображений.
-                            Вы можете загрузить изображение для справки, но подбор параметров осуществляется вручную.
-                        </div>
-                    </div>
+            <div class="control-group">
+                <label>Настройки верстки:</label>
+                <div class="layout-buttons">
+                    <div class="layout-btn" data-layout="list"><img src="spisok.svg"><span>Список</span></div>
+                    <div class="layout-btn" data-layout="2x2"><img src="2x2.svg"><span>2×2</span></div>
+                    <div class="layout-btn" data-layout="3x3"><img src="3x3.svg"><span>3×3</span></div>
                 </div>
             </div>
-        </div>
-        
-        <div class="preview-wrapper">
-            <div class="preview-container">
-                <div class="menu-preview" id="menu-preview">
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
-                        <h3>Здесь будет ваше меню</h3>
-                        <p>Настройте параметры слева и загрузите данные</p>
-                    </div>
-                </div>
-            </div>
-            <div class="preview-actions">
-                <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
-                <button class="btn btn-secondary" id="download-pdf-btn">Сохранить в PDF</button>
+            <div class="control-group colors-inline">
+                <label>Фон меню: <input type="color" id="menu-bg-color-picker" value="#eeeeee"></label>
+                <label>Фон сетки: <input type="color" id="grid-bg-color-picker" value="#f5f5f5"></label>
+                <label>Фон ячейки: <input type="color" id="cell-bg-color-picker" value="#ffffff"></label>
             </div>
         </div>
     </div>
-    
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text">Генерация фона...</div>
+</div>
+<div class="preview-wrapper">
+    <div class="preview-container">
+        <div class="menu-preview" id="menu-preview">
+            <div style="color:#999">Здесь будет ваше меню</div>
+        </div>
     </div>
-    <input type="file" id="grid-photo-upload" accept="image/*" style="display: none;">
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Element Refs
-            const getEl = (id) => document.getElementById(id);
-            const controls = {
-                tabButtons: document.querySelectorAll('.tab-btn'),
-                menuControls: getEl('menu-controls'),
-                promoControls: getEl('promo-controls'),
-                combinedControls: getEl('combined-controls'),
-                styleControls: getEl('style-controls'), // New
-                fileInput: getEl('file-input'),
-                menuDropArea: getEl('menu-drop-area'),
-                menuFileInfo: getEl('menu-file-info'),
-                layoutSelect: getEl('layout-type-select'),
-                showDescCheck: getEl('show-description-checkbox'),
-                multiPriceCheck: getEl('multiple-prices-checkbox'),
-                menuBgPicker: getEl('menu-bg-color-picker'),
-                gridBgColorPicker: getEl('grid-bg-color-picker'),
-                cellBgColorPicker: getEl('cell-bg-color-picker'),
-                gridColorsGroup: getEl('grid-colors-group'),
-                categoryFont: getEl('category-font-select'),
-                categorySize: getEl('category-font-size'),
-                categoryColor: getEl('category-color-picker'),
-                // Split item fonts
-                itemNameFont: getEl('item-name-font-select'),
-                itemNameSize: getEl('item-name-font-size'),
-                itemNameColor: getEl('item-name-color-picker'),
-                itemPriceFont: getEl('item-price-font-select'),
-                itemPriceSize: getEl('item-price-font-size'),
-                itemPriceColor: getEl('item-price-color-picker'),
-                // End split item fonts
-                descFont: getEl('desc-font-select'),
-                descSize: getEl('desc-font-size'),
-                descColor: getEl('desc-color-picker'),
-                promoTitle: getEl('promo-title-input'),
-                promoText: getEl('promo-text-input'),
-                promoPrice: getEl('promo-price-input'),
-                promoTitleFont: getEl('promo-title-font-select'),
-                promoTitleSize: getEl('promo-title-size'),
-                promoTitleColor: getEl('promo-title-color-picker'),
-                promoTextFont: getEl('promo-text-font-select'),
-                promoTextSize: getEl('promo-text-size'),
-                promoTextColor: getEl('promo-text-color-picker'),
-                promoPriceFont: getEl('promo-price-font-select'),
-                promoPriceSize: getEl('promo-price-size'),
-                promoPriceColor: getEl('promo-price-color-picker'),
-                promoBgType: getEl('promo-bg-type-select'),
-                promoBgPos: getEl('promo-bg-position-select'),
-                bgColorContainer: getEl('bg-color-container'),
-                bgImageContainer: getEl('bg-image-container'),
-                bgGenerateContainer: getEl('bg-generate-container'),
-                bgPositionContainer: getEl('bg-position-container'),
-                promoBgUpload: getEl('promo-background-upload'),
-                promoBgInfo: getEl('bg-file-info'),
-                bgColorPicker: getEl('bg-color-picker'),
-                bgPrompt: getEl('bg-prompt'),
-                generateBgBtn: getEl('generate-bg-btn'),
-                gridPhotoUpload: getEl('grid-photo-upload'),
-                menuPreview: getEl('menu-preview'),
-                downloadPngBtn: getEl('download-png-btn'),
-                downloadPdfBtn: getEl('download-pdf-btn'),
-                loadingOverlay: getEl('loading-overlay'),
-                loadingText: getEl('loading-text'),
-                styleDropArea: getEl('style-drop-area'), // New
-                styleImageInput: getEl('style-image-input'), // New
-                styleFileInfo: getEl('style-file-info'), // New
-            };
-
-            // State
-            let state = {
-                currentTab: 'menu',
-                excelData: null,
-                promoBgImage: null,
-                gridImages: {}, // {0: 'data:image/...', 1: ...}
-                currentGridTarget: null,
-            };
-            
-            // --- API KEYS ---
-            const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
-            const FUSION_BRAIN_SECRET_KEY = '';
-
-            function init() {
-                setupEventListeners();
-                updateTabVisibility();
-                render();
-            }
-
-            function setupEventListeners() {
-                controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
-                    state.currentTab = btn.dataset.tab;
-                    controls.tabButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    updateTabVisibility();
-                    render();
-                }));
-
-                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo, handleExcelFile);
-                setupDropArea(controls.styleDropArea, controls.styleImageInput, controls.styleFileInfo, (file) => {
-                    controls.styleFileInfo.textContent = file.name;
-                });
-
-                [controls.layoutSelect, controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
-                 controls.categoryFont, controls.categorySize, controls.categoryColor,
-                 controls.itemNameFont, controls.itemNameSize, controls.itemNameColor,
-                 controls.itemPriceFont, controls.itemPriceSize, controls.itemPriceColor,
-                 controls.descFont, controls.descSize, controls.descColor,
-                 controls.gridBgColorPicker, controls.cellBgColorPicker].forEach(el => {
-                    el.addEventListener('input', render);
-                    el.addEventListener('change', render);
-                 });
-                
-                controls.layoutSelect.addEventListener('change', () => {
-                    controls.gridColorsGroup.style.display = controls.layoutSelect.value === 'grid' ? 'block' : 'none';
-                    render();
-                });
-
-                [controls.promoTitle, controls.promoText, controls.promoPrice, controls.promoTitleFont,
-                 controls.promoTitleSize, controls.promoTitleColor, controls.promoTextFont, controls.promoTextSize,
-                 controls.promoTextColor, controls.promoPriceFont, controls.promoPriceSize, controls.promoPriceColor,
-                 controls.promoBgType, controls.promoBgPos, controls.bgColorPicker].forEach(el => {
-                    el.addEventListener('input', render);
-                    el.addEventListener('change', render);
-                 });
-
-                controls.promoBgType.addEventListener('change', updatePromoBgControls);
-                controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
-                controls.generateBgBtn.addEventListener('click', generateAIBg);
-                
-                controls.downloadPngBtn.addEventListener('click', downloadAsPNG);
-                controls.downloadPdfBtn.addEventListener('click', downloadAsPDF);
-
-                controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
-                controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
-            }
-
-            // --- UI UPDATE FUNCTIONS ---
-            function updateTabVisibility() {
-                controls.menuControls.style.display = 'none';
-                controls.promoControls.style.display = 'none';
-                controls.combinedControls.style.display = 'none';
-                controls.styleControls.style.display = 'none';
-                controls.gridColorsGroup.style.display = 'none';
-
-                if (state.currentTab === 'menu') {
-                    controls.menuControls.style.display = 'block';
-                    if (controls.layoutSelect.value === 'grid') {
-                        controls.gridColorsGroup.style.display = 'block';
-                    }
-                } else if (state.currentTab === 'promo') {
-                    controls.promoControls.style.display = 'block';
-                } else if (state.currentTab === 'combined') {
-                    controls.combinedControls.style.display = 'block';
-                } else if (state.currentTab === 'style') {
-                    controls.styleControls.style.display = 'block';
-                }
-            }
-            
-            function updatePromoBgControls() {
-                const type = controls.promoBgType.value;
-                controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
-                controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
-                controls.bgGenerateContainer.style.display = type === 'generate' ? 'block' : 'none';
-                controls.bgPositionContainer.style.display = (type === 'image' || type === 'generate') ? 'block' : 'none';
-                render();
-            }
-
-            // --- DATA HANDLING ---
-            function setupDropArea(dropArea, fileInput, fileInfo, handleFileCallback) {
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
-                });
-                ['dragenter', 'dragover'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight')));
-                ['dragleave', 'drop'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight')));
-                
-                dropArea.addEventListener('drop', e => {
-                    if (e.dataTransfer.files.length) {
-                        fileInput.files = e.dataTransfer.files;
-                        handleFileCallback(e.dataTransfer.files[0]);
-                    }
-                });
-                fileInput.addEventListener('change', e => { if (e.target.files.length) handleFileCallback(e.target.files[0]) });
-            }
-
-            function handleExcelFile(file) {
-                controls.menuFileInfo.textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                        
-                        state.excelData = jsonData.map(row => ({
-                            name: row['Название'] || row['Наименование'] || '',
-                            description: row['Описание'] || '',
-                            price: row['Цена'] || row['Стоимость'] || row['с ндс'] || '',
-                            photo: row['Фото'] || '',
-                            category: row['Категория'] || 'Основное меню',
-                            S: row['S'] || '', M: row['M'] || '', L: row['L'] || ''
-                        }));
-                        state.gridImages = {};
-                        render();
-                    } catch (error) { alert('Ошибка при чтении файла: ' + error.message); }
-                };
-                reader.readAsArrayBuffer(file);
-            }
-
-            function formatPrice(price) {
-                if (price === null || price === undefined || price === '') return '';
-                const num = parseFloat(String(price).replace(',', '.'));
-                return isNaN(num) ? price : num.toFixed(0) + ' ₽';
-            }
-
-            // --- IMAGE HANDLING ---
-            function handlePromoBgUpload(e) {
-                if (e.target.files && e.target.files[0]) {
-                    const file = e.target.files[0];
-                    controls.promoBgInfo.textContent = file.name;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.promoBgImage = event.target.result;
-                        render();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-
-            function handleGridPhotoUploadClick(e) {
-                if (e.target.matches('.upload-photo-btn')) {
-                    state.currentGridTarget = e.target.dataset.index;
-                    controls.gridPhotoUpload.click();
-                }
-            }
-
-            function handleGridPhotoFileChange(e) {
-                if (e.target.files && e.target.files[0] && state.currentGridTarget !== null) {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.gridImages[state.currentGridTarget] = event.target.result;
-                        render();
-                        state.currentGridTarget = null;
-                    };
-                    reader.readAsDataURL(file);
-                    e.target.value = '';
-                }
-            }
-
-            // --- RENDER FUNCTIONS ---
-            function applyStyles() {
-                const root = document.documentElement.style;
-                root.setProperty('--menu-bg-color', controls.menuBgPicker.value);
-                root.setProperty('--grid-bg-color', controls.gridBgColorPicker.value);
-                root.setProperty('--cell-bg-color', controls.cellBgColorPicker.value);
-                root.setProperty('--category-font-family', controls.categoryFont.value);
-                root.setProperty('--category-font-size', controls.categorySize.value + 'px');
-                root.setProperty('--category-font-color', controls.categoryColor.value);
-                root.setProperty('--item-name-font-family', controls.itemNameFont.value);
-                root.setProperty('--item-name-font-size', controls.itemNameSize.value + 'px');
-                root.setProperty('--item-name-font-color', controls.itemNameColor.value);
-                root.setProperty('--item-price-font-family', controls.itemPriceFont.value);
-                root.setProperty('--item-price-font-size', controls.itemPriceSize.value + 'px');
-                root.setProperty('--item-price-font-color', controls.itemPriceColor.value);
-                root.setProperty('--desc-font-family', controls.descFont.value);
-                root.setProperty('--desc-font-size', controls.descSize.value + 'px');
-                root.setProperty('--desc-font-color', controls.descColor.value);
-                root.setProperty('--promo-title-font-family', controls.promoTitleFont.value);
-                root.setProperty('--promo-title-font-size', controls.promoTitleSize.value + 'px');
-                root.setProperty('--promo-title-font-color', controls.promoTitleColor.value);
-                root.setProperty('--promo-text-font-family', controls.promoTextFont.value);
-                root.setProperty('--promo-text-font-size', controls.promoTextSize.value + 'px');
-                root.setProperty('--promo-text-color', controls.promoTextColor.value);
-                root.setProperty('--promo-price-font-family', controls.promoPriceFont.value);
-                root.setProperty('--promo-price-font-size', controls.promoPriceSize.value + 'px');
-                root.setProperty('--promo-price-font-color', controls.promoPriceColor.value);
-            }
-            
-            function renderMenuHTML() {
-                if (!state.excelData) return '';
-                const layout = controls.layoutSelect.value;
-                return layout === 'grid' ? renderGridMenu() : renderListMenu();
-            }
-
-            function renderListMenu() {
-                let html = '';
-                const categories = [...new Set(state.excelData.map(item => item.category))];
-                
-                categories.forEach(category => {
-                    html += `<div class="menu-section"><div class="section-title">${category}</div>`;
-                    state.excelData.filter(item => item.category === category).forEach(item => {
-                        const volumePrices = controls.multiPriceCheck.checked ? 
-                            ['S', 'M', 'L'].map(v => item[v] ? `<span class="volume-price">${v}: ${formatPrice(item[v])}</span>` : '').join(' ') : '';
-                        
-                        html += `
-                        <div class="menu-item">
-                            <div class="item-content">
-                                <div class="item-name">${item.name}</div>
-                                ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                            </div>
-                            <div class="item-price">
-                                ${volumePrices || formatPrice(item.price)}
-                            </div>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                });
-
-                const container = document.createElement('div');
-                container.className = 'menu-list-template';
-                container.innerHTML = `<div class="menu-items-container">${html}</div>`;
-                return container.outerHTML;
-            }
-
-            function renderGridMenu() {
-                let html = '';
-                const itemsToDisplay = state.excelData ? state.excelData.slice(0, 4) : [];
-
-                if (itemsToDisplay.length === 0) {
-                     return `<div class="menu-grid-template" style="display: flex; justify-content: center; align-items: center; color: #a3a9c2;">
-                        <h3>Нет данных для сетки.</h3>
-                    </div>`;
-                }
-
-                itemsToDisplay.forEach((item, index) => {
-                    const imgSrc = state.gridImages[index] || item.photo;
-                    html += `
-                    <div class="grid-cell">
-                        <div class="item-name">${item.name}</div>
-                        ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : '<div></div>'}
-                        <div class="item-price">${formatPrice(item.price)}</div>
-                        <div class="item-photo-container">
-                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn" data-index="${index}">+</button>`}
-                        </div>
-                    </div>`;
-                });
-                return `<div class="menu-grid-template">${html}</div>`;
-            }
-
-            function renderPromoHTMLContent() {
-                const title = controls.promoTitle.value;
-                const text = controls.promoText.value;
-                const price = controls.promoPrice.value;
-                
-                if (!title && !text && !price) {
-                     return `<div style="text-align: center; color: #a3a9c2; padding: 40px;">
-                        <h3>Здесь будет ваша акция</h3>
-                        <p>Настройте параметры акции</p>
-                    </div>`;
-                }
-
-                return `
-                    <div class="promo-content">
-                        ${title ? `<div class="promo-title">${title}</div>` : ''}
-                        ${text ? `<div class="promo-text">${text}</div>` : ''}
-                        ${price ? `<div class="promo-price">${formatPrice(price)}</div>` : ''}
-                    </div>
-                `;
-            }
-
-            function render() {
-                applyStyles();
-                let html = '';
-                
-                if ( (state.currentTab === 'menu' && !state.excelData) ||
-                     (state.currentTab === 'promo' && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)) ||
-                     (state.currentTab === 'combined' && (!state.excelData && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value)))
-                ) {
-                    controls.menuPreview.innerHTML = `
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
-                        <h3>Здесь будет ваше меню</h3>
-                        <p>Настройте параметры слева и загрузите данные</p>
-                    </div>`;
-                    controls.menuPreview.style.backgroundImage = 'none';
-                    return;
-                }
-
-                if (state.currentTab === 'menu') {
-                    html = renderMenuHTML();
-                    controls.menuPreview.style.backgroundImage = 'none';
-                    controls.menuPreview.style.backgroundColor = controls.menuBgPicker.value;
-                } else if (state.currentTab === 'promo') {
-                    const promoContainer = document.createElement('div');
-                    promoContainer.className = 'promo-template';
-                    promoContainer.innerHTML = renderPromoHTMLContent();
-                    setPromoBackground(promoContainer);
-                    html = promoContainer.outerHTML;
-                } else if (state.currentTab === 'combined') {
-                    const combinedTemplate = document.createElement('div');
-                    combinedTemplate.className = 'combined-template';
-
-                    const menuLayoutIsGrid = controls.layoutSelect.value === 'grid';
-                    if (menuLayoutIsGrid) {
-                        combinedTemplate.classList.add('grid-layout');
-                    }
-
-                    const menuPart = document.createElement('div');
-                    menuPart.className = 'combined-menu-part';
-                    menuPart.innerHTML = renderMenuHTML();
-                    
-                    const promoPart = document.createElement('div');
-                    promoPart.className = 'combined-promo-part';
-                    promoPart.innerHTML = renderPromoHTMLContent();
-                    setPromoBackground(promoPart);
-
-                    combinedTemplate.appendChild(menuPart);
-                    combinedTemplate.appendChild(promoPart);
-                    html = combinedTemplate.outerHTML;
-                } else if (state.currentTab === 'style') {
-                    html = `
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
-                        <h3>Анализ стиля</h3>
-                        <p>Загрузите изображение для анализа.</p>
-                        <p><strong>Примечание:</strong> В текущей версии автоматический подбор стилей не поддерживается.</p>
-                    </div>`;
-                    controls.menuPreview.style.backgroundImage = 'none';
-                    controls.menuPreview.style.backgroundColor = '#f5f5f5';
-                }
-                
-                controls.menuPreview.innerHTML = html;
-            }
-
-            function setPromoBackground(element) {
-                const type = controls.promoBgType.value;
-                const position = controls.promoBgPos.value;
-                const imageSrc = state.promoBgImage;
-                const color = controls.bgColorPicker.value;
-
-                element.style.backgroundPosition = position;
-                element.style.backgroundColor = '';
-                element.style.backgroundImage = 'none';
-
-                if (type === 'color') {
-                    element.style.backgroundColor = color;
-                } else if ((type === 'image' || type === 'generate') && imageSrc) {
-                    element.style.backgroundImage = `url(${imageSrc})`;
-                } else {
-                    element.style.backgroundColor = color;
-                }
-            }
-            
-            // --- API & DOWNLOAD ---
-            async function generateAIBg() {
-                const prompt = controls.bgPrompt.value.trim();
-                if (!prompt) { alert('Введите описание для генерации фона'); return; }
-
-                controls.loadingText.textContent = 'Отправка запроса...';
-                controls.loadingOverlay.style.display = 'flex';
-                
-                try {
-                    const runResponse = await fetch('https://api-key.fusionbrain.ai/key/api/v1/text2image/run', {
-                        method: 'POST',
-                        headers: { 
-                            'X-Key': `Key ${FUSION_BRAIN_API_KEY}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "model_id": 4,
-                            "prompt": prompt,
-                            "negative_prompt": "",
-                            "styles": [],
-                            "width": 1920,
-                            "height": 1080
-                        })
-                    });
-                    const runData = await runResponse.json();
-                    if (!runData.uuid) throw new Error(runData.message || 'Failed to start generation');
-                    
-                    const uuid = runData.uuid;
-                    controls.loadingText.textContent = 'Генерация изображения... \nЭто может занять минуту.';
-
-                    for (let i = 0; i < 30; i++) {
-                        await new Promise(resolve => setTimeout(resolve, 4000));
-                        const statusResponse = await fetch(`https://api-key.fusionbrain.ai/key/api/v1/text2image/status/${uuid}`, {
-                           headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`}
-                        });
-                        const statusData = await statusResponse.json();
-                        
-                        if (statusData.status === 'DONE') {
-                            state.promoBgImage = 'data:image/jpeg;base64,' + statusData.images[0];
-                            controls.promoBgInfo.textContent = 'Сгенерированный фон';
-                            render();
-                            controls.loadingOverlay.style.display = 'none';
-                            return;
-                        } else if (statusData.status === 'FAIL') {
-                            throw new Error('Generation failed: ' + statusData.errorDescription);
-                        }
-                    }
-                     throw new Error('Generation timed out.');
-                } catch (error) {
-                    console.error('Ошибка генерации фона:', error);
-                    alert('Произошла ошибка при генерации фона: ' + error.message);
-                    controls.loadingOverlay.style.display = 'none';
-                }
-            }
-
-            function download(generator, filename) {
-                const target = controls.menuPreview.children[0];
-                if (!target) {
-                    alert('Нет содержимого для сохранения. Загрузите данные или настройте меню/акцию.');
-                    return;
-                }
-                
-                controls.loadingText.textContent = 'Сохранение...';
-                controls.loadingOverlay.style.display = 'flex';
-
-                html2canvas(target, { 
-                    backgroundColor: null, 
-                    scale: 2,
-                    width: 1920,
-                    height: 1080 
-                }).then(canvas => {
-                    generator(canvas, filename);
-                    controls.loadingOverlay.style.display = 'none';
-                }).catch(err => {
-                    console.error('Download error:', err);
-                    alert('Ошибка сохранения файла: ' + err.message);
-                    controls.loadingOverlay.style.display = 'none';
-                });
-            }
-
-            function downloadAsPNG() {
-                download((canvas, filename) => {
-                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
-                }, 'menuboard.jpeg');
-            }
-            
-            function downloadAsPDF() {
-                 download((canvas, filename) => {
-                    const { jsPDF } = window.jspdf;
-                    const imgData = canvas.toDataURL('image/jpeg');
-                    const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1920, 1080] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, 1920, 1080);
-                    pdf.save(filename);
-                }, 'menuboard.pdf');
-            }
-
-            init();
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+    const controls={
+        fileInput:document.getElementById('file-input'),
+        layoutBtns:document.querySelectorAll('.layout-btn'),
+        menuBg:document.getElementById('menu-bg-color-picker'),
+        gridBg:document.getElementById('grid-bg-color-picker'),
+        cellBg:document.getElementById('cell-bg-color-picker'),
+        menuPreview:document.getElementById('menu-preview')
+    };
+    let state={layout:'list',excelData:null,gridImages:{}};
+    controls.layoutBtns.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            controls.layoutBtns.forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            state.layout=btn.dataset.layout;
+            render();
         });
-    </script>
+    });
+    controls.fileInput.addEventListener('change',e=>{
+        if(e.target.files.length) handleExcel(e.target.files[0]);
+    });
+    function handleExcel(file){
+        const reader=new FileReader();
+        reader.onload=e=>{
+            const data=new Uint8Array(e.target.result);
+            const workbook=XLSX.read(data,{type:'array'});
+            const ws=workbook.Sheets[workbook.SheetNames[0]];
+            const json=XLSX.utils.sheet_to_json(ws);
+            state.excelData=json.map(r=>({
+                name:r['Название']||'',
+                description:r['Описание']||'',
+                price:r['Цена']||'',
+                photo:r['Фото']||''
+            }));
+            render();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+    function formatPrice(p){
+        if(!p) return '';
+        const n=parseFloat(String(p).replace(',','.'));
+        return isNaN(n)?p:n.toFixed(0)+' ₽';
+    }
+    function render(){
+        document.documentElement.style.setProperty('--menu-bg-color',controls.menuBg.value);
+        document.documentElement.style.setProperty('--grid-bg-color',controls.gridBg.value);
+        document.documentElement.style.setProperty('--cell-bg-color',controls.cellBg.value);
+        if(!state.excelData){
+            controls.menuPreview.innerHTML='<div style="color:#999">Здесь будет ваше меню</div>';return;
+        }
+        let html='';
+        if(state.layout==='list'){
+            html='<div style="padding:20px">';
+            state.excelData.forEach(item=>{
+                html+=`<div><strong>${item.name}</strong><br>${item.description}<br>${formatPrice(item.price)}</div>`;
+            });
+            html+='</div>';
+        }
+        if(state.layout==='2x2' || state.layout==='3x3'){
+            const limit=state.layout==='2x2'?4:6;
+            const cls=state.layout==='2x2'?'grid-2x2':'grid-3x3';
+            html=`<div class="menu-grid-template ${cls}">`;
+            state.excelData.slice(0,limit).forEach((item,i)=>{
+                const img=item.photo?`<img src="${item.photo}" class="item-photo">`:`<button class="upload-photo-btn" data-index="${i}">+</button>`;
+                html+=`<div class="grid-cell">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-description">${item.description}</div>
+                        <div class="item-price">${formatPrice(item.price)}</div>
+                        <div class="item-photo-container">${img}</div>
+                    </div>`;
+            });
+            html+='</div>';
+        }
+        controls.menuPreview.innerHTML=html;
+    }
+});
+</script>
 </body>
 </html>
