@@ -1,175 +1,382 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор менюборда</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root {
-            --button-color: #00b398;
-            --button-hover: #008f79;
-            --button-text: white;
-            --text-color: #667099;
-            --active-color: #008f79;
-            --input-bg: #f6f6f9;
-            --input-border: hsl(228, 20%, 97%);
-            --grid-bg-color: #f5f5f5;
-            --cell-bg-color: rgba(255, 255, 255, 0.85);
-        }
-        *{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Roboto',sans-serif;color:var(--text-color);background-color:#f5f5f5;padding:20px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-        .header{display:flex;align-items:center;margin-bottom:5px;padding-bottom:15px}
-        .header-logo{width:85px;height:22px;margin-right:20px}
-        .main-container{display:flex;flex:1;gap:20px;overflow:hidden;height:calc(100% - 120px)}
-        .controls-panel{background:white;padding:20px;border-radius:8px;width:380px;display:flex;flex-direction:column;height:100%}
-        .controls-content{flex:1;overflow-y:auto;padding-right:10px}
-        .tab-buttons{display:flex;margin-bottom:10px;position:sticky;top:0;background:white;z-index:10}
-        .tab-btn{display:flex;align-items:center;padding:10px;background:none;border:none;cursor:pointer;font-weight:600;transition:all 0.3s;color:var(--text-color)}
-        .tab-btn img{width:20px;height:20px;margin-right:8px}
-        .tab-btn.active{color:var(--active-color)}
-        .control-group{margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
-        label{display:block;margin-bottom:8px;font-weight:500;font-size:14px}
-        .layout-buttons{display:flex;gap:10px;margin-bottom:10px}
-        .layout-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:12px}
-        .layout-btn.active{border-color:var(--active-color);color:var(--active-color)}
-        .layout-btn img{width:24px;height:24px}
-        .colors-inline{display:flex;gap:10px;align-items:center}
-        .menu-grid-template{display:grid;gap:15px;padding:15px;background-color:var(--grid-bg-color)}
-        .menu-grid-template.grid-2x2{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
-        .menu-grid-template.grid-3x3{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}
-        .grid-cell{background-color:var(--cell-bg-color);border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start;overflow:hidden;position:relative}
-        .grid-cell .item-name{font-weight:700;flex:0 0 60%}
-        .grid-cell .item-description{flex:0 0 60%;white-space:normal;overflow:visible}
-        .grid-cell .item-price{flex:0 0 40%;text-align:right}
-        .grid-cell .item-photo-container{position:absolute;top:5%;left:5%;width:90%;height:90%;z-index:-1}
-        .grid-cell .item-photo{width:100%;height:100%;object-fit:cover;border-radius:6px}
-        .grid-cell .upload-photo-btn{font-size:30px;cursor:pointer;border:none;background:#e0e0e0;width:40px;height:40px;border-radius:50%;color:#888}
-        .preview-wrapper{flex:1;display:flex;flex-direction:column;align-items:center}
-        .preview-container{width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden}
-        .menu-preview{width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#eee}
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Генератор менюборда — экспорт в видео (offline)</title>
+
+<!-- Fonts & libs -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{--button-color:#00b398;--button-hover:#008f79;--button-text:#fff;--text-color:#667099;--active-color:#008f79;--input-bg:#f6f6f9;--input-border:hsl(228,20%,97%);--accent-color:#e74c3c;--divider-color:#eee;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Roboto',sans-serif;color:var(--text-color);background:#f5f5f5;padding:20px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.header{display:flex;align-items:center;margin-bottom:5px;padding-bottom:15px}
+.header-logo{width:85px;height:22px;margin-right:20px;object-fit:contain}
+.header-title{font-size:20px;font-weight:600;color:#3d435c;margin-bottom:15px}
+.main-container{display:flex;flex:1;gap:20px;overflow:hidden;height:calc(100% - 120px)}
+.controls-panel{background:#fff;padding:20px;border-radius:8px;width:380px;display:flex;flex-direction:column;height:100%}
+.controls-content{flex:1;overflow-y:auto;padding-right:10px}
+.tab-buttons{display:flex;margin-bottom:10px;position:sticky;top:0;background:#fff;z-index:10}
+.tab-btn{display:flex;align-items:center;padding:10px;background:none;border:none;cursor:pointer;font-weight:600;color:var(--text-color)}
+.tab-btn.active{color:var(--active-color)}
+.control-group{margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+.btn{background:var(--button-color);color:var(--button-text);border:none;padding:10px 15px;border-radius:4px;cursor:pointer;font-size:14px;margin-bottom:10px}
+.btn:hover{background:var(--button-hover)}
+.btn-secondary{background:none;color:var(--text-color);border:1px solid #ddd;padding:10px;border-radius:4px}
+.input,.select{width:100%;padding:10px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);font-size:14px;margin-bottom:10px}
+.preview-wrapper{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.preview-container{width:100%;background:transparent;border-radius:8px;aspect-ratio:16/9;display:flex;justify-content:center;align-items:center;overflow:hidden}
+.preview-actions{padding:15px 0 0 0;display:flex;gap:10px;width:100%;max-width:600px}
+.menu-preview{width:100%;height:100%;position:relative;background-color:var(--menu-bg-color,#eeeeee);display:flex;justify-content:center;align-items:center;overflow:hidden}
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:1000;color:white;font-size:20px;flex-direction:column;text-align:center}
+.spinner{border:5px solid #f3f3f3;border-top:5px solid var(--active-color);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;margin-bottom:18px}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1200}
+.modal{background:#fff;border-radius:8px;padding:18px;width:420px;max-width:92%}
+.modal h3{margin-bottom:8px}
+.row{margin-bottom:10px}
+.small-muted{font-size:12px;color:#666;margin-top:6px}
+@media(max-width:800px){.main-container{flex-direction:column;height:auto}.controls-panel{width:100%}.preview-wrapper{width:100%;margin-top:12px}}
+/* basic styles for promo animation demo */
+.promo-price.animated { display:inline-block; transform-origin:center; animation:pricePulse 1s infinite; }
+@keyframes pricePulse { 0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)} }
+</style>
 </head>
 <body>
-<div class="header"><img src="logo.png" class="header-logo"></div>
-<div class="main-container">
-<div class="controls-panel">
-    <h1>Генератор менюборда</h1>
-    <div class="tab-buttons">
-        <button class="tab-btn active" data-tab="menu"><img src="menu.svg">Меню</button>
-        <button class="tab-btn" data-tab="promo"><img src="acii.svg">Акция</button>
-        <button class="tab-btn" data-tab="combined"><img src="2v1.svg">2в1</button>
-    </div>
-    <div class="controls-content">
+  <div class="header">
+    <img src="logo.png" alt="logo" class="header-logo" />
+  </div>
+
+  <div class="main-container">
+    <div class="controls-panel">
+      <h1 class="header-title">Генератор менюборда</h1>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="menu">Меню</button>
+        <button class="tab-btn" data-tab="promo">Акция</button>
+        <button class="tab-btn" data-tab="combined">2в1</button>
+      </div>
+
+      <div class="controls-content">
         <div id="menu-controls">
-            <div class="control-group">
-                <label>Загрузка данных:</label>
-                <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+          <div class="control-group">
+            <label>Загрузка данных:</label>
+            <div class="drop-area" id="menu-drop-area">
+              Перетащите файл Excel или
+              <button class="btn-secondary" onclick="document.getElementById('file-input').click()" style="margin-left:10px;padding:6px 10px">Выберите файл</button>
+              <input id="file-input" type="file" accept=".xlsx,.xls,.csv" style="display:none">
+              <div class="file-info" id="menu-file-info" style="margin-top:8px;font-size:13px;color:#888">Файл не выбран</div>
             </div>
-            <div class="control-group">
-                <label>Настройки верстки:</label>
-                <div class="layout-buttons">
-                    <div class="layout-btn" data-layout="list"><img src="spisok.svg"><span>Список</span></div>
-                    <div class="layout-btn" data-layout="2x2"><img src="2x2.svg"><span>2×2</span></div>
-                    <div class="layout-btn" data-layout="3x3"><img src="3x3.svg"><span>3×3</span></div>
-                </div>
+          </div>
+
+          <div class="control-group">
+            <label>Настройки верстки:</label>
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <button class="btn-secondary layout-btn active" data-layout="list" style="flex:1">Список</button>
+              <button class="btn-secondary layout-btn" data-layout="grid" style="flex:1">2x2</button>
+              <button class="btn-secondary layout-btn" data-layout="grid3x3" style="flex:1">3x3</button>
             </div>
-            <div class="control-group colors-inline">
-                <label>Фон меню: <input type="color" id="menu-bg-color-picker" value="#eeeeee"></label>
-                <label>Фон сетки: <input type="color" id="grid-bg-color-picker" value="#f5f5f5"></label>
-                <label>Фон ячейки: <input type="color" id="cell-bg-color-picker" value="#ffffff"></label>
+            <div style="margin-bottom:8px">
+              <label style="font-weight:500;font-size:13px">Показывать описание</label>
+              <input id="show-description-checkbox" type="checkbox" checked />
             </div>
+            <div>
+              <label style="font-weight:500;font-size:13px">Мультицены S/M/L</label>
+              <input id="multiple-prices-checkbox" type="checkbox" />
+            </div>
+          </div>
         </div>
+
+        <div id="promo-controls" style="display:none">
+          <div class="control-group">
+            <label>Заголовок акции</label>
+            <input id="promo-title-input" class="input" placeholder="Введите заголовок" />
+            <label>Текст акции</label>
+            <input id="promo-text-input" class="input" placeholder="Короткий текст" />
+            <label>Цена</label>
+            <input id="promo-price-input" class="input" placeholder="199" type="number" />
+          </div>
+        </div>
+
+      </div>
     </div>
-</div>
-<div class="preview-wrapper">
-    <div class="preview-container">
+
+    <div class="preview-wrapper">
+      <div class="preview-container">
         <div class="menu-preview" id="menu-preview">
-            <div style="color:#999">Здесь будет ваше меню</div>
+          <div style="text-align:center;color:#a3a9c2;padding:40px">
+            <h3>Здесь будет ваше меню</h3>
+            <p>Настрой параметры и загрузи данные</p>
+          </div>
         </div>
+      </div>
+
+      <div class="preview-actions">
+        <button id="download-png-btn" class="btn">Сохранить в JPEG</button>
+        <!-- PDF button полностью убран -->
+        <button id="export-video-btn" class="btn btn-secondary">Сохранить в MP4 / WebM</button>
+      </div>
     </div>
-</div>
-</div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal-backdrop" id="video-modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3>Сохранить видео</h3>
+      <div class="row">
+        <label for="video-filename">Имя файла (без расширения)</label>
+        <input id="video-filename" type="text" value="menuboard" />
+      </div>
+      <div class="row">
+        <label for="video-duration">Длительность (секунды)</label>
+        <input id="video-duration" type="number" value="5" min="1" max="300" />
+        <div class="small-muted">Статичное изображение будет записано указанное время.</div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="video-cancel" class="btn-secondary" style="padding:8px 12px">Отмена</button>
+        <button id="video-start" class="btn" style="padding:8px 12px">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text">Генерация...</div>
+  </div>
+
+  <input id="grid-photo-upload" type="file" accept="image/*" style="display:none" />
+
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
-    const controls={
-        fileInput:document.getElementById('file-input'),
-        layoutBtns:document.querySelectorAll('.layout-btn'),
-        menuBg:document.getElementById('menu-bg-color-picker'),
-        gridBg:document.getElementById('grid-bg-color-picker'),
-        cellBg:document.getElementById('cell-bg-color-picker'),
-        menuPreview:document.getElementById('menu-preview')
+document.addEventListener('DOMContentLoaded', () => {
+  // Elements
+  const menuPreview = document.getElementById('menu-preview');
+  const downloadPngBtn = document.getElementById('download-png-btn');
+  const exportVideoBtn = document.getElementById('export-video-btn');
+  const videoModal = document.getElementById('video-modal');
+  const videoStart = document.getElementById('video-start');
+  const videoCancel = document.getElementById('video-cancel');
+  const videoFilename = document.getElementById('video-filename');
+  const videoDuration = document.getElementById('video-duration');
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
+
+  // Minimal demo rendering logic copied/adapted (keeps original behaviour)
+  const state = { excelData: null, gridImages: {}, layout: 'list' };
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      state.currentTab = tab;
+      document.getElementById('menu-controls').style.display = (tab==='menu' || tab==='combined') ? 'block' : 'none';
+      document.getElementById('promo-controls').style.display = (tab==='promo' || tab==='combined') ? 'block' : 'none';
+      render();
+    });
+  });
+
+  // Layout buttons
+  document.querySelectorAll('.layout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.layout-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.layout = btn.dataset?.layout || btn.textContent?.toLowerCase() || 'list';
+      render();
+    });
+  });
+
+  // Excel drop area
+  const fileInput = document.getElementById('file-input');
+  const menuDropArea = document.getElementById('menu-drop-area');
+  const menuFileInfo = document.getElementById('menu-file-info');
+  ['dragenter','dragover','dragleave','drop'].forEach(ev => {
+    menuDropArea.addEventListener(ev, e => { e.preventDefault(); e.stopPropagation(); }, false);
+  });
+  ['dragenter','dragover'].forEach(ev => menuDropArea.addEventListener(ev, ()=>menuDropArea.classList.add('highlight')));
+  ['dragleave','drop'].forEach(ev => menuDropArea.addEventListener(ev, ()=>menuDropArea.classList.remove('highlight')));
+  menuDropArea.addEventListener('drop', e => {
+    if (e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; handleExcelFile(e.dataTransfer.files[0]); }
+  });
+  fileInput.addEventListener('change', e => { if (e.target.files.length) handleExcelFile(e.target.files[0]); });
+
+  function handleExcelFile(file) {
+    menuFileInfo.textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data,{type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws);
+        state.excelData = json.map(row => ({
+          name: row['Название']||row['Наименование']||'',
+          description: row['Описание']||'',
+          price: row['Цена']||row['Стоимость']||'',
+          photo: row['Фото']||'',
+          category: row['Категория']||'Основное меню'
+        }));
+        render();
+      } catch(err){ alert('Ошибка чтения файла: '+err.message); }
     };
-    let state={layout:'list',excelData:null,gridImages:{}};
-    controls.layoutBtns.forEach(btn=>{
-        btn.addEventListener('click',()=>{
-            controls.layoutBtns.forEach(b=>b.classList.remove('active'));
-            btn.classList.add('active');
-            state.layout=btn.dataset.layout;
-            render();
-        });
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Simple render: list/grid/promo combined like original
+  function formatPrice(price){ if(price===null||price===undefined||price==='') return ''; const n=parseFloat(String(price).replace(',','.')); return isNaN(n)?price:Math.round(n)+' ₽'; }
+
+  function renderListMenu(){
+    if(!state.excelData) return `<div style="text-align:center;color:#a3a9c2;padding:40px"><h3>Здесь будет ваше меню</h3><p>Настрой параметры слева и загрузите данные</p></div>`;
+    const cats=[...new Set(state.excelData.map(i=>i.category))];
+    let html='';
+    cats.forEach(cat=>{
+      html += `<div style="padding:18px"><div style="font-weight:700;font-size:20px;margin-bottom:12px">${cat}</div>`;
+      state.excelData.filter(it=>it.category===cat).forEach(it=>{
+        html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #eee"><div><div style="font-weight:600">${it.name}</div>${(document.getElementById('show-description-checkbox').checked && it.description)?`<div style="font-size:13px;color:#777">${it.description}</div>`:''}</div><div style="font-weight:700">${formatPrice(it.price)}</div></div>`;
+      });
+      html += `</div>`;
     });
-    controls.fileInput.addEventListener('change',e=>{
-        if(e.target.files.length) handleExcel(e.target.files[0]);
-    });
-    function handleExcel(file){
-        const reader=new FileReader();
-        reader.onload=e=>{
-            const data=new Uint8Array(e.target.result);
-            const workbook=XLSX.read(data,{type:'array'});
-            const ws=workbook.Sheets[workbook.SheetNames[0]];
-            const json=XLSX.utils.sheet_to_json(ws);
-            state.excelData=json.map(r=>({
-                name:r['Название']||'',
-                description:r['Описание']||'',
-                price:r['Цена']||'',
-                photo:r['Фото']||''
-            }));
-            render();
-        };
-        reader.readAsArrayBuffer(file);
+    return `<div style="width:100%;height:100%;overflow:auto">${html}</div>`;
+  }
+
+  function renderPromo(){
+    const title = document.getElementById('promo-title-input').value;
+    const text = document.getElementById('promo-text-input').value;
+    const price = document.getElementById('promo-price-input').value;
+    if(!title && !text && !price) return '';
+    return `<div style="width:100%;height:100%;background:linear-gradient(135deg,#4a6baf,#2b3f86);padding:40px;color:#fff;display:flex;flex-direction:column;box-sizing:border-box">
+      ${title?`<div style="font-size:48px;font-weight:700;margin-bottom:14px">${title}</div>`:''}
+      ${text?`<div style="font-size:24px;margin-bottom:18px">${text}</div>`:''}
+      ${price?`<div class="promo-price animated" style="font-size:36px;font-weight:800">${formatPrice(price)}</div>`:''}
+    </div>`;
+  }
+
+  function render(){
+    // combined logic
+    const tab = state.currentTab || 'menu';
+    if(tab === 'menu') {
+      menuPreview.innerHTML = renderListMenu();
+      menuPreview.style.backgroundImage = 'none';
+    } else if(tab === 'promo'){
+      const p = renderPromo();
+      if(!p){ menuPreview.innerHTML = `<div style="text-align:center;color:#a3a9c2;padding:40px"><h3>Здесь будет акция</h3></div>`; }
+      else menuPreview.innerHTML = p;
+    } else {
+      // combined: menu left, promo right
+      const left = renderListMenu();
+      const right = renderPromo();
+      menuPreview.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%">${left}${right}</div>`;
     }
-    function formatPrice(p){
-        if(!p) return '';
-        const n=parseFloat(String(p).replace(',','.'));
-        return isNaN(n)?p:n.toFixed(0)+' ₽';
+  }
+
+  // initial render
+  render();
+
+  // Download JPEG (same as before)
+  downloadPngBtn.addEventListener('click', async () => {
+    const target = menuPreview.children[0];
+    if(!target) return;
+    loadingText.textContent = 'Сохранение изображения...';
+    loadingOverlay.style.display = 'flex';
+    try {
+      const canvas = await html2canvas(target, {backgroundColor:null, scale:2, width:1920, height:1080});
+      canvas.toBlob(blob => saveAs(blob, 'menuboard.jpeg'), 'image/jpeg', 0.92);
+    } catch(e){ alert('Ошибка: '+e.message); }
+    loadingOverlay.style.display = 'none';
+  });
+
+  // Open modal to ask filename/duration
+  exportVideoBtn.addEventListener('click', () => {
+    videoModal.style.display = 'flex';
+  });
+  videoCancel.addEventListener('click', () => { videoModal.style.display = 'none'; });
+
+  // Core: record static preview into a video via MediaRecorder (no server)
+  videoStart.addEventListener('click', async () => {
+    videoModal.style.display = 'none';
+    const filenameBase = (videoFilename.value || 'menuboard').trim().replace(/\s+/g,'_');
+    let duration = Math.max(1, parseInt(videoDuration.value,10) || 5);
+    // capture current preview as canvas image
+    const target = menuPreview.children[0];
+    if(!target){ alert('Нет содержимого для записи.'); return; }
+
+    // Show message
+    loadingText.textContent = 'Мы сохраняем видео файл, это займет какое-то время. Подождите';
+    loadingOverlay.style.display = 'flex';
+
+    try {
+      // Create a high-res canvas of 1920x1080 and draw the captured preview onto it
+      const snapCanvas = await html2canvas(target, {backgroundColor:null, scale:2, width:1920, height:1080});
+      const offcanvas = document.createElement('canvas');
+      offcanvas.width = 1920;
+      offcanvas.height = 1080;
+      const ctx = offcanvas.getContext('2d');
+      // white background if needed:
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,offcanvas.width,offcanvas.height);
+      ctx.drawImage(snapCanvas, 0, 0, offcanvas.width, offcanvas.height);
+
+      // Prepare stream from canvas
+      const fps = 30;
+      const stream = offcanvas.captureStream(fps);
+
+      // choose mimeType: prefer mp4 if supported (rare), then webm vp9/vp8
+      let mime = '';
+      if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/mp4')) {
+        mime = 'video/mp4';
+      } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        mime = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+        mime = 'video/webm;codecs=vp8';
+      } else if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm')) {
+        mime = 'video/webm';
+      } else {
+        // As fallback, try default
+        mime = '';
+      }
+
+      const options = mime ? { mimeType: mime } : undefined;
+      let recordedChunks = [];
+      const recorder = new MediaRecorder(stream, options);
+
+      recorder.ondataavailable = e => { if (e.data && e.data.size) recordedChunks.push(e.data); };
+      recorder.onerror = e => { console.error('Recorder error', e); };
+
+      recorder.start();
+
+      // For static image, we need to push identical frames — but captureStream will supply frames from offcanvas.
+      // We'll animate the canvas minimally to ensure frames are produced (not strictly necessary).
+      // Record for desired duration then stop.
+      await new Promise((resolve) => setTimeout(resolve, duration * 1000));
+      recorder.stop();
+
+      // wait for stop event and datafinalization
+      await new Promise(resolve => { recorder.onstop = resolve; });
+
+      // Build blob
+      const mimeFinal = recordedChunks[0] ? recordedChunks[0].type : (mime || 'video/webm');
+      const ext = mimeFinal.includes('mp4') ? '.mp4' : '.webm';
+      const videoBlob = new Blob(recordedChunks, { type: mimeFinal });
+
+      // Save
+      saveAs(videoBlob, filenameBase + ext);
+    } catch (err) {
+      console.error('Ошибка создания видео:', err);
+      alert('Ошибка при создании видео: ' + (err.message || err));
+    } finally {
+      loadingOverlay.style.display = 'none';
     }
-    function render(){
-        document.documentElement.style.setProperty('--menu-bg-color',controls.menuBg.value);
-        document.documentElement.style.setProperty('--grid-bg-color',controls.gridBg.value);
-        document.documentElement.style.setProperty('--cell-bg-color',controls.cellBg.value);
-        if(!state.excelData){
-            controls.menuPreview.innerHTML='<div style="color:#999">Здесь будет ваше меню</div>';return;
-        }
-        let html='';
-        if(state.layout==='list'){
-            html='<div style="padding:20px">';
-            state.excelData.forEach(item=>{
-                html+=`<div><strong>${item.name}</strong><br>${item.description}<br>${formatPrice(item.price)}</div>`;
-            });
-            html+='</div>';
-        }
-        if(state.layout==='2x2' || state.layout==='3x3'){
-            const limit=state.layout==='2x2'?4:6;
-            const cls=state.layout==='2x2'?'grid-2x2':'grid-3x3';
-            html=`<div class="menu-grid-template ${cls}">`;
-            state.excelData.slice(0,limit).forEach((item,i)=>{
-                const img=item.photo?`<img src="${item.photo}" class="item-photo">`:`<button class="upload-photo-btn" data-index="${i}">+</button>`;
-                html+=`<div class="grid-cell">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-description">${item.description}</div>
-                        <div class="item-price">${formatPrice(item.price)}</div>
-                        <div class="item-photo-container">${img}</div>
-                    </div>`;
-            });
-            html+='</div>';
-        }
-        controls.menuPreview.innerHTML=html;
-    }
+  });
+
+  // If user wants to tweak: pressing Enter in modal triggers save
+  document.getElementById('video-duration').addEventListener('keyup', (e) => { if(e.key==='Enter'){ videoStart.click(); }});
+  document.getElementById('video-filename').addEventListener('keyup', (e) => { if(e.key==='Enter'){ videoStart.click(); }});
 });
 </script>
 </body>
