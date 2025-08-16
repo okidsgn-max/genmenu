@@ -1,127 +1,176 @@
 <!DOCTYPE html>
 <html lang="ru">
-<!-- Остальная часть HTML остается без изменений до скрипта -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор менюборда</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --button-color: #00b398;
+            --button-hover: #008f79;
+            --button-text: white;
+            --text-color: #667099;
+            --active-color: #008f79;
+            --input-bg: #f6f6f9;
+            --input-border: hsl(228, 20%, 97%);
+            --grid-bg-color: #f5f5f5;
+            --cell-bg-color: rgba(255, 255, 255, 0.85);
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Roboto',sans-serif;color:var(--text-color);background-color:#f5f5f5;padding:20px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+        .header{display:flex;align-items:center;margin-bottom:5px;padding-bottom:15px}
+        .header-logo{width:85px;height:22px;margin-right:20px}
+        .main-container{display:flex;flex:1;gap:20px;overflow:hidden;height:calc(100% - 120px)}
+        .controls-panel{background:white;padding:20px;border-radius:8px;width:380px;display:flex;flex-direction:column;height:100%}
+        .controls-content{flex:1;overflow-y:auto;padding-right:10px}
+        .tab-buttons{display:flex;margin-bottom:10px;position:sticky;top:0;background:white;z-index:10}
+        .tab-btn{display:flex;align-items:center;padding:10px;background:none;border:none;cursor:pointer;font-weight:600;transition:all 0.3s;color:var(--text-color)}
+        .tab-btn img{width:20px;height:20px;margin-right:8px}
+        .tab-btn.active{color:var(--active-color)}
+        .control-group{margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+        label{display:block;margin-bottom:8px;font-weight:500;font-size:14px}
+        .layout-buttons{display:flex;gap:10px;margin-bottom:10px}
+        .layout-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:12px}
+        .layout-btn.active{border-color:var(--active-color);color:var(--active-color)}
+        .layout-btn img{width:24px;height:24px}
+        .colors-inline{display:flex;gap:10px;align-items:center}
+        .menu-grid-template{display:grid;gap:15px;padding:15px;background-color:var(--grid-bg-color)}
+        .menu-grid-template.grid-2x2{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}
+        .menu-grid-template.grid-3x3{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)}
+        .grid-cell{background-color:var(--cell-bg-color);border-radius:8px;padding:10px;display:flex;gap:10px;align-items:flex-start;overflow:hidden;position:relative}
+        .grid-cell .item-name{font-weight:700;flex:0 0 60%}
+        .grid-cell .item-description{flex:0 0 60%;white-space:normal;overflow:visible}
+        .grid-cell .item-price{flex:0 0 40%;text-align:right}
+        .grid-cell .item-photo-container{position:absolute;top:5%;left:5%;width:90%;height:90%;z-index:-1}
+        .grid-cell .item-photo{width:100%;height:100%;object-fit:cover;border-radius:6px}
+        .grid-cell .upload-photo-btn{font-size:30px;cursor:pointer;border:none;background:#e0e0e0;width:40px;height:40px;border-radius:50%;color:#888}
+        .preview-wrapper{flex:1;display:flex;flex-direction:column;align-items:center}
+        .preview-container{width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden}
+        .menu-preview{width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:#eee}
+    </style>
+</head>
+<body>
+<div class="header"><img src="logo.png" class="header-logo"></div>
+<div class="main-container">
+<div class="controls-panel">
+    <h1>Генератор менюборда</h1>
+    <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="menu"><img src="menu.svg">Меню</button>
+        <button class="tab-btn" data-tab="promo"><img src="acii.svg">Акция</button>
+        <button class="tab-btn" data-tab="combined"><img src="2v1.svg">2в1</button>
+    </div>
+    <div class="controls-content">
+        <div id="menu-controls">
+            <div class="control-group">
+                <label>Загрузка данных:</label>
+                <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+            </div>
+            <div class="control-group">
+                <label>Настройки верстки:</label>
+                <div class="layout-buttons">
+                    <div class="layout-btn" data-layout="list"><img src="spisok.svg"><span>Список</span></div>
+                    <div class="layout-btn" data-layout="2x2"><img src="2x2.svg"><span>2×2</span></div>
+                    <div class="layout-btn" data-layout="3x3"><img src="3x3.svg"><span>3×3</span></div>
+                </div>
+            </div>
+            <div class="control-group colors-inline">
+                <label>Фон меню: <input type="color" id="menu-bg-color-picker" value="#eeeeee"></label>
+                <label>Фон сетки: <input type="color" id="grid-bg-color-picker" value="#f5f5f5"></label>
+                <label>Фон ячейки: <input type="color" id="cell-bg-color-picker" value="#ffffff"></label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="preview-wrapper">
+    <div class="preview-container">
+        <div class="menu-preview" id="menu-preview">
+            <div style="color:#999">Здесь будет ваше меню</div>
+        </div>
+    </div>
+</div>
+</div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Создаем FFmpeg с встроенными WASM-файлами
-    const { createFFmpeg } = FFmpeg;
-    const ffmpeg = createFFmpeg({ 
-        log: true,
-        corePath: 'ffmpeg-core.js',
-        // Отключаем загрузку из сети
-        mainName: 'main',
-        workerLoad: false,
-        coreLoad: false
+document.addEventListener('DOMContentLoaded',()=>{
+    const controls={
+        fileInput:document.getElementById('file-input'),
+        layoutBtns:document.querySelectorAll('.layout-btn'),
+        menuBg:document.getElementById('menu-bg-color-picker'),
+        gridBg:document.getElementById('grid-bg-color-picker'),
+        cellBg:document.getElementById('cell-bg-color-picker'),
+        menuPreview:document.getElementById('menu-preview')
+    };
+    let state={layout:'list',excelData:null,gridImages:{}};
+    controls.layoutBtns.forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            controls.layoutBtns.forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            state.layout=btn.dataset.layout;
+            render();
+        });
     });
-
-    // Встроенные WASM-ресурсы (обычно их нужно заменить на актуальные base64-строки)
-    const wasmBinary = `...base64 encoded ffmpeg-core.wasm...`;
-    const workerScript = `...base64 encoded ffmpeg-worker.js...`;
-
-    let ffmpegLoaded = false;
-    
-    // Загружаем FFmpeg из памяти
-    async function loadFFmpeg() {
-        if (ffmpegLoaded) return true;
-        
-        controls.loadingText.textContent = 'Инициализация видеомодуля...';
-        controls.loadingOverlay.style.display = 'flex';
-        
-        try {
-            // Создаем Blob URL для worker
-            const workerBlob = new Blob([atob(workerScript)], { type: 'application/javascript' });
-            const workerUrl = URL.createObjectURL(workerBlob);
-            
-            // Создаем Uint8Array из WASM бинарника
-            const wasmArray = Uint8Array.from(atob(wasmBinary), c => c.charCodeAt(0));
-            
-            // Загружаем FFmpeg
-            await ffmpeg.load({
-                workerURL: workerUrl,
-                coreURL: { wasm: wasmArray },
-                wasmPath: '',
-                workerPath: ''
-            });
-            
-            ffmpegLoaded = true;
-            console.log('FFmpeg инициализирован');
-            return true;
-        } catch (e) {
-            console.error('Ошибка загрузки FFmpeg:', e);
-            alert('Не удалось инициализировать видеомодуль. Попробуйте обновить страницу.');
-            return false;
-        } finally {
-            controls.loadingOverlay.style.display = 'none';
-        }
+    controls.fileInput.addEventListener('change',e=>{
+        if(e.target.files.length) handleExcel(e.target.files[0]);
+    });
+    function handleExcel(file){
+        const reader=new FileReader();
+        reader.onload=e=>{
+            const data=new Uint8Array(e.target.result);
+            const workbook=XLSX.read(data,{type:'array'});
+            const ws=workbook.Sheets[workbook.SheetNames[0]];
+            const json=XLSX.utils.sheet_to_json(ws);
+            state.excelData=json.map(r=>({
+                name:r['Название']||'',
+                description:r['Описание']||'',
+                price:r['Цена']||'',
+                photo:r['Фото']||''
+            }));
+            render();
+        };
+        reader.readAsArrayBuffer(file);
     }
-
-    // Остальной код остается без изменений до функции downloadAsMP4
-
-    async function downloadAsMP4() {
-        controls.mp4Modal.style.display = 'none';
-        const name = controls.videoName.value || 'Мое меню';
-        const duration = parseInt(controls.videoDuration.value) || 10;
-        
-        controls.videoProcessing.style.display = 'flex';
-        
-        try {
-            // Инициализируем FFmpeg если еще не загружен
-            if (!await loadFFmpeg()) return;
-            
-            // Делаем скриншот меню
-            const target = controls.menuPreview.children[0];
-            if (!target) return;
-            
-            controls.videoProcessing.querySelector('p').textContent = 'Делаем скриншот меню...';
-            const canvas = await html2canvas(target, { 
-                backgroundColor: null, 
-                scale: 2,
-                width: 1920,
-                height: 1080,
-                logging: false
-            });
-            
-            // Конвертируем в JPEG
-            controls.videoProcessing.querySelector('p').textContent = 'Подготавливаем изображение...';
-            const imageData = canvas.toDataURL('image/jpeg', 0.9);
-            const imageBlob = await (await fetch(imageData)).blob();
-            
-            // Создаем видео
-            controls.videoProcessing.querySelector('p').textContent = 'Создаем видео... (это займет 10-30 секунд)';
-            
-            // Пишем файл в виртуальную файловую систему FFmpeg
-            ffmpeg.FS('writeFile', 'input.jpg', await fetchFile(imageBlob));
-            
-            // Запускаем кодирование
-            await ffmpeg.run(
-                '-loop', '1',
-                '-i', 'input.jpg',
-                '-c:v', 'libx264',
-                '-t', duration.toString(),
-                '-pix_fmt', 'yuv420p',
-                '-vf', 'scale=1920:1080',
-                '-preset', 'fast',
-                '-crf', '23',
-                'output.mp4'
-            );
-            
-            // Читаем результат
-            const data = ffmpeg.FS('readFile', 'output.mp4');
-            
-            // Сохраняем файл
-            controls.videoProcessing.querySelector('p').textContent = 'Сохранение видео...';
-            const blob = new Blob([data.buffer], { type: 'video/mp4' });
-            saveAs(blob, `${name.replace(/[^a-zа-яё0-9]/gi, '_')}.mp4`);
-            
-        } catch (error) {
-            console.error('Ошибка создания видео:', error);
-            alert('Произошла ошибка: ' + error.message);
-        } finally {
-            controls.videoProcessing.style.display = 'none';
-        }
+    function formatPrice(p){
+        if(!p) return '';
+        const n=parseFloat(String(p).replace(',','.'));
+        return isNaN(n)?p:n.toFixed(0)+' ₽';
     }
-
-    // Остальной код остается без изменений
+    function render(){
+        document.documentElement.style.setProperty('--menu-bg-color',controls.menuBg.value);
+        document.documentElement.style.setProperty('--grid-bg-color',controls.gridBg.value);
+        document.documentElement.style.setProperty('--cell-bg-color',controls.cellBg.value);
+        if(!state.excelData){
+            controls.menuPreview.innerHTML='<div style="color:#999">Здесь будет ваше меню</div>';return;
+        }
+        let html='';
+        if(state.layout==='list'){
+            html='<div style="padding:20px">';
+            state.excelData.forEach(item=>{
+                html+=`<div><strong>${item.name}</strong><br>${item.description}<br>${formatPrice(item.price)}</div>`;
+            });
+            html+='</div>';
+        }
+        if(state.layout==='2x2' || state.layout==='3x3'){
+            const limit=state.layout==='2x2'?4:6;
+            const cls=state.layout==='2x2'?'grid-2x2':'grid-3x3';
+            html=`<div class="menu-grid-template ${cls}">`;
+            state.excelData.slice(0,limit).forEach((item,i)=>{
+                const img=item.photo?`<img src="${item.photo}" class="item-photo">`:`<button class="upload-photo-btn" data-index="${i}">+</button>`;
+                html+=`<div class="grid-cell">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-description">${item.description}</div>
+                        <div class="item-price">${formatPrice(item.price)}</div>
+                        <div class="item-photo-container">${img}</div>
+                    </div>`;
+            });
+            html+='</div>';
+        }
+        controls.menuPreview.innerHTML=html;
+    }
 });
 </script>
+</body>
 </html>
