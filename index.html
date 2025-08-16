@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор менюборда</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -16,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
     <style>
         :root {
             --primary: #00b398;
@@ -116,24 +118,21 @@
             top: 0;
             background: white;
             z-index: 10;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            border: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
         
         .tab-btn {
             display: flex;
             align-items: center;
-            padding: 10px;
+            padding: 10px 15px;
             background: none;
             border: none;
             cursor: pointer;
             font-weight: 500;
             transition: all var(--transition-medium);
             color: var(--text-secondary);
-            flex: 1;
-            justify-content: center;
-            font-size: 14px;
+            border-bottom: 2px solid transparent;
+            font-family: 'Inter', sans-serif;
         }
 
         .tab-btn img {
@@ -143,13 +142,17 @@
         }
         
         .tab-btn.active {
-            color: white;
-            background-color: var(--primary);
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary-hover);
         }
         
         .control-group {
             margin-bottom: 15px;
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
         
@@ -169,8 +172,17 @@
             margin-bottom: 10px;
         }
         
-        .checkbox-group input { margin-right: 10px; }
-        .checkbox-group label { margin-bottom: 0; }
+        .checkbox-group input { 
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+        
+        .checkbox-group label { 
+            margin-bottom: 0;
+            color: var(--text-secondary);
+        }
         
         .btn {
             background: var(--primary);
@@ -179,7 +191,7 @@
             padding: 12px 16px;
             border-radius: var(--border-radius);
             cursor: pointer;
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
             font-weight: 500;
             transition: all var(--transition-medium);
@@ -193,7 +205,11 @@
         .btn:hover { 
             background: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            background: var(--primary-active);
+            transform: translateY(0);
         }
         
         .btn-secondary {
@@ -205,7 +221,11 @@
         .btn-secondary:hover { 
             background: #e8e8f0;
             transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary:active {
+            background: var(--border);
+            transform: translateY(0);
         }
         
         .input, .select {
@@ -213,14 +233,14 @@
             padding: 10px 12px;
             border: 2px solid var(--border);
             border-radius: var(--border-radius);
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 16px;
             background-color: var(--background-light);
             color: var(--text-secondary);
-            outline: none;
             transition: all var(--transition-medium);
+            outline: none;
         }
         
         .input:hover, .select:hover {
@@ -229,8 +249,16 @@
         
         .input:focus, .select:focus {
             border-color: var(--primary);
-            background-color: #fff;
+            background-color: white;
             box-shadow: 0 0 0 2px rgba(0, 179, 152, 0.1);
+        }
+        
+        .select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%239A9FA5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
         }
         
         .setting-row {
@@ -280,7 +308,6 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            border-radius: var(--border-radius);
         }
         
         /* Стили для шаблона списка */
@@ -455,15 +482,7 @@
             font-size: var(--promo-price-font-size);
             font-family: var(--promo-price-font-family);
             color: var(--promo-price-font-color);
-            font-weight: bold; 
-            margin-top: auto;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            font-weight: bold; margin-top: auto;
         }
         
         /* Стили для комбинированного шаблона */
@@ -528,14 +547,14 @@
             border-color: var(--primary);
             background: rgba(0, 179, 152, 0.1);
         }
-        .file-info { font-size: 12px; color: var(--placeholder); margin-top: 5px; }
+        .file-info { font-size: 12px; color: var(--text-inactive); margin-top: 5px; }
 
         /* New layout buttons */
         .layout-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
         .layout-btn {
             display: flex;
@@ -579,6 +598,7 @@
         .color-picker-item label {
             font-size: 12px;
             text-align: center;
+            color: var(--text-secondary);
         }
         .color-picker-item input[type="color"] {
             width: 100%;
@@ -604,7 +624,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
         }
         
         .modal {
@@ -623,22 +643,40 @@
             color: var(--text-secondary);
         }
         
-        .modal-footer {
+        .modal-actions {
             display: flex;
-            justify-content: flex-end;
             gap: 10px;
             margin-top: 20px;
         }
         
-        /* Animation for price in video */
-        .animated-price {
-            animation: pricePulse 1s infinite alternate;
+        .modal-actions .btn {
+            flex: 1;
+            margin: 0;
         }
         
-        @keyframes pricePulse {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.1); opacity: 0.9; }
+        /* Video processing message */
+        .video-processing {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            color: white;
+            font-size: 18px;
+            text-align: center;
         }
+        
+        .video-processing p {
+            margin-top: 20px;
+            max-width: 80%;
+        }
+
     </style>
 </head>
 <body>
@@ -816,50 +854,64 @@
             <div class="preview-actions">
                 <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
                 <button class="btn btn-secondary" id="download-pdf-btn">Сохранить в PDF</button>
-                <button class="btn btn-secondary" id="download-mp4-btn">Сохранить в MP4</button>
+                <button class="btn" id="download-mp4-btn" style="background: #6a5acd;">Сохранить в MP4</button>
             </div>
         </div>
-    </div>
-    
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text">Генерация фона...</div>
     </div>
     
     <!-- Modal for MP4 settings -->
     <div class="modal-overlay" id="mp4-modal">
         <div class="modal">
             <div class="modal-title">Настройки видео</div>
-            <div class="control-group">
+            <div class="control-group" style="border-bottom: none; padding-bottom: 0;">
                 <label>Название видео:</label>
                 <input type="text" id="video-name" class="input" placeholder="Мое меню" value="Мое меню">
             </div>
-            <div class="control-group">
+            <div class="control-group" style="border-bottom: none; padding-bottom: 0;">
                 <label>Длительность (секунды):</label>
-                <input type="number" id="video-duration" class="input" value="10" min="5" max="60">
+                <input type="number" id="video-duration" class="input" value="10" min="1" max="60">
             </div>
-            <div class="modal-footer">
+            <div class="modal-actions">
                 <button class="btn btn-secondary" id="cancel-mp4-btn">Отмена</button>
-                <button class="btn" id="confirm-mp4-btn">Создать видео</button>
+                <button class="btn" id="confirm-mp4-btn">Сохранить</button>
             </div>
         </div>
     </div>
     
+    <!-- Video processing overlay -->
+    <div class="video-processing" id="video-processing">
+        <div class="spinner"></div>
+        <p>Мы сохраняем видео файл, это займет какое-то время. Подождите...</p>
+    </div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Генерация фона...</div>
+    </div>
     <input type="file" id="grid-photo-upload" accept="image/*" style="display: none;">
 
     <script>
-        // FFMPEG.WASM as Blob URLs
-        const ffmpegCoreUrl = URL.createObjectURL(new Blob([`
-        // FFMPEG core script would be here as a Blob
-        // In a real implementation, you would include the actual ffmpeg-core.js content here
-        `], { type: 'application/javascript' }));
-        
-        const ffmpegWasmUrl = URL.createObjectURL(new Blob([`
-        // FFMPEG wasm binary would be here as a Blob
-        // In a real implementation, you would include the actual ffmpeg-core.wasm content here
-        `], { type: 'application/wasm' }));
-
         document.addEventListener('DOMContentLoaded', function() {
+            // Load ffmpeg
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ 
+                log: true,
+                corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+            });
+            
+            let ffmpegLoaded = false;
+            
+            // Load ffmpeg in background
+            (async function() {
+                try {
+                    await ffmpeg.load();
+                    ffmpegLoaded = true;
+                    console.log('FFmpeg loaded');
+                } catch (e) {
+                    console.error('FFmpeg load error:', e);
+                }
+            })();
+
             // Element Refs
             const getEl = (id) => document.getElementById(id);
             const controls = {
@@ -914,10 +966,11 @@
                 downloadPdfBtn: getEl('download-pdf-btn'),
                 downloadMp4Btn: getEl('download-mp4-btn'),
                 mp4Modal: getEl('mp4-modal'),
-                videoName: getEl('video-name'),
-                videoDuration: getEl('video-duration'),
                 cancelMp4Btn: getEl('cancel-mp4-btn'),
                 confirmMp4Btn: getEl('confirm-mp4-btn'),
+                videoName: getEl('video-name'),
+                videoDuration: getEl('video-duration'),
+                videoProcessing: getEl('video-processing'),
                 loadingOverlay: getEl('loading-overlay'),
                 loadingText: getEl('loading-text'),
             };
@@ -930,7 +983,6 @@
                 promoBgImage: null,
                 gridImages: {}, // {0: 'data:image/...', 1: ...}
                 currentGridTarget: null,
-                ffmpeg: null,
             };
             
             // --- API KEYS ---
@@ -1219,7 +1271,7 @@
                     <div class="promo-content">
                         ${title ? `<div class="promo-title">${title}</div>` : ''}
                         ${text ? `<div class="promo-text">${text}</div>` : ''}
-                        ${price ? `<div class="promo-price animated-price">${formatPrice(price)}</div>` : ''}
+                        ${price ? `<div class="promo-price">${formatPrice(price)}</div>` : ''}
                     </div>
                 `;
             }
@@ -1383,58 +1435,62 @@
             
             async function downloadAsMP4() {
                 controls.mp4Modal.style.display = 'none';
-                const videoName = controls.videoName.value || 'menuboard';
+                const name = controls.videoName.value || 'Мое меню';
                 const duration = parseInt(controls.videoDuration.value) || 10;
                 
-                controls.loadingText.textContent = 'Подготовка видео...';
-                controls.loadingOverlay.style.display = 'flex';
+                if (!ffmpegLoaded) {
+                    alert('FFmpeg еще не загружен. Пожалуйста, подождите и попробуйте снова.');
+                    return;
+                }
+                
+                controls.videoProcessing.style.display = 'flex';
                 
                 try {
-                    // Create canvas with animation
+                    // Capture image
                     const target = controls.menuPreview.children[0];
                     if (!target) return;
                     
-                    // Add animation class to prices
-                    const prices = target.querySelectorAll('.item-price, .promo-price');
-                    prices.forEach(price => price.classList.add('animated-price'));
+                    const canvas = await html2canvas(target, { 
+                        backgroundColor: null, 
+                        scale: 2,
+                        width: 1920,
+                        height: 1080 
+                    });
                     
-                    // Create frames for animation
-                    const fps = 30;
-                    const totalFrames = duration * fps;
-                    const frames = [];
+                    // Convert canvas to image data
+                    const imageData = canvas.toDataURL('image/jpeg');
+                    const imageBlob = await (await fetch(imageData)).blob();
                     
-                    for (let i = 0; i < totalFrames; i++) {
-                        const canvas = await html2canvas(target, { 
-                            backgroundColor: null, 
-                            scale: 1,
-                            width: 1920,
-                            height: 1080
-                        });
-                        frames.push(canvas);
-                        await new Promise(resolve => setTimeout(resolve, 1000/fps));
-                    }
+                    // Create video from image
+                    const ffmpeg = FFmpeg.createFFmpeg({ log: true });
+                    await ffmpeg.load();
                     
-                    // Remove animation class
-                    prices.forEach(price => price.classList.remove('animated-price'));
+                    // Write image to FFmpeg's file system
+                    ffmpeg.FS('writeFile', 'input.jpg', await fetchFile(imageBlob));
                     
-                    controls.loadingText.textContent = 'Кодирование видео...';
+                    // Run FFmpeg command to create video from image
+                    await ffmpeg.run(
+                        '-loop', '1',
+                        '-i', 'input.jpg',
+                        '-c:v', 'libx264',
+                        '-t', duration.toString(),
+                        '-pix_fmt', 'yuv420p',
+                        '-vf', 'scale=1920:1080',
+                        'output.mp4'
+                    );
                     
-                    // Here you would use ffmpeg.wasm to encode frames to MP4
-                    // This is a simplified example - in a real implementation you would:
-                    // 1. Load ffmpeg.wasm if not already loaded
-                    // 2. Convert canvas frames to image files
-                    // 3. Use ffmpeg to combine them into a video
+                    // Read the result
+                    const data = ffmpeg.FS('readFile', 'output.mp4');
                     
-                    // For now, we'll simulate this with a timeout
-                    setTimeout(() => {
-                        controls.loadingOverlay.style.display = 'none';
-                        alert('Видео успешно сохранено как ' + videoName + '.mp4\n(В реальной реализации здесь будет скачивание файла)');
-                    }, 3000);
+                    // Create download link
+                    const blob = new Blob([data.buffer], { type: 'video/mp4' });
+                    saveAs(blob, `${name}.mp4`);
                     
                 } catch (error) {
-                    console.error('Video generation error:', error);
-                    controls.loadingOverlay.style.display = 'none';
+                    console.error('Error creating video:', error);
                     alert('Ошибка при создании видео: ' + error.message);
+                } finally {
+                    controls.videoProcessing.style.display = 'none';
                 }
             }
 
