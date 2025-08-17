@@ -13,11 +13,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/ffmpeg.min.js"></script>
 
   <style>
-    /* === Стили из cssstyle3.css + новые === */
-
     :root {
       --primary: #00b398;
       --primary-hover: #008f79;
@@ -31,11 +29,8 @@
       --background-dark: #f0f0f5;
       --placeholder: #9A9FA5;
       --border-radius: 12px;
-      --transition-fast: 0.15s;
       --transition-medium: 0.3s;
-      --transition-slow: 0.5s;
     }
-
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
@@ -44,15 +39,12 @@
       background: #f5f5f5;
       overflow: hidden;
     }
-
-    /* Кнопки */
     .zvuk-button {
       font-family: 'Inter', sans-serif;
       font-weight: 500;
       font-size: 14px;
-      line-height: 20px;
       border-radius: var(--border-radius);
-      padding: 12px 16px;
+      padding: 10px 16px;
       cursor: pointer;
       transition: all var(--transition-medium);
       border: none;
@@ -60,136 +52,36 @@
       align-items: center;
       justify-content: center;
     }
-    .zvuk-button--primary {
-      background-color: var(--primary);
-      color: #fff;
-    }
-    .zvuk-button--primary:hover {
-      background-color: var(--primary-hover);
-    }
-    .zvuk-button--secondary {
-      background-color: var(--background-light);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-    }
-
-    /* Инпуты и селекты */
+    .zvuk-button--primary { background: var(--primary); color:#fff; }
+    .zvuk-button--primary:hover { background: var(--primary-hover); }
+    .zvuk-button--secondary { background: var(--background-light); color: var(--text-secondary); border:1px solid var(--border); }
     .zvuk-input, .zvuk-select {
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 20px;
-      padding: 10px 12px;
-      border: 2px solid var(--border);
-      border-radius: var(--border-radius);
-      background-color: var(--background-light);
-      color: var(--text-secondary);
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      transition: all var(--transition-medium);
-      margin-bottom: 16px;
+      font-size: 14px; padding: 8px 12px;
+      border: 2px solid var(--border); border-radius: var(--border-radius);
+      background: var(--background-light); width: 100%; margin-bottom: 12px;
     }
-    .zvuk-select {
-      appearance: none;
-    }
-
-    /* Хедер */
     .main-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
+      position: fixed; top:0; left:0; width:100%; height:60px;
       background: url("banner-adv.webp") no-repeat center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 0 20px; z-index:100;
     }
-    .main-header img {
-      height: 40px;
-    }
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    /* Попап выбора пропорций */
+    .main-header img { height:40px; }
+    .header-actions { display:flex; gap:10px; }
     .ratio-popup {
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.7);
-      display:flex; align-items:center; justify-content:center;
-      z-index: 2000;
+      position:fixed;top:0;left:0;right:0;bottom:0;
+      background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:2000;
     }
     .ratio-popup-content {
-      background:#fff;
-      border-radius:12px;
-      padding:20px;
-      width:300px;
-      text-align:center;
+      background:#fff;padding:20px;border-radius:12px;text-align:center;width:300px;
     }
-    .ratio-popup-content h3 {
-      margin-bottom: 15px;
-      font-size:18px;
-    }
-    .ratio-options button {
-      margin: 6px 0;
-      width: 100%;
-    }
-
-    /* Логотип + дата */
-    .preview-logo {
-      position:absolute;
-      top:10px;
-      left:10px;
-      max-width:120px;
-    }
-    .preview-date {
-      position:absolute;
-      top:10px;
-      right:10px;
-      background:rgba(255,255,255,0.7);
-      padding:4px 8px;
-      border-radius:6px;
-      font-size:14px;
-    }
-
-    /* Скидка */
-    .discount-label {
-      color:#e74c3c;
-      font-weight:bold;
-      margin-left:8px;
-    }
-
-    /* Иконки акции */
-    .diet-icons {
-      display:flex;
-      gap:6px;
-      margin-left:6px;
-    }
-    .diet-icons img {
-      width:20px;
-      height:20px;
-    }
-
-    /* Затемнение */
-    .dim-overlay {
-      position:absolute;
-      top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,0.5);
-      display:flex; justify-content:center; align-items:center;
-      color:white;
-      font-size:18px;
-      font-weight:bold;
-      text-align:center;
-      padding:20px;
-    }
+    .ratio-options button { margin:6px 0;width:100%; }
+    .preview-logo {position:absolute;top:10px;left:10px;max-width:120px;}
+    .preview-date {position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.7);padding:4px 8px;border-radius:6px;font-size:14px;}
+    .loading-overlay {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:3000;display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-direction:column;}
   </style>
 </head>
 <body>
-
   <!-- Хедер -->
   <header class="main-header">
     <img src="logo.png" alt="Логотип">
@@ -214,68 +106,41 @@
 
   <!-- Основной контейнер -->
   <div class="main-container" style="margin-top:60px; display:flex; height:calc(100vh - 60px);">
-
-    <!-- Панель настроек -->
-    <div class="controls-panel" style="width:300px; background:#fff; padding:16px; overflow-y:auto;">
-      <h1 class="header-title">Генератор менюборда</h1>
-
-      <div class="tab-buttons" style="display:flex; gap:8px; margin-bottom:12px;">
-        <button class="zvuk-button zvuk-button--secondary active" data-tab="menu">Меню</button>
-        <button class="zvuk-button zvuk-button--secondary" data-tab="promo">Акция</button>
-        <button class="zvuk-button zvuk-button--secondary" data-tab="combined">Меню+Акция</button>
-      </div>
-
-      <div id="menu-controls">
-        <label>Загрузить логотип</label>
-        <input type="file" id="logo-upload" class="zvuk-input" accept="image/*">
-      </div>
-
-      <div id="promo-controls" style="display:none">
-        <label>Скидка (%)</label>
-        <input type="number" id="promo-discount" class="zvuk-input" placeholder="20">
-        <label>Иконки</label>
-        <select id="promo-icon" class="zvuk-select">
-          <option value="">Без иконки</option>
-          <option value="vegan.svg">Веган</option>
-          <option value="halal.svg">Халяль</option>
-          <option value="glutenfree.svg">Без глютена</option>
-        </select>
-        <label>Выравнивание</label>
-        <select id="promo-align" class="zvuk-select">
-          <option value="left">Слева</option>
-          <option value="center">По центру</option>
-          <option value="right">Справа</option>
-        </select>
-      </div>
+    <div class="controls-panel" style="width:300px; background:#fff; padding:16px;">
+      <h1>Генератор менюборда</h1>
+      <label>Загрузить логотип</label>
+      <input type="file" id="logo-upload" class="zvuk-input" accept="image/*">
     </div>
-
-    <!-- Превью -->
-    <div class="preview-wrapper" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-      <div class="preview-container" id="preview-container" style="position:relative; width:100%; height:100%; background:#ccc;">
-        <div id="menu-preview" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+    <div class="preview-wrapper" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div class="preview-container" id="preview-container" style="position:relative;width:100%;height:100%;background:#ccc;">
+        <div id="menu-preview" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
           <p>Здесь будет превью меню</p>
         </div>
       </div>
-      <div class="preview-actions" style="display:flex; gap:10px; margin-top:10px;">
-        <button class="zvuk-button zvuk-button--primary" id="download-jpeg">Сохранить в JPEG</button>
-        <button class="zvuk-button zvuk-button--secondary" id="download-pdf">Сохранить в PDF</button>
-        <button class="zvuk-button zvuk-button--primary" id="download-mp4">Сохранить в MP4</button>
+      <div class="preview-actions" style="margin-top:10px;display:flex;gap:10px;">
+        <button class="zvuk-button zvuk-button--primary" id="download-jpeg">Сохранить JPEG</button>
+        <button class="zvuk-button zvuk-button--secondary" id="download-pdf">Сохранить PDF</button>
+        <button class="zvuk-button zvuk-button--primary" id="download-mp4">Сохранить MP4</button>
       </div>
     </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <p id="loading-text">Мы сохраняем видео файл, подождите...</p>
   </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const ratioPopup = document.getElementById("ratio-popup");
   const preview = document.getElementById("menu-preview");
-  let exportW = 1920, exportH = 1080;
+  let exportW=1920, exportH=1080;
 
   ratioPopup.querySelectorAll("button").forEach(btn=>{
     btn.addEventListener("click",()=>{
-      exportW = +btn.dataset.w;
-      exportH = +btn.dataset.h;
+      exportW=+btn.dataset.w; exportH=+btn.dataset.h;
       ratioPopup.style.display="none";
-      document.getElementById("preview-container").style.aspectRatio = btn.dataset.ratio;
+      document.getElementById("preview-container").style.aspectRatio=btn.dataset.ratio;
     });
   });
 
@@ -284,10 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   logoUpload.addEventListener("change",e=>{
     if(e.target.files[0]){
       const r=new FileReader();
-      r.onload=ev=>{
-        logoURL=ev.target.result;
-        renderPreview();
-      }
+      r.onload=ev=>{ logoURL=ev.target.result; renderPreview(); }
       r.readAsDataURL(e.target.files[0]);
     }
   });
@@ -296,8 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.innerHTML="";
     if(logoURL){
       const img=document.createElement("img");
-      img.src=logoURL;
-      img.className="preview-logo";
+      img.src=logoURL; img.className="preview-logo";
       preview.appendChild(img);
     }
     const date=document.createElement("div");
@@ -322,8 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Экспорт MP4 с ffmpeg.wasm
   document.getElementById("download-mp4").addEventListener("click",async()=>{
-    alert("Экспорт в MP4: будет сделан кадр превью и сохранён как видео.");
+    const overlay=document.getElementById("loading-overlay");
+    overlay.style.display="flex";
     const canvas=await html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH});
     const stream=canvas.captureStream();
     const rec=new MediaRecorder(stream,{mimeType:"video/webm"});
@@ -331,13 +194,20 @@ document.addEventListener("DOMContentLoaded", () => {
     rec.ondataavailable=e=>chunks.push(e.data);
     rec.onstop=async()=>{
       const webm=new Blob(chunks,{type:"video/webm"});
-      saveAs(webm,"menu.webm");
-    }
+      const arrayBuffer=await webm.arrayBuffer();
+      const ffmpeg=FFmpeg.createFFmpeg({log:true});
+      await ffmpeg.load();
+      ffmpeg.FS("writeFile","input.webm",new Uint8Array(arrayBuffer));
+      await ffmpeg.run("-i","input.webm","-c:v","libx264","-pix_fmt","yuv420p","output.mp4");
+      const data=ffmpeg.FS("readFile","output.mp4");
+      const mp4Blob=new Blob([data.buffer],{type:"video/mp4"});
+      saveAs(mp4Blob,"menu.mp4");
+      overlay.style.display="none";
+    };
     rec.start();
-    setTimeout(()=>rec.stop(),3000);
+    setTimeout(()=>rec.stop(),3000); // 3 секунды видео
   });
 });
 </script>
-
 </body>
 </html>
