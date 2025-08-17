@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Генератор менюборда</title>
 
-  <!-- Подключение Google Fonts (топ-10 кириллических) -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=PT+Sans:wght@400;700&family=Inter:wght@400;600&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="cssstyle3.css">
 
   <!-- Libs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -19,12 +16,81 @@
   <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 
   <style>
+    /* === Стили из cssstyle3.css + новые === */
+
+    :root {
+      --primary: #00b398;
+      --primary-hover: #008f79;
+      --primary-active: #005c4e;
+      --primary-light: #e0f2f0;
+      --text-main: #1A1D1F;
+      --text-secondary: #3d435c;
+      --text-inactive: #667099;
+      --border: #e8e8f0;
+      --background-light: #f6f6f9;
+      --background-dark: #f0f0f5;
+      --placeholder: #9A9FA5;
+      --border-radius: 12px;
+      --transition-fast: 0.15s;
+      --transition-medium: 0.3s;
+      --transition-slow: 0.5s;
+    }
+
     body {
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      color: var(--text-main);
       background: #f5f5f5;
       overflow: hidden;
+    }
+
+    /* Кнопки */
+    .zvuk-button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      border-radius: var(--border-radius);
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .zvuk-button--primary {
+      background-color: var(--primary);
+      color: #fff;
+    }
+    .zvuk-button--primary:hover {
+      background-color: var(--primary-hover);
+    }
+    .zvuk-button--secondary {
+      background-color: var(--background-light);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* Инпуты и селекты */
+    .zvuk-input, .zvuk-select {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--border-radius);
+      background-color: var(--background-light);
+      color: var(--text-secondary);
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all var(--transition-medium);
+      margin-bottom: 16px;
+    }
+    .zvuk-select {
+      appearance: none;
     }
 
     /* Хедер */
@@ -150,76 +216,36 @@
   <div class="main-container" style="margin-top:60px; display:flex; height:calc(100vh - 60px);">
 
     <!-- Панель настроек -->
-    <div class="controls-panel">
+    <div class="controls-panel" style="width:300px; background:#fff; padding:16px; overflow-y:auto;">
       <h1 class="header-title">Генератор менюборда</h1>
 
-      <div class="tab-buttons">
-        <button class="tab-btn active" data-tab="menu"><img src="menu.svg"> Меню</button>
-        <button class="tab-btn" data-tab="promo"><img src="acii.svg"> Акция</button>
-        <button class="tab-btn" data-tab="combined"><img src="2v1.svg"> Меню+Акция</button>
+      <div class="tab-buttons" style="display:flex; gap:8px; margin-bottom:12px;">
+        <button class="zvuk-button zvuk-button--secondary active" data-tab="menu">Меню</button>
+        <button class="zvuk-button zvuk-button--secondary" data-tab="promo">Акция</button>
+        <button class="zvuk-button zvuk-button--secondary" data-tab="combined">Меню+Акция</button>
       </div>
 
-      <div class="controls-content">
-        <!-- меню -->
-        <div id="menu-controls">
-          <div class="control-group">
-            <label>Загрузка данных</label>
-            <div class="drop-area" id="menu-drop-area">Перетащите Excel/Word/TXT</div>
-            <input type="file" id="file-input" style="display:none" accept=".xlsx,.xls,.csv,.txt,.docx">
-            <div class="file-info" id="menu-file-info">Файл не выбран</div>
-          </div>
+      <div id="menu-controls">
+        <label>Загрузить логотип</label>
+        <input type="file" id="logo-upload" class="zvuk-input" accept="image/*">
+      </div>
 
-          <div class="control-group">
-            <label>Загрузить логотип</label>
-            <input type="file" id="logo-upload" class="zvuk-input" accept="image/*">
-          </div>
-
-          <div class="control-group">
-            <label>Верстка</label>
-            <div class="layout-buttons" id="layout-buttons">
-              <button class="layout-btn active" data-layout="list">Список</button>
-              <button class="layout-btn" data-layout="grid">2x2</button>
-              <button class="layout-btn" data-layout="grid3x3">3x3</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- акция -->
-        <div id="promo-controls" style="display:none">
-          <div class="control-group">
-            <label>Заголовок</label>
-            <input type="text" id="promo-title" class="zvuk-input">
-          </div>
-          <div class="control-group">
-            <label>Текст</label>
-            <input type="text" id="promo-text" class="zvuk-input">
-          </div>
-          <div class="control-group">
-            <label>Цена</label>
-            <input type="number" id="promo-price" class="zvuk-input">
-          </div>
-          <div class="control-group">
-            <label>Скидка (%)</label>
-            <input type="number" id="promo-discount" class="zvuk-input" placeholder="20">
-          </div>
-          <div class="control-group">
-            <label>Иконки</label>
-            <select id="promo-icon" class="zvuk-select">
-              <option value="">Без иконки</option>
-              <option value="vegan.svg">Веган</option>
-              <option value="halal.svg">Халяль</option>
-              <option value="glutenfree.svg">Без глютена</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label>Выравнивание</label>
-            <select id="promo-align" class="zvuk-select">
-              <option value="left">Слева</option>
-              <option value="center">По центру</option>
-              <option value="right">Справа</option>
-            </select>
-          </div>
-        </div>
+      <div id="promo-controls" style="display:none">
+        <label>Скидка (%)</label>
+        <input type="number" id="promo-discount" class="zvuk-input" placeholder="20">
+        <label>Иконки</label>
+        <select id="promo-icon" class="zvuk-select">
+          <option value="">Без иконки</option>
+          <option value="vegan.svg">Веган</option>
+          <option value="halal.svg">Халяль</option>
+          <option value="glutenfree.svg">Без глютена</option>
+        </select>
+        <label>Выравнивание</label>
+        <select id="promo-align" class="zvuk-select">
+          <option value="left">Слева</option>
+          <option value="center">По центру</option>
+          <option value="right">Справа</option>
+        </select>
       </div>
     </div>
 
@@ -238,19 +264,12 @@
     </div>
   </div>
 
-  <!-- Overlay -->
-  <div class="loading-overlay" id="loading-overlay" style="display:none; position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:3000;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;font-size:18px;">
-    <div class="spinner"></div>
-    <p id="loading-text">Загрузка...</p>
-  </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const ratioPopup = document.getElementById("ratio-popup");
   const preview = document.getElementById("menu-preview");
   let exportW = 1920, exportH = 1080;
 
-  // выбор пропорций
   ratioPopup.querySelectorAll("button").forEach(btn=>{
     btn.addEventListener("click",()=>{
       exportW = +btn.dataset.w;
@@ -260,7 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // загрузка логотипа
   const logoUpload=document.getElementById("logo-upload");
   let logoURL=null;
   logoUpload.addEventListener("change",e=>{
@@ -274,7 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // функция отрисовки превью
   function renderPreview(){
     preview.innerHTML="";
     if(logoURL){
@@ -290,14 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   renderPreview();
 
-  // Скачивание JPEG
   document.getElementById("download-jpeg").addEventListener("click",()=>{
     html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH}).then(canvas=>{
       canvas.toBlob(blob=>saveAs(blob,"menu.jpeg"),"image/jpeg");
     });
   });
 
-  // Скачивание PDF
   document.getElementById("download-pdf").addEventListener("click",()=>{
     html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH}).then(canvas=>{
       const {jsPDF}=window.jspdf;
@@ -307,7 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Скачивание MP4 через ffmpeg.wasm (webm -> mp4)
   document.getElementById("download-mp4").addEventListener("click",async()=>{
     alert("Экспорт в MP4: будет сделан кадр превью и сохранён как видео.");
     const canvas=await html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH});
@@ -320,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
       saveAs(webm,"menu.webm");
     }
     rec.start();
-    setTimeout(()=>rec.stop(),3000); // длительность 3с
+    setTimeout(()=>rec.stop(),3000);
   });
 });
 </script>
