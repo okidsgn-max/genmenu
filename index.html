@@ -1,213 +1,2008 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Генератор менюборда</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор менюборда</title>
+    <!-- Расширенная библиотека Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bad+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+    <style>
+        /* Основные стили из cssstyle3.css */
+        :root {
+            --primary: #00b398;
+            --primary-hover: #008f79;
+            --primary-active: #005c4e;
+            --primary-light: #e0f2f0;
+            --text-main: #1A1D1F;
+            --text-secondary: #3d435c;
+            --text-inactive: #667099;
+            --border: #e8e8f0;
+            --background-light: #f6f6f9;
+            --background-dark: #f0f0f5;
+            --placeholder: #9A9FA5;
+            --border-radius: 12px;
+            --transition-fast: 0.15s;
+            --transition-medium: 0.3s;
+            --transition-slow: 0.5s;
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=PT+Sans:wght@400;700&family=Inter:wght@400;600&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+            /* Grid specific */
+            --grid-bg-color: #f5f5f5;
+            --cell-bg-color: rgba(255, 255, 255, 0.85);
+            --menu-bg-color: #eeeeee;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-main);
+            background-color: #f5f5f5;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Новый хедер */
+        .header {
+            height: 60px;
+            width: 100%;
+            background-image: url('banner-adv.webp');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .header-logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-logo {
+            height: 30px;
+            object-fit: contain;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .header-btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            text-decoration: none;
+        }
+        
+        .header-btn.trial {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .header-btn.trial:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .header-btn.login {
+            background-color: var(--background-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        
+        .header-btn.login:hover {
+            background-color: #e8e8f0;
+        }
+        
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            overflow: hidden;
+            height: calc(100% - 60px);
+            padding: 20px;
+        }
+        
+        /* Кнопки */
+        .btn {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            border-radius: var(--border-radius);
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(0px);
+            box-shadow: 0 0px 0px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            background-color: var(--primary-active);
+            transform: translateY(0);
+            box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background-color: var(--background-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e8e8f0;
+        }
+        
+        /* Поля ввода */
+        .input, .select {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            padding: 10px 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            background-color: var(--background-light);
+            color: var(--text-secondary);
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            transition: all var(--transition-medium);
+            margin-bottom: 16px;
+        }
+        
+        .input:hover, .select:hover {
+            border-color: var(--primary-hover);
+        }
+        
+        .select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%239A9FA5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
+        }
+        
+        .input:focus, .select:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(0, 179, 152, 0.1);
+        }
+        
+        /* Чекбоксы */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .checkbox-group input {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+        
+        /* Остальные стили из оригинального файла */
+        .controls-panel {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .controls-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .controls-footer {
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-medium);
+            color: var(--text-secondary);
+        }
 
-  <!-- Libs -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/ffmpeg.min.js"></script>
+        .tab-btn img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .control-group:last-child { border-bottom: none; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .preview-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .preview-container {
+            width: 100%;
+            background: transparent;
+            border-radius: var(--border-radius);
+            aspect-ratio: 16 / 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+                
+        .preview-actions {
+            padding: 15px 0 0 0;
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .menu-preview {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: var(--menu-bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        /* Стили для шаблона списка */
+        .menu-list-template {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        .menu-items-container {
+            flex: 1;
+            overflow: hidden;
+            display: grid;
+            gap: 20px 40px;
+        }
 
-  <style>
-    :root {
-      --primary: #00b398;
-      --primary-hover: #008f79;
-      --primary-active: #005c4e;
-      --primary-light: #e0f2f0;
-      --text-main: #1A1D1F;
-      --text-secondary: #3d435c;
-      --text-inactive: #667099;
-      --border: #e8e8f0;
-      --background-light: #f6f6f9;
-      --background-dark: #f0f0f5;
-      --placeholder: #9A9FA5;
-      --border-radius: 12px;
-      --transition-medium: 0.3s;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      color: var(--text-main);
-      background: #f5f5f5;
-      overflow: hidden;
-    }
-    .zvuk-button {
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      font-size: 14px;
-      border-radius: var(--border-radius);
-      padding: 10px 16px;
-      cursor: pointer;
-      transition: all var(--transition-medium);
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .zvuk-button--primary { background: var(--primary); color:#fff; }
-    .zvuk-button--primary:hover { background: var(--primary-hover); }
-    .zvuk-button--secondary { background: var(--background-light); color: var(--text-secondary); border:1px solid var(--border); }
-    .zvuk-input, .zvuk-select {
-      font-size: 14px; padding: 8px 12px;
-      border: 2px solid var(--border); border-radius: var(--border-radius);
-      background: var(--background-light); width: 100%; margin-bottom: 12px;
-    }
-    .main-header {
-      position: fixed; top:0; left:0; width:100%; height:60px;
-      background: url("banner-adv.webp") no-repeat center/cover;
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 0 20px; z-index:100;
-    }
-    .main-header img { height:40px; }
-    .header-actions { display:flex; gap:10px; }
-    .ratio-popup {
-      position:fixed;top:0;left:0;right:0;bottom:0;
-      background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:2000;
-    }
-    .ratio-popup-content {
-      background:#fff;padding:20px;border-radius:12px;text-align:center;width:300px;
-    }
-    .ratio-options button { margin:6px 0;width:100%; }
-    .preview-logo {position:absolute;top:10px;left:10px;max-width:120px;}
-    .preview-date {position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.7);padding:4px 8px;border-radius:6px;font-size:14px;}
-    .loading-overlay {position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:3000;display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-direction:column;}
-  </style>
+        .menu-items-container.two-columns { grid-template-columns: 1fr 1fr; }
+        
+        .menu-section { margin-bottom: 30px; }
+        
+        .section-title {
+            font-family: var(--category-font-family);
+            font-size: var(--category-font-size);
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            color: var(--category-font-color);
+        }
+        
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border);
+        }
+        
+        .item-content { flex-grow: 1; }
+        
+        .item-name {
+            font-family: var(--item-font-family);
+            font-weight: 500;
+            font-size: var(--item-font-size);
+            color: var(--item-font-color);
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            font-family: var(--desc-font-family);
+            font-size: var(--desc-font-size);
+            color: var(--desc-font-color);
+            margin-bottom: 5px;
+            font-weight: 300;
+        }
+        
+        .item-price {
+            font-family: var(--item-font-family);
+            font-weight: 700;
+            font-size: var(--item-font-size);
+            color: var(--item-font-color);
+            white-space: nowrap;
+            margin-left: 20px;
+            text-align: right;
+            min-width: 80px;
+        }
+        
+        /* Стили для шаблонов сетки */
+        .menu-grid-template, .menu-grid-template-3x3 {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            gap: 15px;
+            padding: 15px;
+            background-color: var(--grid-bg-color);
+        }
+        .menu-grid-template {
+             grid-template-columns: 1fr 1fr;
+             grid-template-rows: 1fr 1fr;
+        }
+        .menu-grid-template-3x3 {
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .grid-cell {
+            background-color: var(--cell-bg-color);
+            backdrop-filter: blur(5px);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 5px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .grid-cell .item-name { grid-area: 1 / 1 / 2 / 2; font-weight: 700;}
+        .grid-cell .item-description { 
+            grid-area: 2 / 1 / 3 / 2; 
+            align-self: start; 
+            white-space: normal;
+            overflow: hidden; 
+        }
+        .grid-cell .item-price { grid-area: 3 / 1 / 4 / 2; align-self: end; text-align: left; margin-left: 0; }
+        .grid-cell .item-photo-container {
+            grid-area: 1 / 2 / 4 / 3;
+            position: relative;
+            background: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .grid-cell .item-photo { 
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            position: absolute;
+            z-index: 1;
+        }
+        .grid-cell .upload-photo-btn {
+            font-size: 30px;
+            cursor: pointer;
+            border: none;
+            background: #e0e0e0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: #888;
+            z-index: 2;
+        }
+
+        /* Стили для шаблона "Акция" */
+        .promo-template {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .promo-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: var(--promo-text-align, left);
+        }
+        .promo-title {
+            font-size: var(--promo-title-font-size);
+            font-family: var(--promo-title-font-family);
+            color: var(--promo-title-font-color);
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            line-height: 1.1;
+            display: flex;
+            align-items: center;
+        }
+        .promo-text {
+            font-size: var(--promo-text-font-size);
+            font-family: var(--promo-text-font-family);
+            color: var(--promo-text-font-color);
+            margin-bottom: 30px; 
+            line-height: 1.3;
+        }
+        .promo-price-container {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .promo-price {
+            font-size: var(--promo-price-font-size);
+            font-family: var(--promo-price-font-family);
+            color: var(--promo-price-font-color);
+            font-weight: bold;
+        }
+        .promo-discount {
+            font-size: calc(var(--promo-price-font-size) * 0.7);
+            font-family: var(--promo-price-font-family);
+            color: #ff5252;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        .promo-icon {
+            width: 30px;
+            height: 30px;
+            margin-left: 15px;
+        }
+        
+        /* Стили для комбинированного шаблона */
+        .combined-template {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .combined-menu-part {
+            overflow: hidden;
+            position: relative;
+            background-color: var(--menu-bg-color);
+        }
+        .combined-promo-part {
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        /* Special styles for 2-in-1 with grid */
+        .combined-grid-active .combined-promo-part {
+            display: grid;
+            place-items: center;
+        }
+        .combined-grid-active .combined-promo-content {
+             width: 90%;
+             height: 90%;
+             padding: 30px;
+        }
+        .combined-promo-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            color: white;
+        }
+        
+        /* Стили для логотипа и даты */
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--menu-bg-color);
+        }
+        .menu-logo {
+            max-height: 50px;
+            max-width: 150px;
+        }
+        .menu-date {
+            font-family: var(--item-font-family);
+            font-size: 14px;
+            color: var(--text-secondary);
+            background-color: var(--menu-bg-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        /* Оверлей для 3x3 предупреждения */
+        .warning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, var(--overlay-opacity, 0.5));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+        }
+        
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .aspect-ratio-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .aspect-ratio-btn {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .aspect-ratio-btn.active {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        .loading-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: rgba(0,0,0,0.7); 
+            display: none;
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000;
+            color: white; 
+            font-size: 24px; 
+            flex-direction: column; 
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3; 
+            border-top: 5px solid var(--primary);
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px;
+            animation: spin 1s linear infinite; 
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        
+        /* Область для перетаскивания файлов */
+        .drop-area {
+            border: 2px dashed var(--border); 
+            border-radius: var(--border-radius);
+            padding: 20px; 
+            text-align: center; 
+            margin-bottom: 15px;
+            cursor: pointer; 
+            transition: all var(--transition-medium); 
+            background-color: var(--background-light);
+        }
+        
+        .drop-area:hover, .drop-area.highlight {
+            border-color: var(--primary);
+            background: rgba(0, 179, 152, 0.1);
+        }
+        
+        .file-info { 
+            font-size: 12px; 
+            color: var(--text-inactive); 
+            margin-top: 5px; 
+        }
+
+        /* Кнопки выбора макета */
+        .layout-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .layout-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            background: var(--background-light);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .layout-btn:hover {
+            border-color: var(--primary);
+            background: rgba(0, 179, 152, 0.1);
+        }
+        
+        .layout-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .layout-btn img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .layout-btn.active img {
+             filter: brightness(0) invert(1);
+        }
+
+        /* Выбор цвета */
+        .color-picker-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .color-picker-item label {
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .color-picker-item input[type="color"] {
+            width: 100%;
+            height: 30px;
+            padding: 0;
+            border: none;
+            background: none;
+            border-radius: var(--border-radius);
+        }
+        
+        .grid-color-item {
+            display: none;
+        }
+        
+        /* Ползунок */
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--background-light);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            font-size: 12px;
+            color: var(--text-inactive);
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
-  <!-- Хедер -->
-  <header class="main-header">
-    <img src="logo.png" alt="Логотип">
-    <div class="header-actions">
-      <a href="https://zvuk-b2b.com" class="zvuk-button zvuk-button--primary">Попробовать сервис</a>
-      <a href="https://app.zvuk-b2b.com" class="zvuk-button zvuk-button--secondary">Вход в ЛК</a>
-    </div>
-  </header>
-
-  <!-- Попап выбора пропорций -->
-  <div class="ratio-popup" id="ratio-popup">
-    <div class="ratio-popup-content">
-      <h3>Выберите пропорции превью</h3>
-      <div class="ratio-options">
-        <button class="zvuk-button zvuk-button--primary" data-ratio="16:9" data-w="1920" data-h="1080">16:9 (1920×1080)</button>
-        <button class="zvuk-button zvuk-button--primary" data-ratio="9:16" data-w="1080" data-h="1920">9:16 (1080×1920)</button>
-        <button class="zvuk-button zvuk-button--primary" data-ratio="4:3" data-w="1600" data-h="1300">4:3 (1600×1300)</button>
-        <button class="zvuk-button zvuk-button--primary" data-ratio="3:2" data-w="1920" data-h="1280">3:2 (1920×1280)</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Основной контейнер -->
-  <div class="main-container" style="margin-top:60px; display:flex; height:calc(100vh - 60px);">
-    <div class="controls-panel" style="width:300px; background:#fff; padding:16px;">
-      <h1>Генератор менюборда</h1>
-      <label>Загрузить логотип</label>
-      <input type="file" id="logo-upload" class="zvuk-input" accept="image/*">
-    </div>
-    <div class="preview-wrapper" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <div class="preview-container" id="preview-container" style="position:relative;width:100%;height:100%;background:#ccc;">
-        <div id="menu-preview" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-          <p>Здесь будет превью меню</p>
+    <div class="header">
+        <div class="header-logo-container">
+            <img src="logo.png" alt="Логотип" class="header-logo">
         </div>
-      </div>
-      <div class="preview-actions" style="margin-top:10px;display:flex;gap:10px;">
-        <button class="zvuk-button zvuk-button--primary" id="download-jpeg">Сохранить JPEG</button>
-        <button class="zvuk-button zvuk-button--secondary" id="download-pdf">Сохранить PDF</button>
-        <button class="zvuk-button zvuk-button--primary" id="download-mp4">Сохранить MP4</button>
-      </div>
+        <div class="header-buttons">
+            <a href="https://zvuk-b2b.com" class="header-btn trial">Попробовать сервис</a>
+            <a href="https://app.zvuk-b2b.com" class="header-btn login">Вход в ЛК</a>
+        </div>
     </div>
-  </div>
+    
+    <div class="main-container">
+        <div class="controls-panel">
+            <h1 class="header-title">Генератор менюборда</h1>
 
-  <!-- Overlay -->
-  <div class="loading-overlay" id="loading-overlay">
-    <p id="loading-text">Мы сохраняем видео файл, подождите...</p>
-  </div>
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
+                <button class="tab-btn" data-tab="promo"><img src="acii.svg" alt="Акция"> Акция</button>
+                <button class="tab-btn" data-tab="combined"><img src="2v1.svg" alt="Меню+Акция"> Меню+Акция</button>
+            </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const ratioPopup = document.getElementById("ratio-popup");
-  const preview = document.getElementById("menu-preview");
-  let exportW=1920, exportH=1080;
+            <div class="controls-content">
+                <div id="menu-controls">
+                    <div class="control-group">
+                        <label>Загрузка данных:</label>
+                        <div class="drop-area" id="menu-drop-area">
+                            Перетащите файл Excel, Word или TXT или
+                            <button class="btn btn-secondary" style="width: auto; padding: 5px 10px; margin: 5px 0 0 0;" onclick="document.getElementById('file-input').click()">Выберите файл</button>
+                            <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .doc, .docx, .txt" style="display: none;">
+                            <div class="file-info" id="menu-file-info">Файл не выбран</div>
+                        </div>
+                    </div>
 
-  ratioPopup.querySelectorAll("button").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      exportW=+btn.dataset.w; exportH=+btn.dataset.h;
-      ratioPopup.style.display="none";
-      document.getElementById("preview-container").style.aspectRatio=btn.dataset.ratio;
-    });
-  });
+                    <div class="control-group">
+                        <label>Настройки верстки:</label>
+                        <div class="layout-buttons" id="layout-buttons">
+                           <button class="layout-btn active" data-layout="list">
+                                <img src="menu.svg" alt="">
+                                Список
+                            </button>
+                            <button class="layout-btn" data-layout="grid">
+                                <img src="2v1.svg" alt="">
+                                2x2
+                            </button>
+                            <button class="layout-btn" data-layout="grid3x3">
+                                <img src="acii.svg" alt="">
+                                3x3
+                            </button>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="show-description-checkbox" checked>
+                            <label for="show-description-checkbox">Показывать описание блюд</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="multiple-prices-checkbox">
+                            <label for="multiple-prices-checkbox">Использовать цены для объемов (S/M/L)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Логотип и дата:</label>
+                        <button class="btn btn-secondary" onclick="document.getElementById('logo-upload').click()">Загрузить логотип</button>
+                        <input type="file" id="logo-upload" accept="image/*" style="display: none;">
+                        <div class="checkbox-group" style="margin-top: 10px;">
+                            <input type="checkbox" id="show-date-checkbox" checked>
+                            <label for="show-date-checkbox">Показывать текущую дату</label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Цвета</label>
+                        <div class="color-picker-row">
+                            <div class="color-picker-item">
+                                <label>Фон меню</label>
+                                <input type="color" id="menu-bg-color-picker" value="#eeeeee">
+                            </div>
+                            <div class="color-picker-item grid-color-item">
+                                <label>Фон сетки</label>
+                                <input type="color" id="grid-bg-color-picker" value="#f5f5f5">
+                            </div>
+                            <div class="color-picker-item grid-color-item">
+                                <label>Фон ячейки</label>
+                                <input type="color" id="cell-bg-color-picker" value="#ffffff">
+                            </div>
+                        </div>
+                    </div>
 
-  const logoUpload=document.getElementById("logo-upload");
-  let logoURL=null;
-  logoUpload.addEventListener("change",e=>{
-    if(e.target.files[0]){
-      const r=new FileReader();
-      r.onload=ev=>{ logoURL=ev.target.result; renderPreview(); }
-      r.readAsDataURL(e.target.files[0]);
-    }
-  });
+                    <div class="control-group">
+                        <label>Шрифт категорий:</label>
+                        <div class="setting-row">
+                            <select id="category-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Bad Script', cursive">Bad Script</option>
+                                <option value="'Marck Script', cursive">Marck Script</option>
+                            </select>
+                            <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
+                            <input type="color" id="category-color-picker" value="#00b398">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Шрифт пунктов:</label>
+                        <div class="setting-row">
+                            <select id="item-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Exo 2', sans-serif">Exo 2</option>
+                            </select>
+                            <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
+                            <input type="color" id="item-color-picker" value="#3d435c">
+                        </div>
+                    </div>
 
-  function renderPreview(){
-    preview.innerHTML="";
-    if(logoURL){
-      const img=document.createElement("img");
-      img.src=logoURL; img.className="preview-logo";
-      preview.appendChild(img);
-    }
-    const date=document.createElement("div");
-    date.className="preview-date";
-    date.innerText=new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
-    preview.appendChild(date);
-  }
-  renderPreview();
+                    <div class="control-group">
+                        <label>Шрифт описания:</label>
+                        <div class="setting-row">
+                            <select id="desc-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                            </select>
+                            <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
+                            <input type="color" id="desc-color-picker" value="#667099">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="promo-controls" style="display: none;">
+                    <div class="control-group">
+                        <label>Заголовок акции:</label>
+                        <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок">
+                        <div class="setting-row">
+                            <select id="promo-title-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                            </select>
+                            <input type="number" id="promo-title-size" class="input" value="60" min="10" max="180">
+                            <input type="color" id="promo-title-color-picker" value="#ffffff">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Текст акции:</label>
+                        <input type="text" id="promo-text-input" class="input" placeholder="Введите текст">
+                        <div class="setting-row">
+                            <select id="promo-text-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                            </select>
+                            <input type="number" id="promo-text-size" class="input" value="30" min="10" max="100">
+                            <input type="color" id="promo-text-color-picker" value="#ffffff">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Цена:</label>
+                        <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
+                        <div class="setting-row">
+                            <select id="promo-price-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                            </select>
+                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="180">
+                            <input type="color" id="promo-price-color-picker" value="#ffffff">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Скидка:</label>
+                        <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Особенности:</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="vegan-checkbox">
+                            <label for="vegan-checkbox">Веган</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="halal-checkbox">
+                            <label for="halal-checkbox">Халяль</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="glutenfree-checkbox">
+                            <label for="glutenfree-checkbox">Без глютена</label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Выравнивание текста:</label>
+                        <select id="promo-text-align-select" class="select">
+                            <option value="left">По левой стороне</option>
+                            <option value="center">По центру</option>
+                            <option value="right">По правой стороне</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Фон:</label>
+                         <select id="promo-bg-type-select" class="select">
+                            <option value="color">Сплошной цвет</option>
+                            <option value="image">Загрузить изображение</option>
+                            <option value="generate">Сгенерировать (AI)</option>
+                        </select>
+                         <div id="bg-position-container" style="display: none;">
+                            <label>Расположение картинки:</label>
+                            <select id="promo-bg-position-select" class="select">
+                                <option value="center">По центру</option>
+                                <option value="left">Слева</option>
+                                <option value="right">Справа</option>
+                            </select>
+                        </div>
+                        <div id="bg-color-container">
+                            <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
+                        </div>
+                        <div id="bg-image-container" style="display: none;">
+                            <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Выберите файл</button>
+                            <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
+                            <div class="file-info" id="bg-file-info">Изображение не загружено</div>
+                        </div>
+                        <div id="bg-generate-container" style="display: none;">
+                            <input type="text" id="bg-prompt" class="input" placeholder="Опишите фон для генерации...">
+                            <button class="btn" id="generate-bg-btn" style="background:var(--primary)">Сгенерировать</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="combined-controls" style="display: none;">
+                    <div class="control-group">
+                        <label>Верстка меню:</label>
+                        <div class="layout-buttons">
+                           <button class="layout-btn active" data-combined-layout="list">
+                                <img src="menu.svg" alt="">
+                                Список
+                            </button>
+                            <button class="layout-btn" data-combined-layout="grid">
+                                <img src="2v1.svg" alt="">
+                                2x2
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Затемнение предупреждения:</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="100" value="50" class="slider" id="overlay-opacity-slider">
+                            <div class="slider-value" id="overlay-opacity-value">50%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-footer">
+                <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
+                <button class="btn btn-secondary" id="download-mp4-btn">Сохранить в MP4</button>
+                <button class="btn btn-secondary" id="download-pdf-btn">Сохранить в PDF</button>
+            </div>
+        </div>
+        
+        <div class="preview-wrapper">
+            <div class="preview-container">
+                <div class="menu-preview" id="menu-preview">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                        <h3>Здесь будет ваше меню</h3>
+                        <p>Настройте параметры слева и загрузите данные</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно выбора пропорций -->
+    <div class="modal-overlay" id="aspect-ratio-modal" style="display: flex;">
+        <div class="modal">
+            <div class="modal-title">Выберите пропорции превью</div>
+            <div class="aspect-ratio-buttons">
+                <button class="aspect-ratio-btn active" data-ratio="16:9" data-width="1920" data-height="1080">16:9 (1920x1080)</button>
+                <button class="aspect-ratio-btn" data-ratio="9:16" data-width="1080" data-height="1920">9:16 (1080x1920)</button>
+                <button class="aspect-ratio-btn" data-ratio="4:3" data-width="1600" data-height="1200">4:3 (1600x1200)</button>
+                <button class="aspect-ratio-btn" data-ratio="3:2" data-width="1920" data-height="1280">3:2 (1920x1280)</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="confirm-aspect-ratio">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для сохранения MP4 -->
+    <div class="modal-overlay" id="mp4-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-title">Сохранить как MP4</div>
+            <input type="text" id="mp4-filename" class="input" placeholder="Имя файла (без расширения)" value="менюборд">
+            <div class="setting-row">
+                <label>Длительность (секунды):</label>
+                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="60">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-mp4">Отмена</button>
+                <button class="btn" id="save-mp4">Сохранить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Генерация фона...</div>
+    </div>
+    
+    <input type="file" id="grid-photo-upload" accept="image/*" style="display: none;">
 
-  document.getElementById("download-jpeg").addEventListener("click",()=>{
-    html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH}).then(canvas=>{
-      canvas.toBlob(blob=>saveAs(blob,"menu.jpeg"),"image/jpeg");
-    });
-  });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация FFmpeg
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true });
+            
+            // Element Refs
+            const getEl = (id) => document.getElementById(id);
+            const controls = {
+                tabButtons: document.querySelectorAll('.tab-btn'),
+                menuControls: getEl('menu-controls'),
+                promoControls: getEl('promo-controls'),
+                combinedControls: getEl('combined-controls'),
+                fileInput: getEl('file-input'),
+                menuDropArea: getEl('menu-drop-area'),
+                menuFileInfo: getEl('menu-file-info'),
+                layoutButtons: getEl('layout-buttons'),
+                showDescCheck: getEl('show-description-checkbox'),
+                multiPriceCheck: getEl('multiple-prices-checkbox'),
+                showDateCheck: getEl('show-date-checkbox'),
+                logoUpload: getEl('logo-upload'),
+                menuBgPicker: getEl('menu-bg-color-picker'),
+                gridBgColorPicker: getEl('grid-bg-color-picker'),
+                cellBgColorPicker: getEl('cell-bg-color-picker'),
+                gridColorItems: document.querySelectorAll('.grid-color-item'),
+                categoryFont: getEl('category-font-select'),
+                categorySize: getEl('category-font-size'),
+                categoryColor: getEl('category-color-picker'),
+                itemFont: getEl('item-font-select'),
+                itemSize: getEl('item-font-size'),
+                itemColor: getEl('item-color-picker'),
+                descFont: getEl('desc-font-select'),
+                descSize: getEl('desc-font-size'),
+                descColor: getEl('desc-color-picker'),
+                promoTitle: getEl('promo-title-input'),
+                promoText: getEl('promo-text-input'),
+                promoPrice: getEl('promo-price-input'),
+                promoDiscount: getEl('promo-discount-input'),
+                veganCheck: getEl('vegan-checkbox'),
+                halalCheck: getEl('halal-checkbox'),
+                glutenfreeCheck: getEl('glutenfree-checkbox'),
+                promoTextAlign: getEl('promo-text-align-select'),
+                promoTitleFont: getEl('promo-title-font-select'),
+                promoTitleSize: getEl('promo-title-size'),
+                promoTitleColor: getEl('promo-title-color-picker'),
+                promoTextFont: getEl('promo-text-font-select'),
+                promoTextSize: getEl('promo-text-size'),
+                promoTextColor: getEl('promo-text-color-picker'),
+                promoPriceFont: getEl('promo-price-font-select'),
+                promoPriceSize: getEl('promo-price-size'),
+                promoPriceColor: getEl('promo-price-color-picker'),
+                promoBgType: getEl('promo-bg-type-select'),
+                promoBgPos: getEl('promo-bg-position-select'),
+                bgColorContainer: getEl('bg-color-container'),
+                bgImageContainer: getEl('bg-image-container'),
+                bgGenerateContainer: getEl('bg-generate-container'),
+                bgPositionContainer: getEl('bg-position-container'),
+                promoBgUpload: getEl('promo-background-upload'),
+                promoBgInfo: getEl('bg-file-info'),
+                bgColorPicker: getEl('bg-color-picker'),
+                bgPrompt: getEl('bg-prompt'),
+                generateBgBtn: getEl('generate-bg-btn'),
+                gridPhotoUpload: getEl('grid-photo-upload'),
+                menuPreview: getEl('menu-preview'),
+                downloadPngBtn: getEl('download-png-btn'),
+                downloadMp4Btn: getEl('download-mp4-btn'),
+                downloadPdfBtn: getEl('download-pdf-btn'),
+                loadingOverlay: getEl('loading-overlay'),
+                loadingText: getEl('loading-text'),
+                aspectRatioModal: getEl('aspect-ratio-modal'),
+                aspectRatioBtns: document.querySelectorAll('.aspect-ratio-btn'),
+                confirmAspectRatio: getEl('confirm-aspect-ratio'),
+                mp4Modal: getEl('mp4-modal'),
+                mp4Filename: getEl('mp4-filename'),
+                mp4Duration: getEl('mp4-duration'),
+                cancelMp4: getEl('cancel-mp4'),
+                saveMp4: getEl('save-mp4'),
+                overlayOpacitySlider: getEl('overlay-opacity-slider'),
+                overlayOpacityValue: getEl('overlay-opacity-value')
+            };
 
-  document.getElementById("download-pdf").addEventListener("click",()=>{
-    html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH}).then(canvas=>{
-      const {jsPDF}=window.jspdf;
-      const pdf=new jsPDF({orientation:"landscape",unit:"px",format:[exportW,exportH]});
-      pdf.addImage(canvas.toDataURL("image/jpeg"),"JPEG",0,0,exportW,exportH);
-      pdf.save("menu.pdf");
-    });
-  });
+            // State
+            let state = {
+                currentTab: 'menu',
+                layout: 'list',
+                combinedLayout: 'list',
+                excelData: null,
+                promoBgImage: null,
+                gridImages: {},
+                currentGridTarget: null,
+                logoImage: null,
+                aspectRatio: '16:9',
+                exportWidth: 1920,
+                exportHeight: 1080,
+                currency: '₽', // По умолчанию рубль
+                overlayOpacity: 0.5
+            };
+            
+            // --- API KEYS ---
+            const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
+            const FUSION_BRAIN_SECRET_KEY = '';
 
-  // Экспорт MP4 с ffmpeg.wasm
-  document.getElementById("download-mp4").addEventListener("click",async()=>{
-    const overlay=document.getElementById("loading-overlay");
-    overlay.style.display="flex";
-    const canvas=await html2canvas(preview,{backgroundColor:null,scale:2,width:exportW,height:exportH});
-    const stream=canvas.captureStream();
-    const rec=new MediaRecorder(stream,{mimeType:"video/webm"});
-    const chunks=[];
-    rec.ondataavailable=e=>chunks.push(e.data);
-    rec.onstop=async()=>{
-      const webm=new Blob(chunks,{type:"video/webm"});
-      const arrayBuffer=await webm.arrayBuffer();
-      const ffmpeg=FFmpeg.createFFmpeg({log:true});
-      await ffmpeg.load();
-      ffmpeg.FS("writeFile","input.webm",new Uint8Array(arrayBuffer));
-      await ffmpeg.run("-i","input.webm","-c:v","libx264","-pix_fmt","yuv420p","output.mp4");
-      const data=ffmpeg.FS("readFile","output.mp4");
-      const mp4Blob=new Blob([data.buffer],{type:"video/mp4"});
-      saveAs(mp4Blob,"menu.mp4");
-      overlay.style.display="none";
-    };
-    rec.start();
-    setTimeout(()=>rec.stop(),3000); // 3 секунды видео
-  });
-});
-</script>
+            // Определяем валюту по стране пользователя
+            function detectCurrency() {
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (timezone.includes('Asia/Almaty') || timezone.includes('Asia/Aqtobe')) {
+                    state.currency = '₸';
+                } else if (timezone.includes('Europe/Minsk')) {
+                    state.currency = 'BYN';
+                } else {
+                    state.currency = '₽';
+                }
+            }
+            
+            // Форматирование даты
+            function formatDate(date) {
+                const months = [
+                    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                ];
+                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            }
+
+            function init() {
+                detectCurrency();
+                setupEventListeners();
+                updateTabVisibility();
+                render();
+                
+                // Показываем модальное окно выбора пропорций при загрузке
+                controls.aspectRatioModal.style.display = 'flex';
+            }
+
+            function setupEventListeners() {
+                // Tabs
+                controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
+                    state.currentTab = btn.dataset.tab;
+                    controls.tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateTabVisibility();
+                    render();
+                }));
+
+                // Drag & Drop
+                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo);
+
+                // Layout buttons
+                controls.layoutButtons.addEventListener('click', (e) => {
+                    const targetButton = e.target.closest('.layout-btn');
+                    if (!targetButton) return;
+
+                    state.layout = targetButton.dataset.layout;
+                    
+                    controls.layoutButtons.querySelectorAll('.layout-btn').forEach(btn => btn.classList.remove('active'));
+                    targetButton.classList.add('active');
+
+                    updateGridColorVisibility();
+                    render();
+                });
+                
+                // Combined layout buttons
+                document.querySelectorAll('[data-combined-layout]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        state.combinedLayout = btn.dataset.combinedLayout;
+                        document.querySelectorAll('[data-combined-layout]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        render();
+                    });
+                });
+
+                // Menu Controls
+                [controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
+                 controls.categoryFont, controls.categorySize, controls.categoryColor,
+                 controls.itemFont, controls.itemSize, controls.itemColor,
+                 controls.descFont, controls.descSize, controls.descColor,
+                 controls.gridBgColorPicker, controls.cellBgColorPicker,
+                 controls.showDateCheck].forEach(el => {
+                    el.addEventListener('input', render);
+                    el.addEventListener('change', render);
+                 });
+                
+                // Promo Controls
+                [controls.promoTitle, controls.promoText, controls.promoPrice, controls.promoDiscount,
+                 controls.veganCheck, controls.halalCheck, controls.glutenfreeCheck,
+                 controls.promoTextAlign, controls.promoTitleFont, controls.promoTitleSize,
+                 controls.promoTitleColor, controls.promoTextFont, controls.promoTextSize,
+                 controls.promoTextColor, controls.promoPriceFont, controls.promoPriceSize,
+                 controls.promoPriceColor, controls.promoBgType, controls.promoBgPos, 
+                 controls.bgColorPicker].forEach(el => {
+                    el.addEventListener('input', render);
+                    el.addEventListener('change', render);
+                 });
+
+                controls.promoBgType.addEventListener('change', updatePromoBgControls);
+                controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
+                controls.generateBgBtn.addEventListener('click', generateAIBg);
+                
+                // Logo upload
+                controls.logoUpload.addEventListener('change', handleLogoUpload);
+                
+                // Downloads
+                controls.downloadPngBtn.addEventListener('click', downloadAsPNG);
+                controls.downloadPdfBtn.addEventListener('click', downloadAsPDF);
+                controls.downloadMp4Btn.addEventListener('click', showMp4Modal);
+                
+                // Grid photo upload
+                controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
+                controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
+                
+                // Aspect ratio modal
+                controls.aspectRatioBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        controls.aspectRatioBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        state.aspectRatio = btn.dataset.ratio;
+                        state.exportWidth = parseInt(btn.dataset.width);
+                        state.exportHeight = parseInt(btn.dataset.height);
+                        updatePreviewAspectRatio();
+                    });
+                });
+                
+                controls.confirmAspectRatio.addEventListener('click', () => {
+                    controls.aspectRatioModal.style.display = 'none';
+                    updatePreviewAspectRatio();
+                });
+                
+                // MP4 modal
+                controls.cancelMp4.addEventListener('click', () => {
+                    controls.mp4Modal.style.display = 'none';
+                });
+                
+                controls.saveMp4.addEventListener('click', downloadAsMP4);
+                
+                // Overlay opacity slider
+                controls.overlayOpacitySlider.addEventListener('input', function() {
+                    state.overlayOpacity = this.value / 100;
+                    controls.overlayOpacityValue.textContent = `${this.value}%`;
+                    render();
+                });
+            }
+            
+            function updatePreviewAspectRatio() {
+                const previewContainer = document.querySelector('.preview-container');
+                const [width, height] = state.aspectRatio.split(':');
+                previewContainer.style.aspectRatio = `${width} / ${height}`;
+            }
+
+            // --- UI UPDATE FUNCTIONS ---
+            function updateTabVisibility() {
+                controls.menuControls.style.display = (state.currentTab === 'menu' || state.currentTab === 'combined') ? 'block' : 'none';
+                controls.promoControls.style.display = (state.currentTab === 'promo' || state.currentTab === 'combined') ? 'block' : 'none';
+                controls.combinedControls.style.display = (state.currentTab === 'combined') ? 'block' : 'none';
+                updateGridColorVisibility();
+            }
+            
+            function updateGridColorVisibility() {
+                const show = state.layout === 'grid' || state.layout === 'grid3x3';
+                 controls.gridColorItems.forEach(item => {
+                    item.style.display = show ? 'block' : 'none';
+                });
+            }
+
+            function updatePromoBgControls() {
+                const type = controls.promoBgType.value;
+                controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
+                controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
+                controls.bgGenerateContainer.style.display = type === 'generate' ? 'block' : 'none';
+                controls.bgPositionContainer.style.display = (type === 'image' || type === 'generate') ? 'block' : 'none';
+                render();
+            }
+
+            // --- DATA HANDLING ---
+            function setupDropArea(dropArea, fileInput, fileInfo) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+                });
+                ['dragenter', 'dragover'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight')));
+                ['dragleave', 'drop'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight')));
+                
+                dropArea.addEventListener('drop', e => {
+                    if (e.dataTransfer.files.length) {
+                        fileInput.files = e.dataTransfer.files;
+                        handleFile(e.dataTransfer.files[0]);
+                    }
+                });
+                fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
+
+                function handleFile(file) {
+                    fileInfo.textContent = file.name;
+                    
+                    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv')) {
+                        handleExcelFile(file);
+                    } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+                        // Для Word файлов можно использовать API для парсинга
+                        alert('Парсинг Word файлов пока не реализован. Пожалуйста, используйте Excel или TXT.');
+                    } else if (file.name.endsWith('.txt')) {
+                        handleTextFile(file);
+                    } else {
+                        alert('Неподдерживаемый формат файла. Используйте Excel, Word или TXT.');
+                    }
+                }
+                
+                function handleExcelFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                            
+                            // Нормализация ключей
+                            state.excelData = jsonData.map(row => {
+                                const nameKeys = ['Название', 'Наименование', 'блюдо'];
+                                const descKeys = ['Описание', 'состав'];
+                                const priceKeys = ['Цена', 'Стоимость', 'с ндс'];
+                                const categoryKeys = ['Категория', 'тип'];
+                                
+                                return {
+                                    name: findValueByKeys(row, nameKeys) || '',
+                                    description: findValueByKeys(row, descKeys) || '',
+                                    price: findValueByKeys(row, priceKeys) || '',
+                                    photo: row['Фото'] || '',
+                                    category: findValueByKeys(row, categoryKeys) || 'Основное меню',
+                                    S: row['S'] || '', 
+                                    M: row['M'] || '', 
+                                    L: row['L'] || ''
+                                };
+                            });
+                            
+                            state.gridImages = {}; // Сброс изображений при загрузке нового файла
+                            render();
+                        } catch (error) { 
+                            alert('Ошибка при чтении файла: ' + error.message); 
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+                
+                function handleTextFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const text = e.target.result;
+                            const lines = text.split('\n');
+                            const result = [];
+                            let currentCategory = 'Основное меню';
+                            
+                            lines.forEach(line => {
+                                line = line.trim();
+                                if (!line) return;
+                                
+                                // Определяем категорию
+                                if (line.startsWith('#') || line.startsWith('*') || line.endsWith(':')) {
+                                    currentCategory = line.replace(/[#*:]/, '').trim();
+                                    return;
+                                }
+                                
+                                // Парсим строку в формате: Название - Описание - Цена
+                                const parts = line.split(' - ');
+                                const item = {
+                                    name: parts[0]?.trim() || '',
+                                    description: parts[1]?.trim() || '',
+                                    price: parts[2]?.trim() || '',
+                                    category: currentCategory
+                                };
+                                
+                                result.push(item);
+                            });
+                            
+                            state.excelData = result;
+                            state.gridImages = {};
+                            render();
+                        } catch (error) {
+                            alert('Ошибка при чтении файла: ' + error.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+                
+                function findValueByKeys(obj, keys) {
+                    for (const key of keys) {
+                        if (obj[key] !== undefined) {
+                            return obj[key];
+                        }
+                    }
+                    return '';
+                }
+            }
+
+            function formatPrice(price) {
+                if (price === null || price === undefined || price === '') return '';
+                const num = parseFloat(String(price).replace(',', '.'));
+                return isNaN(num) ? price : num.toFixed(0) + ' ' + state.currency;
+            }
+
+            // --- IMAGE HANDLING ---
+            function handleLogoUpload(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.logoImage = event.target.result;
+                        render();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function handlePromoBgUpload(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    controls.promoBgInfo.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.promoBgImage = event.target.result;
+                        render();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function handleGridPhotoUploadClick(e) {
+                if (e.target.matches('.upload-photo-btn')) {
+                    state.currentGridTarget = e.target.dataset.index;
+                    controls.gridPhotoUpload.click();
+                }
+            }
+
+            function handleGridPhotoFileChange(e) {
+                if (e.target.files && e.target.files[0] && state.currentGridTarget !== null) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.gridImages[state.currentGridTarget] = event.target.result;
+                        render();
+                        state.currentGridTarget = null;
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = ''; // Reset input
+                }
+            }
+
+            // --- RENDER FUNCTIONS ---
+            function applyStyles() {
+                const root = document.documentElement.style;
+                root.setProperty('--menu-bg-color', controls.menuBgPicker.value);
+                root.setProperty('--grid-bg-color', controls.gridBgColorPicker.value);
+                root.setProperty('--cell-bg-color', controls.cellBgColorPicker.value);
+                root.setProperty('--category-font-family', controls.categoryFont.value);
+                root.setProperty('--category-font-size', controls.categorySize.value + 'px');
+                root.setProperty('--category-font-color', controls.categoryColor.value);
+                root.setProperty('--item-font-family', controls.itemFont.value);
+                root.setProperty('--item-font-size', controls.itemSize.value + 'px');
+                root.setProperty('--item-font-color', controls.itemColor.value);
+                root.setProperty('--desc-font-family', controls.descFont.value);
+                root.setProperty('--desc-font-size', controls.descSize.value + 'px');
+                root.setProperty('--desc-font-color', controls.descColor.value);
+                root.setProperty('--promo-title-font-family', controls.promoTitleFont.value);
+                root.setProperty('--promo-title-font-size', controls.promoTitleSize.value + 'px');
+                root.setProperty('--promo-title-font-color', controls.promoTitleColor.value);
+                root.setProperty('--promo-text-font-family', controls.promoTextFont.value);
+                root.setProperty('--promo-text-font-size', controls.promoTextSize.value + 'px');
+                root.setProperty('--promo-text-font-color', controls.promoTextColor.value);
+                root.setProperty('--promo-price-font-family', controls.promoPriceFont.value);
+                root.setProperty('--promo-price-font-size', controls.promoPriceSize.value + 'px');
+                root.setProperty('--promo-price-font-color', controls.promoPriceColor.value);
+                root.setProperty('--promo-text-align', controls.promoTextAlign.value);
+                root.setProperty('--overlay-opacity', state.overlayOpacity);
+            }
+            
+            function renderMenuHTML() {
+                if (!state.excelData) return '';
+                
+                // Добавляем логотип и дату
+                let headerHTML = '';
+                if (state.logoImage || controls.showDateCheck.checked) {
+                    headerHTML = `<div class="menu-header">
+                        ${state.logoImage ? `<img src="${state.logoImage}" alt="Логотип" class="menu-logo">` : '<div></div>'}
+                        ${controls.showDateCheck.checked ? `<div class="menu-date">${formatDate(new Date())}</div>` : ''}
+                    </div>`;
+                }
+                
+                switch (state.layout) {
+                    case 'grid': return headerHTML + renderGridMenu();
+                    case 'grid3x3': return headerHTML + renderGrid3x3Menu();
+                    case 'list':
+                    default: return headerHTML + renderListMenu();
+                }
+            }
+
+            function renderListMenu() {
+                let html = '';
+                const categories = [...new Set(state.excelData.map(item => item.category))];
+                
+                categories.forEach(category => {
+                    html += `<div class="menu-section"><div class="section-title">${category}</div>`;
+                    state.excelData.filter(item => item.category === category).forEach(item => {
+                        const volumePrices = controls.multiPriceCheck.checked ? 
+                            ['S', 'M', 'L'].map(v => item[v] ? `<span class="volume-price">${v}: ${formatPrice(item[v])}</span>` : '').join(' ') : '';
+                        
+                        const priceToShow = volumePrices || formatPrice(item.price) || formatPrice('0');
+                        
+                        html += `
+                        <div class="menu-item">
+                            <div class="item-content">
+                                <div class="item-name">${item.name}</div>
+                                ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                            </div>
+                            <div class="item-price">
+                                ${priceToShow}
+                            </div>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                });
+
+                const container = document.createElement('div');
+                container.className = 'menu-list-template';
+                container.innerHTML = `<div class="menu-items-container">${html}</div>`;
+                return container.outerHTML;
+            }
+            
+            function renderGridCellHTML(item, index) {
+                 const imgSrc = state.gridImages[index] || item.photo;
+                 return `
+                    <div class="grid-cell">
+                        <div class="item-name">${item.name}</div>
+                        ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : '<div></div>'}
+                        <div class="item-price">${formatPrice(item.price) || formatPrice('0')}</div>
+                        <div class="item-photo-container">
+                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn" data-index="${index}">+</button>`}
+                        </div>
+                    </div>`;
+            }
+
+            function renderGridMenu() {
+                let html = '';
+                const itemsToDisplay = state.excelData.slice(0, 4);
+                itemsToDisplay.forEach((item, index) => {
+                    html += renderGridCellHTML(item, index);
+                });
+                return `<div class="menu-grid-template">${html}</div>`;
+            }
+
+             function renderGrid3x3Menu() {
+                let html = '';
+                const itemsToDisplay = state.excelData.slice(0, 6);
+                itemsToDisplay.forEach((item, index) => {
+                     html += renderGridCellHTML(item, index);
+                });
+                return `<div class="menu-grid-template-3x3">${html}</div>`;
+            }
+
+            function renderPromoHTML() {
+                const title = controls.promoTitle.value;
+                const text = controls.promoText.value;
+                const price = controls.promoPrice.value;
+                const discount = controls.promoDiscount.value;
+                if (!title && !text && !price) return '';
+
+                // Добавляем иконки особенностей
+                let iconsHTML = '';
+                if (controls.veganCheck.checked) iconsHTML += `<img src="vegan.svg" alt="Веган" class="promo-icon">`;
+                if (controls.halalCheck.checked) iconsHTML += `<img src="halal.svg" alt="Халяль" class="promo-icon">`;
+                if (controls.glutenfreeCheck.checked) iconsHTML += `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon">`;
+
+                // Добавляем скидку если указана
+                const discountHTML = discount ? `<div class="promo-discount">-${discount}%</div>` : '';
+
+                return `
+                    <div class="promo-content">
+                        ${title ? `<div class="promo-title">${title}${iconsHTML}</div>` : ''}
+                        ${text ? `<div class="promo-text">${text}</div>` : ''}
+                        ${price ? `
+                        <div class="promo-price-container">
+                            <div class="promo-price">${formatPrice(price)}</div>
+                            ${discountHTML}
+                        </div>` : ''}
+                    </div>
+                `;
+            }
+
+            function render() {
+                applyStyles();
+                let html = '';
+                
+                const isCombinedGrid = state.currentTab === 'combined' && (state.combinedLayout === 'grid');
+                controls.menuPreview.classList.toggle('combined-grid-active', isCombinedGrid);
+                
+                // Показываем начальный плейсхолдер если нет данных
+                if ( (state.currentTab === 'menu' && !state.excelData) ||
+                     (state.currentTab === 'promo' && !controls.promoTitle.value && !controls.promoText.value) ||
+                     (state.currentTab === 'combined' && !state.excelData && (!controls.promoTitle.value && !controls.promoText.value))
+                ) {
+                    controls.menuPreview.innerHTML = `
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                        <h3>Здесь будет ваше меню</h3>
+                        <p>Настройте параметры слева и загрузите данные</p>
+                    </div>`;
+                    controls.menuPreview.style.backgroundImage = 'none';
+                    return;
+                }
+
+                if (state.currentTab === 'menu') {
+                    html = renderMenuHTML();
+                    controls.menuPreview.style.backgroundImage = 'none';
+                } else if (state.currentTab === 'promo') {
+                    const promoContainer = document.createElement('div');
+                    promoContainer.className = 'promo-template';
+                    promoContainer.innerHTML = renderPromoHTML();
+                    setPromoBackground(promoContainer);
+                    html = promoContainer.outerHTML;
+                } else if (state.currentTab === 'combined') {
+                    const menuPart = document.createElement('div');
+                    menuPart.className = 'combined-menu-part';
+                    
+                    // Для комбинированного вида используем выбранный layout (list или grid)
+                    const tempLayout = state.layout;
+                    state.layout = state.combinedLayout;
+                    menuPart.innerHTML = renderMenuHTML();
+                    state.layout = tempLayout;
+                    
+                    const promoPart = document.createElement('div');
+                    promoPart.className = 'combined-promo-part';
+                    promoPart.innerHTML = renderPromoHTML();
+                    setPromoBackground(promoPart);
+
+                    html = `<div class="combined-template">${menuPart.outerHTML}${promoPart.outerHTML}</div>`;
+                    
+                    // Добавляем предупреждение если выбран 3x3
+                    if (state.combinedLayout === 'grid3x3') {
+                        html += `<div class="warning-overlay">
+                            Лучше выбрать верстку "Список" или "2x2". 3x3 будет выглядеть некорректно.
+                        </div>`;
+                    }
+                }
+                
+                controls.menuPreview.innerHTML = html;
+            }
+
+            function setPromoBackground(element) {
+                const type = controls.promoBgType.value;
+                const position = controls.promoBgPos.value;
+                element.style.backgroundPosition = position;
+                if (type === 'color') {
+                    element.style.backgroundColor = controls.bgColorPicker.value;
+                    element.style.backgroundImage = 'none';
+                } else if ((type === 'image' || type === 'generate') && state.promoBgImage) {
+                    element.style.backgroundImage = `url(${state.promoBgImage})`;
+                    element.style.backgroundColor = '';
+                } else {
+                    element.style.backgroundColor = controls.bgColorPicker.value;
+                    element.style.backgroundImage = 'none';
+                }
+            }
+            
+            // --- API & DOWNLOAD ---
+            async function generateAIBg() {
+                const prompt = controls.bgPrompt.value.trim();
+                if (!prompt) { alert('Введите описание для генерации фона'); return; }
+
+                controls.loadingText.textContent = 'Отправка запроса...';
+                controls.loadingOverlay.style.display = 'flex';
+                
+                try {
+                    // Step 1: Request generation
+                    const runResponse = await fetch('https://api-key.fusionbrain.ai/key/api/v1/text2image/run', {
+                        method: 'POST',
+                        headers: { 
+                            'X-Key': `Key ${FUSION_BRAIN_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "model_id": 4, // Kandinsky 2.2
+                            "prompt": prompt,
+                            "negative_prompt": "",
+                            "styles": [],
+                            "width": 1920,
+                            "height": 1080
+                        })
+                    });
+                    const runData = await runResponse.json();
+                    if (!runData.uuid) throw new Error(runData.message || 'Failed to start generation');
+                    
+                    const uuid = runData.uuid;
+                    controls.loadingText.textContent = 'Генерация изображения... \nЭто может занять минуту.';
+
+                    // Step 2: Poll for result
+                    for (let i = 0; i < 30; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 4000)); // wait 4 seconds
+                        const statusResponse = await fetch(`https://api-key.fusionbrain.ai/key/api/v1/text2image/status/${uuid}`, {
+                           headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`}
+                        });
+                        const statusData = await statusResponse.json();
+                        
+                        if (statusData.status === 'DONE') {
+                            state.promoBgImage = 'data:image/jpeg;base64,' + statusData.images[0];
+                            controls.promoBgInfo.textContent = 'Сгенерированный фон';
+                            render();
+                            controls.loadingOverlay.style.display = 'none';
+                            return;
+                        } else if (statusData.status === 'FAIL') {
+                            throw new Error('Generation failed: ' + statusData.errorDescription);
+                        }
+                    }
+                     throw new Error('Generation timed out.');
+                } catch (error) {
+                    console.error('Ошибка генерации фона:', error);
+                    alert('Произошла ошибка при генерации фона: ' + error.message);
+                    controls.loadingOverlay.style.display = 'none';
+                }
+            }
+
+            function download(generator, filename) {
+                const target = controls.menuPreview.children[0];
+                if (!target) return;
+                
+                controls.loadingText.textContent = 'Сохранение...';
+                controls.loadingOverlay.style.display = 'flex';
+
+                html2canvas(target, { 
+                    backgroundColor: null, 
+                    scale: 2,
+                    width: state.exportWidth,
+                    height: state.exportHeight
+                }).then(canvas => {
+                    generator(canvas, filename);
+                    controls.loadingOverlay.style.display = 'none';
+                }).catch(err => {
+                    console.error('Download error:', err);
+                    alert('Ошибка сохранения файла.');
+                    controls.loadingOverlay.style.display = 'none';
+                });
+            }
+
+            function downloadAsPNG() {
+                download((canvas, filename) => {
+                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
+                }, 'menuboard.jpeg');
+            }
+            
+            function downloadAsPDF() {
+                 download((canvas, filename) => {
+                    const { jsPDF } = window.jspdf;
+                    const imgData = canvas.toDataURL('image/jpeg');
+                    const pdf = new jsPDF({ 
+                        orientation: state.aspectRatio === '9:16' ? 'portrait' : 'landscape', 
+                        unit: 'px', 
+                        format: [state.exportWidth, state.exportHeight] 
+                    });
+                    pdf.addImage(imgData, 'JPEG', 0, 0, state.exportWidth, state.exportHeight);
+                    pdf.save(filename);
+                }, 'menuboard.pdf');
+            }
+            
+            function showMp4Modal() {
+                controls.mp4Modal.style.display = 'flex';
+            }
+            
+            async function downloadAsMP4() {
+                const filename = controls.mp4Filename.value.trim() || 'menuboard';
+                const duration = parseInt(controls.mp4Duration.value) || 5;
+                
+                if (duration < 1 || duration > 60) {
+                    alert('Длительность должна быть от 1 до 60 секунд');
+                    return;
+                }
+                
+                controls.mp4Modal.style.display = 'none';
+                controls.loadingText.textContent = 'Мы сохраняем видео файл, это займет какое-то время. Подождите';
+                controls.loadingOverlay.style.display = 'flex';
+                
+                try {
+                    // Создаем canvas из превью
+                    const target = controls.menuPreview.children[0];
+                    const canvas = await html2canvas(target, { 
+                        backgroundColor: null, 
+                        scale: 2,
+                        width: state.exportWidth,
+                        height: state.exportHeight
+                    });
+                    
+                    // Загружаем FFmpeg если еще не загружен
+                    if (!ffmpeg.isLoaded()) {
+                        await ffmpeg.load();
+                    }
+                    
+                    // Конвертируем canvas в изображение
+                    const imageData = canvas.toDataURL('image/png');
+                    const imageBlob = await (await fetch(imageData)).blob();
+                    
+                    // Создаем видео с одной картинкой
+                    ffmpeg.FS('writeFile', 'input.png', await fetchFile(imageBlob));
+                    
+                    // Запускаем FFmpeg для создания видео
+                    await ffmpeg.run(
+                        '-loop', '1',
+                        '-i', 'input.png',
+                        '-c:v', 'libvpx-vp9',
+                        '-t', duration.toString(),
+                        '-pix_fmt', 'yuv420p',
+                        '-vf', `scale=${state.exportWidth}:${state.exportHeight}`,
+                        'output.webm'
+                    );
+                    
+                    // Конвертируем WebM в MP4
+                    await ffmpeg.run(
+                        '-i', 'output.webm',
+                        '-c:v', 'libx264',
+                        '-preset', 'fast',
+                        '-crf', '22',
+                        '-c:a', 'aac',
+                        '-b:a', '128k',
+                        'output.mp4'
+                    );
+                    
+                    // Получаем результат
+                    const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
+                    const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+                    
+                    // Сохраняем файл
+                    saveAs(mp4Blob, `${filename}.mp4`);
+                    
+                } catch (error) {
+                    console.error('Ошибка создания видео:', error);
+                    alert('Произошла ошибка при создании видео: ' + error.message);
+                } finally {
+                    controls.loadingOverlay.style.display = 'none';
+                }
+            }
+
+            init();
+        });
+    </script>
 </body>
 </html>
