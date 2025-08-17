@@ -45,7 +45,7 @@
             --transition-slow: 0.5s;
 
             /* Grid specific */
-            --grid-bg-color: #f5f5f5;
+            --grid-bg-color: transparent;
             --cell-bg-color: rgba(255, 255, 255, 0.85);
             --menu-bg-color: #eeeeee;
         }
@@ -69,7 +69,7 @@
         
         /* Новый хедер */
         .header {
-            height: 60px;
+            height: 100px;
             width: 100%;
             background-image: url('banner-adv.webp');
             background-size: cover;
@@ -80,11 +80,31 @@
             padding: 0 20px;
             position: relative;
             z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .header-text {
+            color: white;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .header-title {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .header-subtitle {
+            font-size: 18px;
         }
         
         .header-logo-container {
             display: flex;
             align-items: center;
+            position: absolute;
+            left: 20px;
         }
         
         .header-logo {
@@ -95,6 +115,8 @@
         .header-buttons {
             display: flex;
             gap: 10px;
+            position: absolute;
+            right: 20px;
         }
         
         .header-btn {
@@ -133,7 +155,7 @@
             flex: 1;
             gap: 20px;
             overflow: hidden;
-            height: calc(100% - 60px);
+            height: calc(100% - 100px);
             padding: 20px;
         }
         
@@ -306,6 +328,29 @@
             color: var(--text-secondary);
         }
         
+        .setting-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .setting-row .select {
+            flex: 2;
+        }
+        
+        .setting-row .input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .setting-row input[type="color"] {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+        }
+        
         .preview-wrapper {
             flex: 1;
             display: flex;
@@ -442,14 +487,45 @@
             position: relative;
             overflow: hidden;
         }
-        .grid-cell .item-name { grid-area: 1 / 1 / 2 / 2; font-weight: 700;}
+        
+        .grid-cell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%);
+            z-index: 1;
+        }
+        
+        .grid-cell .item-name, 
+        .grid-cell .item-description, 
+        .grid-cell .item-price {
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .grid-cell .item-name { 
+            grid-area: 1 / 1 / 2 / 2; 
+            font-weight: 700;
+            font-size: var(--grid-item-font-size);
+        }
         .grid-cell .item-description { 
             grid-area: 2 / 1 / 3 / 2; 
             align-self: start; 
             white-space: normal;
-            overflow: hidden; 
+            overflow: hidden;
+            font-size: var(--grid-desc-font-size);
         }
-        .grid-cell .item-price { grid-area: 3 / 1 / 4 / 2; align-self: end; text-align: left; margin-left: 0; }
+        .grid-cell .item-price { 
+            grid-area: 3 / 1 / 4 / 2; 
+            align-self: end; 
+            text-align: left; 
+            margin-left: 0;
+            font-size: var(--grid-price-font-size);
+        }
         .grid-cell .item-photo-container {
             grid-area: 1 / 2 / 4 / 3;
             position: relative;
@@ -459,10 +535,11 @@
             justify-content: center;
             align-items: center;
             height: 100%;
+            overflow: hidden;
         }
         .grid-cell .item-photo { 
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             position: absolute;
             z-index: 1;
@@ -487,6 +564,7 @@
             overflow: hidden;
             background-size: cover;
             background-position: center;
+            background-color: #333333;
         }
 
         .promo-content {
@@ -508,6 +586,7 @@
             line-height: 1.1;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
         .promo-text {
             font-size: var(--promo-text-font-size);
@@ -531,15 +610,15 @@
         .promo-discount {
             font-size: calc(var(--promo-price-font-size) * 0.7);
             font-family: var(--promo-price-font-family);
-            color: #ff5252;
+            color: var(--discount-font-color);
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--discount-bg-color);
             padding: 5px 10px;
             border-radius: 20px;
         }
         .promo-icon {
-            width: 30px;
-            height: 30px;
+            height: calc(var(--promo-title-font-size) * 0.8);
+            width: auto;
             margin-left: 15px;
         }
         
@@ -561,6 +640,7 @@
             overflow: hidden;
             background-size: cover;
             background-position: center;
+            background-color: #333333;
         }
         /* Special styles for 2-in-1 with grid */
         .combined-grid-active .combined-promo-part {
@@ -842,6 +922,10 @@
         <div class="header-logo-container">
             <img src="logo.svg" alt="Логотип" class="header-logo">
         </div>
+        <div class="header-text">
+            <div class="header-title">12+1</div>
+            <div class="header-subtitle">При покупке подписки на год, месяц в подарок!</div>
+        </div>
         <div class="header-buttons">
             <a href="https://zvuk-b2b.com" class="header-btn trial">Попробовать сервис</a>
             <a href="https://app.zvuk-b2b.com" class="header-btn login">Вход в ЛК</a>
@@ -934,10 +1018,11 @@
                                 <option value="'Playfair Display', serif">Playfair Display</option>
                                 <option value="'Lato', sans-serif">Lato</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
                                 <option value="'Merriweather', serif">Merriweather</option>
                                 <option value="'Noto Serif', serif">Noto Serif</option>
-                                <option value="'Bad Script', cursive">Bad Script</option>
-                                <option value="'Marck Script', cursive">Marck Script</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
                             </select>
                             <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
                             <input type="color" id="category-color-picker" value="#00b398">
@@ -949,13 +1034,16 @@
                         <div class="setting-row">
                             <select id="item-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
                                 <option value="'Lato', sans-serif">Lato</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
                                 <option value="'Raleway', sans-serif">Raleway</option>
                                 <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
                                 <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                <option value="'Exo 2', sans-serif">Exo 2</option>
                             </select>
                             <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
                             <input type="color" id="item-color-picker" value="#3d435c">
@@ -967,13 +1055,40 @@
                         <div class="setting-row">
                             <select id="desc-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
                                 <option value="'Lato', sans-serif">Lato</option>
-                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
                                 <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
                             </select>
                             <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
                             <input type="color" id="desc-color-picker" value="#667099">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group grid-color-item">
+                        <label>Шрифт стоимости (сетка):</label>
+                        <div class="setting-row">
+                            <select id="price-font-select" class="select">
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                            </select>
+                            <input type="number" id="price-font-size" class="input" value="60" min="10" max="100">
+                            <input type="color" id="price-color-picker" value="#ffffff">
                         </div>
                     </div>
                 </div>
@@ -986,11 +1101,17 @@
                             <select id="promo-title-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
                                 <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
                                 <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
                             </select>
-                            <input type="number" id="promo-title-size" class="input" value="60" min="10" max="180">
+                            <input type="number" id="promo-title-size" class="input" value="145" min="10" max="180">
                             <input type="color" id="promo-title-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1001,11 +1122,18 @@
                         <div class="setting-row">
                             <select id="promo-text-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
                                 <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
                                 <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
                             </select>
-                            <input type="number" id="promo-text-size" class="input" value="30" min="10" max="100">
+                            <input type="number" id="promo-text-size" class="input" value="100" min="10" max="100">
                             <input type="color" id="promo-text-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1017,9 +1145,17 @@
                             <select id="promo-price-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
                             </select>
-                            <input type="number" id="promo-price-size" class="input" value="40" min="10" max="180">
+                            <input type="number" id="promo-price-size" class="input" value="120" min="10" max="180">
                             <input type="color" id="promo-price-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1027,6 +1163,11 @@
                     <div class="control-group">
                         <label>Скидка:</label>
                         <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %">
+                        <div class="setting-row">
+                            <input type="number" id="promo-discount-size" class="input" value="84" min="10" max="180" placeholder="Размер шрифта">
+                            <input type="color" id="discount-font-color" value="#ff5252" placeholder="Цвет текста">
+                            <input type="color" id="discount-bg-color" value="rgba(255, 255, 255, 0.2)" placeholder="Цвет фона">
+                        </div>
                     </div>
                     
                     <div class="control-group">
@@ -1059,7 +1200,6 @@
                          <select id="promo-bg-type-select" class="select">
                             <option value="color">Сплошной цвет</option>
                             <option value="image">Загрузить изображение</option>
-                            <option value="generate">Сгенерировать (AI)</option>
                         </select>
                          <div id="bg-position-container" style="display: none;">
                             <label>Расположение картинки:</label>
@@ -1070,16 +1210,12 @@
                             </select>
                         </div>
                         <div id="bg-color-container">
-                            <input type="color" id="bg-color-picker" value="#4a6baf" style="width: 100%; height: 40px;">
+                            <input type="color" id="bg-color-picker" value="#333333" style="width: 100%; height: 40px;">
                         </div>
                         <div id="bg-image-container" style="display: none;">
                             <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Выберите файл</button>
                             <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
                             <div class="file-info" id="bg-file-info">Изображение не загружено</div>
-                        </div>
-                        <div id="bg-generate-container" style="display: none;">
-                            <input type="text" id="bg-prompt" class="input" placeholder="Опишите фон для генерации...">
-                            <button class="btn" id="generate-bg-btn" style="background:var(--primary)">Сгенерировать</button>
                         </div>
                     </div>
                 </div>
@@ -1196,10 +1332,16 @@
                 descFont: getEl('desc-font-select'),
                 descSize: getEl('desc-font-size'),
                 descColor: getEl('desc-color-picker'),
+                priceFont: getEl('price-font-select'),
+                priceSize: getEl('price-font-size'),
+                priceColor: getEl('price-color-picker'),
                 promoTitle: getEl('promo-title-input'),
                 promoText: getEl('promo-text-input'),
                 promoPrice: getEl('promo-price-input'),
                 promoDiscount: getEl('promo-discount-input'),
+                promoDiscountSize: getEl('promo-discount-size'),
+                discountFontColor: getEl('discount-font-color'),
+                discountBgColor: getEl('discount-bg-color'),
                 veganCheck: getEl('vegan-checkbox'),
                 halalCheck: getEl('halal-checkbox'),
                 glutenfreeCheck: getEl('glutenfree-checkbox'),
@@ -1217,13 +1359,10 @@
                 promoBgPos: getEl('promo-bg-position-select'),
                 bgColorContainer: getEl('bg-color-container'),
                 bgImageContainer: getEl('bg-image-container'),
-                bgGenerateContainer: getEl('bg-generate-container'),
                 bgPositionContainer: getEl('bg-position-container'),
                 promoBgUpload: getEl('promo-background-upload'),
                 promoBgInfo: getEl('bg-file-info'),
                 bgColorPicker: getEl('bg-color-picker'),
-                bgPrompt: getEl('bg-prompt'),
-                generateBgBtn: getEl('generate-bg-btn'),
                 gridPhotoUpload: getEl('grid-photo-upload'),
                 menuPreview: getEl('menu-preview'),
                 downloadPngBtn: getEl('download-png-btn'),
@@ -1259,10 +1398,6 @@
                 overlayOpacity: 0.5
             };
             
-            // --- API KEYS ---
-            const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
-            const FUSION_BRAIN_SECRET_KEY = '';
-
             // Определяем валюту по стране пользователя
             function detectCurrency() {
                 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1336,6 +1471,7 @@
                  controls.categoryFont, controls.categorySize, controls.categoryColor,
                  controls.itemFont, controls.itemSize, controls.itemColor,
                  controls.descFont, controls.descSize, controls.descColor,
+                 controls.priceFont, controls.priceSize, controls.priceColor,
                  controls.gridBgColorPicker, controls.cellBgColorPicker,
                  controls.showDateCheck].forEach(el => {
                     el.addEventListener('input', render);
@@ -1344,6 +1480,7 @@
                 
                 // Promo Controls
                 [controls.promoTitle, controls.promoText, controls.promoPrice, controls.promoDiscount,
+                 controls.promoDiscountSize, controls.discountFontColor, controls.discountBgColor,
                  controls.veganCheck, controls.halalCheck, controls.glutenfreeCheck,
                  controls.promoTextAlign, controls.promoTitleFont, controls.promoTitleSize,
                  controls.promoTitleColor, controls.promoTextFont, controls.promoTextSize,
@@ -1356,7 +1493,6 @@
 
                 controls.promoBgType.addEventListener('change', updatePromoBgControls);
                 controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
-                controls.generateBgBtn.addEventListener('click', generateAIBg);
                 
                 // Logo upload
                 controls.logoUpload.addEventListener('change', handleLogoUpload);
@@ -1426,8 +1562,7 @@
                 const type = controls.promoBgType.value;
                 controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
                 controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
-                controls.bgGenerateContainer.style.display = type === 'generate' ? 'block' : 'none';
-                controls.bgPositionContainer.style.display = (type === 'image' || type === 'generate') ? 'block' : 'none';
+                controls.bgPositionContainer.style.display = (type === 'image') ? 'block' : 'none';
                 render();
             }
 
@@ -1520,10 +1655,13 @@
                                 
                                 // Парсим строку в формате: Название - Описание - Цена
                                 const parts = line.split(' - ');
+                                const priceMatch = parts[2]?.match(/(\d+)\s*(₽|руб|₸|BYN)/i);
+                                const price = priceMatch ? priceMatch[1] : parts[2]?.trim() || '';
+                                
                                 const item = {
                                     name: parts[0]?.trim() || '',
                                     description: parts[1]?.trim() || '',
-                                    price: parts[2]?.trim() || '',
+                                    price: price,
                                     category: currentCategory
                                 };
                                 
@@ -1618,17 +1756,22 @@
                 root.setProperty('--desc-font-family', controls.descFont.value);
                 root.setProperty('--desc-font-size', controls.descSize.value + 'px');
                 root.setProperty('--desc-font-color', controls.descColor.value);
+                root.setProperty('--grid-item-font-size', '66pt');
+                root.setProperty('--grid-desc-font-size', '24pt');
+                root.setProperty('--grid-price-font-size', controls.priceSize.value + 'pt');
                 root.setProperty('--promo-title-font-family', controls.promoTitleFont.value);
-                root.setProperty('--promo-title-font-size', controls.promoTitleSize.value + 'px');
+                root.setProperty('--promo-title-font-size', controls.promoTitleSize.value + 'pt');
                 root.setProperty('--promo-title-font-color', controls.promoTitleColor.value);
                 root.setProperty('--promo-text-font-family', controls.promoTextFont.value);
-                root.setProperty('--promo-text-font-size', controls.promoTextSize.value + 'px');
+                root.setProperty('--promo-text-font-size', controls.promoTextSize.value + 'pt');
                 root.setProperty('--promo-text-font-color', controls.promoTextColor.value);
                 root.setProperty('--promo-price-font-family', controls.promoPriceFont.value);
-                root.setProperty('--promo-price-font-size', controls.promoPriceSize.value + 'px');
+                root.setProperty('--promo-price-font-size', controls.promoPriceSize.value + 'pt');
                 root.setProperty('--promo-price-font-color', controls.promoPriceColor.value);
                 root.setProperty('--promo-text-align', controls.promoTextAlign.value);
                 root.setProperty('--overlay-opacity', state.overlayOpacity);
+                root.setProperty('--discount-font-color', controls.discountFontColor.value);
+                root.setProperty('--discount-bg-color', controls.discountBgColor.value);
             }
             
             function renderMenuHTML() {
@@ -1789,13 +1932,6 @@
                     setPromoBackground(promoPart);
 
                     html = `<div class="combined-template">${menuPart.outerHTML}${promoPart.outerHTML}</div>`;
-                    
-                    // Добавляем предупреждение если выбран 3x3
-                    if (state.combinedLayout === 'grid3x3') {
-                        html += `<div class="warning-overlay">
-                            Лучше выбрать верстку "Список" или "2x2". 3x3 будет выглядеть некорректно.
-                        </div>`;
-                    }
                 }
                 
                 controls.menuPreview.innerHTML = html;
@@ -1808,7 +1944,7 @@
                 if (type === 'color') {
                     element.style.backgroundColor = controls.bgColorPicker.value;
                     element.style.backgroundImage = 'none';
-                } else if ((type === 'image' || type === 'generate') && state.promoBgImage) {
+                } else if (type === 'image' && state.promoBgImage) {
                     element.style.backgroundImage = `url(${state.promoBgImage})`;
                     element.style.backgroundColor = '';
                 } else {
@@ -1817,63 +1953,6 @@
                 }
             }
             
-            // --- API & DOWNLOAD ---
-            async function generateAIBg() {
-                const prompt = controls.bgPrompt.value.trim();
-                if (!prompt) { alert('Введите описание для генерации фона'); return; }
-
-                controls.loadingText.textContent = 'Отправка запроса...';
-                controls.loadingOverlay.style.display = 'flex';
-                
-                try {
-                    // Step 1: Request generation
-                    const runResponse = await fetch('https://api-key.fusionbrain.ai/key/api/v1/text2image/run', {
-                        method: 'POST',
-                        headers: { 
-                            'X-Key': `Key ${FUSION_BRAIN_API_KEY}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "model_id": 4, // Kandinsky 2.2
-                            "prompt": prompt,
-                            "negative_prompt": "",
-                            "styles": [],
-                            "width": 1920,
-                            "height": 1080
-                        })
-                    });
-                    const runData = await runResponse.json();
-                    if (!runData.uuid) throw new Error(runData.message || 'Failed to start generation');
-                    
-                    const uuid = runData.uuid;
-                    controls.loadingText.textContent = 'Генерация изображения... \nЭто может занять минуту.';
-
-                    // Step 2: Poll for result
-                    for (let i = 0; i < 30; i++) {
-                        await new Promise(resolve => setTimeout(resolve, 4000)); // wait 4 seconds
-                        const statusResponse = await fetch(`https://api-key.fusionbrain.ai/key/api/v1/text2image/status/${uuid}`, {
-                           headers: { 'X-Key': `Key ${FUSION_BRAIN_API_KEY}`}
-                        });
-                        const statusData = await statusResponse.json();
-                        
-                        if (statusData.status === 'DONE') {
-                            state.promoBgImage = 'data:image/jpeg;base64,' + statusData.images[0];
-                            controls.promoBgInfo.textContent = 'Сгенерированный фон';
-                            render();
-                            controls.loadingOverlay.style.display = 'none';
-                            return;
-                        } else if (statusData.status === 'FAIL') {
-                            throw new Error('Generation failed: ' + statusData.errorDescription);
-                        }
-                    }
-                     throw new Error('Generation timed out.');
-                } catch (error) {
-                    console.error('Ошибка генерации фона:', error);
-                    alert('Произошла ошибка при генерации фона: ' + error.message);
-                    controls.loadingOverlay.style.display = 'none';
-                }
-            }
-
             function download(generator, filename) {
                 const target = controls.menuPreview.children[0];
                 if (!target) return;
