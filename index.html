@@ -330,6 +330,8 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
                 
         .preview-actions {
@@ -438,7 +440,7 @@
         }
 
         .grid-cell {
-            background-color: var(--cell-bg-color);
+            background-color: var(--grid-bg-color);
             backdrop-filter: blur(5px);
             border-radius: var(--border-radius);
             padding: 15px;
@@ -456,6 +458,7 @@
             background-color: rgba(0,0,0,0.5);
             padding: 5px;
             color: white;
+            z-index: 2;
         }
         
         .grid-cell .item-description { 
@@ -466,6 +469,7 @@
             background-color: rgba(0,0,0,0.5);
             padding: 5px;
             color: white;
+            z-index: 2;
         }
         
         .grid-cell .item-price { 
@@ -479,6 +483,7 @@
             font-family: var(--price-font-family);
             font-size: var(--price-font-size);
             color: var(--price-font-color);
+            z-index: 2;
         }
         
         .grid-cell .item-photo-container {
@@ -544,6 +549,7 @@
             line-height: 1.1;
             display: flex;
             align-items: center;
+            justify-content: var(--promo-text-align, flex-start);
         }
         
         .promo-text {
@@ -552,6 +558,7 @@
             color: var(--promo-text-font-color);
             margin-bottom: 30px; 
             line-height: 1.3;
+            text-align: var(--promo-text-align, left);
         }
         
         .promo-price-container {
@@ -559,6 +566,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            justify-content: var(--promo-text-align, flex-start);
         }
         
         .promo-price {
@@ -579,8 +587,8 @@
         }
         
         .promo-icon {
-            width: 30px;
-            height: 30px;
+            height: calc(var(--promo-title-font-size) * 1.2);
+            width: auto;
             margin-left: 15px;
         }
         
@@ -636,6 +644,7 @@
             align-items: center;
             padding: 15px 30px;
             background-color: var(--menu-bg-color);
+            border-bottom: 1px solid var(--border);
         }
         
         .menu-logo {
@@ -907,6 +916,13 @@
             border: none;
             background: none;
         }
+
+        /* Особенности в акции */
+        .promo-features {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -989,10 +1005,6 @@
                             <div class="color-picker-item grid-color-item">
                                 <label>Фон сетки</label>
                                 <input type="color" id="grid-bg-color-picker" value="#f5f5f5">
-                            </div>
-                            <div class="color-picker-item grid-color-item">
-                                <label>Фон ячейки</label>
-                                <input type="color" id="cell-bg-color-picker" value="#ffffff">
                             </div>
                         </div>
                     </div>
@@ -1132,7 +1144,7 @@
                     
                     <div class="control-group">
                         <label>Скидка:</label>
-                        <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %">
+                        <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %" min="0" max="100">
                         <div class="setting-row">
                             <input type="number" id="promo-discount-size" class="input" value="84" min="10" max="180">
                             <input type="color" id="discount-color-picker" value="#ff5252">
@@ -1142,17 +1154,19 @@
                     
                     <div class="control-group">
                         <label>Особенности:</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="vegan-checkbox">
-                            <label for="vegan-checkbox">Веган</label>
-                        </div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="halal-checkbox">
-                            <label for="halal-checkbox">Халяль</label>
-                        </div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="glutenfree-checkbox">
-                            <label for="glutenfree-checkbox">Без глютена</label>
+                        <div class="promo-features">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="vegan-checkbox">
+                                <label for="vegan-checkbox">Веган</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="halal-checkbox">
+                                <label for="halal-checkbox">Халяль</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="glutenfree-checkbox">
+                                <label for="glutenfree-checkbox">Без глютена</label>
+                            </div>
                         </div>
                     </div>
                     
@@ -1291,7 +1305,6 @@
                 logoUpload: getEl('logo-upload'),
                 menuBgPicker: getEl('menu-bg-color-picker'),
                 gridBgColorPicker: getEl('grid-bg-color-picker'),
-                cellBgColorPicker: getEl('cell-bg-color-picker'),
                 gridColorItems: document.querySelectorAll('.grid-color-item'),
                 categoryFont: getEl('category-font-select'),
                 categorySize: getEl('category-font-size'),
@@ -1329,13 +1342,10 @@
                 promoBgPos: getEl('promo-bg-position-select'),
                 bgColorContainer: getEl('bg-color-container'),
                 bgImageContainer: getEl('bg-image-container'),
-                bgGenerateContainer: getEl('bg-generate-container'),
                 bgPositionContainer: getEl('bg-position-container'),
                 promoBgUpload: getEl('promo-background-upload'),
                 promoBgInfo: getEl('bg-file-info'),
                 bgColorPicker: getEl('bg-color-picker'),
-                bgPrompt: getEl('bg-prompt'),
-                generateBgBtn: getEl('generate-bg-btn'),
                 gridPhotoUpload: getEl('grid-photo-upload'),
                 menuPreview: getEl('menu-preview'),
                 downloadPngBtn: getEl('download-png-btn'),
@@ -1449,8 +1459,7 @@
                  controls.itemFont, controls.itemSize, controls.itemColor,
                  controls.descFont, controls.descSize, controls.descColor,
                  controls.priceFont, controls.priceSize, controls.priceColor,
-                 controls.gridBgColorPicker, controls.cellBgColorPicker,
-                 controls.showDateCheck].forEach(el => {
+                 controls.gridBgColorPicker, controls.showDateCheck].forEach(el => {
                     el.addEventListener('input', render);
                     el.addEventListener('change', render);
                  });
@@ -1723,7 +1732,6 @@
                 const root = document.documentElement.style;
                 root.setProperty('--menu-bg-color', controls.menuBgPicker.value);
                 root.setProperty('--grid-bg-color', controls.gridBgColorPicker.value);
-                root.setProperty('--cell-bg-color', controls.cellBgColorPicker.value);
                 root.setProperty('--category-font-family', controls.categoryFont.value);
                 root.setProperty('--category-font-size', controls.categorySize.value + 'px');
                 root.setProperty('--category-font-color', controls.categoryColor.value);
@@ -1843,9 +1851,9 @@
 
                 // Добавляем иконки особенностей
                 let iconsHTML = '';
-                if (controls.veganCheck.checked) iconsHTML += `<img src="vegan.svg" alt="Веган" class="promo-icon" style="height: ${controls.promoTitleSize.value}px;">`;
-                if (controls.halalCheck.checked) iconsHTML += `<img src="halal.svg" alt="Халяль" class="promo-icon" style="height: ${controls.promoTitleSize.value}px;">`;
-                if (controls.glutenfreeCheck.checked) iconsHTML += `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon" style="height: ${controls.promoTitleSize.value}px;">`;
+                if (controls.veganCheck.checked) iconsHTML += `<img src="vegan.svg" alt="Веган" class="promo-icon">`;
+                if (controls.halalCheck.checked) iconsHTML += `<img src="halal.svg" alt="Халяль" class="promo-icon">`;
+                if (controls.glutenfreeCheck.checked) iconsHTML += `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon">`;
 
                 // Добавляем скидку если указана
                 const discountHTML = discount ? `<div class="promo-discount">-${discount}%</div>` : '';
@@ -1932,7 +1940,7 @@
             
             // --- API & DOWNLOAD ---
             function download(generator, filename) {
-                const target = controls.menuPreview.children[0];
+                const target = document.querySelector('.preview-container');
                 if (!target) return;
                 
                 controls.loadingText.textContent = 'Сохранение...';
@@ -1978,7 +1986,7 @@
                 
                 try {
                     // Создаем canvas с нужным разрешением
-                    const target = controls.menuPreview.children[0];
+                    const target = document.querySelector('.preview-container');
                     const canvas = await html2canvas(target, { 
                         backgroundColor: null, 
                         scale: 2,
