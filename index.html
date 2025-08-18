@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор менюборда</title>
-    <!-- Расширенная библиотека Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -21,17 +23,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bad+Script&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         /* Основные стили из cssstyle3.css */
         :root {
-            --primary: #00b398;
-            --primary-hover: #008f79;
-            --primary-active: #005c4e;
-            --primary-light: #e0f2f0;
+            --primary: #6A36FF;
+            --primary-hover: #582cd8;
+            --primary-active: #4522a9;
+            --primary-light: #f0ebff;
             --text-main: #1A1D1F;
             --text-secondary: #3d435c;
             --text-inactive: #667099;
@@ -39,25 +41,24 @@
             --background-light: #f6f6f9;
             --background-dark: #f0f0f5;
             --placeholder: #9A9FA5;
-            --border-radius: 12px;
+            --border-radius: 8px;
             --transition-fast: 0.15s;
             --transition-medium: 0.3s;
             --transition-slow: 0.5s;
 
             /* Grid specific */
             --grid-bg-color: transparent;
-            --cell-bg-color: rgba(255, 255, 255, 0.85);
             --menu-bg-color: #eeeeee;
         }
-        
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', 'Roboto', sans-serif;
             color: var(--text-main);
             background-color: #f5f5f5;
             padding: 0;
@@ -66,7 +67,7 @@
             flex-direction: column;
             overflow: hidden;
         }
-        
+
         /* Новый хедер */
         .header {
             height: 60px;
@@ -81,60 +82,60 @@
             position: relative;
             z-index: 100;
         }
-        
+
         .header-logo-container {
             display: flex;
             align-items: center;
         }
-        
+
         .header-logo {
             height: 30px;
             object-fit: contain;
         }
-        
+
         .header-buttons {
             display: flex;
             gap: 10px;
         }
-        
+
         .header-text {
             color: white;
             font-weight: bold;
             font-size: 16px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
-        
+
         .header-btn {
             padding: 8px 16px;
             border-radius: var(--border-radius);
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', 'Roboto', sans-serif;
             font-weight: 500;
             font-size: 14px;
             cursor: pointer;
             transition: all var(--transition-medium);
             text-decoration: none;
         }
-        
+
         .header-btn.trial {
             background-color: var(--primary);
             color: white;
             border: none;
         }
-        
+
         .header-btn.trial:hover {
             background-color: var(--primary-hover);
         }
-        
+
         .header-btn.login {
             background-color: var(--background-light);
             color: var(--text-secondary);
             border: 1px solid var(--border);
         }
-        
+
         .header-btn.login:hover {
             background-color: #e8e8f0;
         }
-        
+
         .main-container {
             display: flex;
             flex: 1;
@@ -143,7 +144,7 @@
             height: calc(100% - 60px);
             padding: 20px;
         }
-        
+
         /* Кнопки */
         .btn {
             font-family: 'Inter', sans-serif;
@@ -163,38 +164,38 @@
             width: 100%;
             margin-bottom: 10px;
         }
-        
+
         .btn:hover {
             background-color: var(--primary-hover);
             transform: translateY(0px);
             box-shadow: 0 0px 0px rgba(0,0,0,0.15);
         }
-        
+
         .btn:active {
             background-color: var(--primary-active);
             transform: translateY(0);
             box-shadow: 0 0px 0px rgba(0,0,0,0.1);
         }
-        
+
         .btn-secondary {
             background-color: var(--background-light);
             color: var(--text-secondary);
             border: 1px solid var(--border);
         }
-        
+
         .btn-secondary:hover {
             background-color: #e8e8f0;
         }
-        
+
         /* Поля ввода */
         .input, .select {
             font-size: 14px;
             font-weight: 500;
             line-height: 20px;
             padding: 10px 12px;
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: var(--border-radius);
-            background-color: var(--background-light);
+            background-color: #fff;
             color: var(--text-secondary);
             outline: none;
             width: 100%;
@@ -202,11 +203,11 @@
             transition: all var(--transition-medium);
             margin-bottom: 16px;
         }
-        
+
         .input:hover, .select:hover {
             border-color: var(--primary-hover);
         }
-        
+
         .select {
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%239A9FA5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -214,27 +215,27 @@
             background-position: right 12px center;
             cursor: pointer;
         }
-        
+
         .input:focus, .select:focus {
             border-color: var(--primary);
             background-color: #fff;
-            box-shadow: 0 0 0 2px rgba(0, 179, 152, 0.1);
+            box-shadow: 0 0 0 3px rgba(106, 54, 255, 0.1);
         }
-        
+
         /* Чекбоксы */
         .checkbox-group {
             display: flex;
             align-items: center;
             margin-bottom: 16px;
         }
-        
+
         .checkbox-group input {
             width: 16px;
             height: 16px;
             margin-right: 8px;
             cursor: pointer;
         }
-        
+
         .checkbox-group label {
             color: var(--text-secondary);
             font-weight: 500;
@@ -242,7 +243,7 @@
             cursor: pointer;
             margin-bottom: 0;
         }
-        
+
         /* Остальные стили из оригинального файла */
         .controls-panel {
             background: white;
@@ -253,19 +254,19 @@
             flex-direction: column;
             height: 100%;
         }
-        
+
         .controls-content {
             flex: 1;
             overflow-y: auto;
             padding-right: 10px;
         }
-        
+
         .controls-footer {
             padding-top: 15px;
             border-top: 1px solid var(--border);
             margin-top: auto;
         }
-        
+
         .tab-buttons {
             display: flex;
             margin-bottom: 10px;
@@ -274,13 +275,14 @@
             background: white;
             z-index: 10;
         }
-        
+
         .tab-btn {
             display: flex;
             align-items: center;
             padding: 10px;
             background: none;
             border: none;
+            border-bottom: 2px solid transparent;
             cursor: pointer;
             font-weight: 600;
             transition: all var(--transition-medium);
@@ -292,19 +294,20 @@
             height: 20px;
             margin-right: 8px;
         }
-        
+
         .tab-btn.active {
             color: var(--primary);
+            border-bottom-color: var(--primary);
         }
-        
+
         .control-group {
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border);
         }
-        
+
         .control-group:last-child { border-bottom: none; }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -312,7 +315,7 @@
             font-size: 14px;
             color: var(--text-secondary);
         }
-        
+
         .preview-wrapper {
             flex: 1;
             display: flex;
@@ -320,7 +323,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .preview-container {
             width: 100%;
             background: transparent;
@@ -330,10 +333,9 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
         }
-                
+
         .preview-actions {
             padding: 15px 0 0 0;
             display: flex;
@@ -341,39 +343,41 @@
             width: 100%;
             max-width: 600px;
         }
-        
+
         .menu-preview {
             width: 100%;
             height: 100%;
             position: relative;
             background-color: var(--menu-bg-color);
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
             overflow: hidden;
         }
-        
+
         /* Стили для шаблона списка */
         .menu-list-template {
-            width: 100%;
-            height: 100%;
+            flex: 1; /* Take remaining space */
             display: flex;
             flex-direction: column;
-            padding: 30px;
             overflow: hidden;
         }
-        
+
         .menu-items-container {
             flex: 1;
-            overflow: hidden;
+            overflow-y: auto; /* Allow scrolling for menu items */
+            padding: 0 30px 30px 30px;
+        }
+
+        .menu-items-container.two-columns {
+            grid-template-columns: 1fr 1fr;
             display: grid;
             gap: 20px 40px;
         }
 
-        .menu-items-container.two-columns { grid-template-columns: 1fr 1fr; }
-        
         .menu-section { margin-bottom: 30px; }
-        
+
         .section-title {
             font-family: var(--category-font-family);
             font-size: var(--category-font-size);
@@ -383,7 +387,7 @@
             border-bottom: 2px solid var(--border);
             color: var(--category-font-color);
         }
-        
+
         .menu-item {
             display: flex;
             justify-content: space-between;
@@ -391,9 +395,9 @@
             padding-bottom: 15px;
             border-bottom: 1px dashed var(--border);
         }
-        
+
         .item-content { flex-grow: 1; }
-        
+
         .item-name {
             font-family: var(--item-font-family);
             font-weight: 500;
@@ -401,7 +405,7 @@
             color: var(--item-font-color);
             margin-bottom: 5px;
         }
-        
+
         .item-description {
             font-family: var(--desc-font-family);
             font-size: var(--desc-font-size);
@@ -409,7 +413,7 @@
             margin-bottom: 5px;
             font-weight: 300;
         }
-        
+
         .item-price {
             font-family: var(--item-font-family);
             font-weight: 700;
@@ -420,11 +424,10 @@
             text-align: right;
             min-width: 80px;
         }
-        
+
         /* Стили для шаблонов сетки */
         .menu-grid-template, .menu-grid-template-3x3 {
-            width: 100%;
-            height: 100%;
+            flex: 1;
             display: grid;
             gap: 15px;
             padding: 15px;
@@ -440,70 +443,60 @@
         }
 
         .grid-cell {
-            background-color: var(--grid-bg-color);
-            backdrop-filter: blur(5px);
             border-radius: var(--border-radius);
             padding: 15px;
-            display: grid;
-            grid-template-columns: 3fr 2fr;
-            grid-template-rows: auto 1fr auto;
-            gap: 5px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             position: relative;
             overflow: hidden;
+            background-color: rgba(0,0,0,0.3);
         }
         
-        .grid-cell .item-name { 
-            grid-area: 1 / 1 / 2 / 2; 
-            font-weight: 700;
-            background-color: rgba(0,0,0,0.5);
-            padding: 5px;
-            color: white;
+        .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price {
+            position: relative;
             z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+            padding: 5px 8px;
+            border-radius: 4px;
         }
-        
+        .grid-cell .item-name { 
+            font-weight: 700;
+            color: white;
+        }
         .grid-cell .item-description { 
-            grid-area: 2 / 1 / 3 / 2; 
+            flex-grow: 1;
+            margin: 10px 0;
             align-self: start; 
             white-space: normal;
             overflow: hidden;
-            background-color: rgba(0,0,0,0.5);
-            padding: 5px;
-            color: white;
-            z-index: 2;
+            color: #f0f0f0;
         }
-        
         .grid-cell .item-price { 
-            grid-area: 3 / 1 / 4 / 2; 
-            align-self: end; 
+            align-self: start; 
             text-align: left; 
             margin-left: 0;
-            background-color: rgba(0,0,0,0.5);
-            padding: 5px;
-            color: white;
             font-family: var(--price-font-family);
             font-size: var(--price-font-size);
             color: var(--price-font-color);
-            z-index: 2;
         }
-        
+
         .grid-cell .item-photo-container {
-            grid-area: 1 / 2 / 4 / 3;
-            position: relative;
-            background: #f0f0f0;
-            border-radius: 4px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .grid-cell .item-photo { 
-            width: 100%;
-            height: 100%;
+            width: 50%;
+            height: 50%;
             object-fit: cover;
-            position: absolute;
-            z-index: 1;
         }
         
         .grid-cell .upload-photo-btn {
@@ -515,7 +508,8 @@
             height: 40px;
             border-radius: 50%;
             color: #888;
-            z-index: 2;
+            position: relative;
+            z-index: 3;
         }
 
         /* Стили для шаблона "Акция" */
@@ -538,6 +532,7 @@
             padding: 40px;
             box-sizing: border-box;
             text-align: var(--promo-text-align, left);
+            align-items: var(--promo-align-items, flex-start);
         }
         
         .promo-title {
@@ -549,7 +544,7 @@
             line-height: 1.1;
             display: flex;
             align-items: center;
-            justify-content: var(--promo-text-align, flex-start);
+            gap: 15px;
         }
         
         .promo-text {
@@ -558,7 +553,6 @@
             color: var(--promo-text-font-color);
             margin-bottom: 30px; 
             line-height: 1.3;
-            text-align: var(--promo-text-align, left);
         }
         
         .promo-price-container {
@@ -566,7 +560,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            justify-content: var(--promo-text-align, flex-start);
         }
         
         .promo-price {
@@ -587,9 +580,9 @@
         }
         
         .promo-icon {
-            height: calc(var(--promo-title-font-size) * 1.2);
             width: auto;
-            margin-left: 15px;
+            object-fit: contain;
+            vertical-align: middle;
         }
         
         /* Стили для комбинированного шаблона */
@@ -605,6 +598,8 @@
             overflow: hidden;
             position: relative;
             background-color: var(--menu-bg-color);
+            display: flex; /* Added */
+            flex-direction: column; /* Added */
         }
         
         .combined-promo-part {
@@ -642,9 +637,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 20px 30px;
             background-color: var(--menu-bg-color);
-            border-bottom: 1px solid var(--border);
+            flex-shrink: 0; /* Prevent header from shrinking */
         }
         
         .menu-logo {
@@ -656,29 +651,11 @@
             font-family: var(--item-font-family);
             font-size: 14px;
             color: var(--text-secondary);
-            background-color: var(--menu-bg-color);
+            background-color: var(--background-dark);
             padding: 5px 10px;
             border-radius: 4px;
         }
-        
-        /* Оверлей для 3x3 предупреждения */
-        .warning-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, var(--overlay-opacity, 0.5));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
-        }
-        
+
         /* Модальные окна */
         .modal-overlay {
             position: fixed;
@@ -780,7 +757,7 @@
         
         .drop-area:hover, .drop-area.highlight {
             border-color: var(--primary);
-            background: rgba(0, 179, 152, 0.1);
+            background: var(--primary-light);
         }
         
         .file-info { 
@@ -814,7 +791,7 @@
         
         .layout-btn:hover {
             border-color: var(--primary);
-            background: rgba(0, 179, 152, 0.1);
+            background: var(--primary-light);
         }
         
         .layout-btn.active {
@@ -836,7 +813,7 @@
         /* Выбор цвета */
         .color-picker-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr); /* Changed to 2 columns */
             gap: 15px;
             align-items: center;
         }
@@ -857,40 +834,6 @@
         
         .grid-color-item {
             display: none;
-        }
-        
-        /* Ползунок */
-        .slider-container {
-            margin-bottom: 15px;
-        }
-        
-        .slider-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: var(--background-light);
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-        
-        .slider-value {
-            font-size: 12px;
-            color: var(--text-inactive);
-            text-align: right;
         }
         
         /* Строки настроек */
@@ -916,13 +859,6 @@
             border: none;
             background: none;
         }
-
-        /* Особенности в акции */
-        .promo-features {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
@@ -939,7 +875,7 @@
     
     <div class="main-container">
         <div class="controls-panel">
-            <h1 class="header-title">Генератор менюборда</h1>
+            <h1 class="header-title" style="font-size: 24px; margin-bottom: 15px;">Генератор менюборда</h1>
 
             <div class="tab-buttons">
                 <button class="tab-btn active" data-tab="menu"><img src="menu.svg" alt="Меню"> Меню</button>
@@ -1013,6 +949,7 @@
                         <label>Шрифт категорий:</label>
                         <div class="setting-row">
                             <select id="category-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
@@ -1025,7 +962,7 @@
                                 <option value="'Marck Script', cursive">Marck Script</option>
                             </select>
                             <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
-                            <input type="color" id="category-color-picker" value="#00b398">
+                            <input type="color" id="category-color-picker" value="#6A36FF">
                         </div>
                     </div>
                     
@@ -1033,6 +970,7 @@
                         <label>Шрифт пунктов:</label>
                         <div class="setting-row">
                             <select id="item-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
                                 <option value="'Lato', sans-serif">Lato</option>
@@ -1051,6 +989,7 @@
                         <label>Шрифт описания:</label>
                         <div class="setting-row">
                             <select id="desc-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
                                 <option value="'Lato', sans-serif">Lato</option>
@@ -1066,13 +1005,14 @@
                         <label>Шрифт стоимости (для сетки):</label>
                         <div class="setting-row">
                             <select id="price-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
                                 <option value="'Playfair Display', serif">Playfair Display</option>
                                 <option value="'Merriweather', serif">Merriweather</option>
                             </select>
-                            <input type="number" id="price-font-size" class="input" value="60" min="10" max="100">
+                            <input type="number" id="price-font-size" class="input" value="22" min="10" max="100">
                             <input type="color" id="price-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1084,6 +1024,7 @@
                         <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок">
                         <div class="setting-row">
                             <select id="promo-title-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
@@ -1095,7 +1036,7 @@
                                 <option value="'Comfortaa', cursive">Comfortaa</option>
                                 <option value="'Exo 2', sans-serif">Exo 2</option>
                             </select>
-                            <input type="number" id="promo-title-size" class="input" value="145" min="10" max="180">
+                            <input type="number" id="promo-title-size" class="input" value="72" min="10" max="180">
                             <input type="color" id="promo-title-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1105,6 +1046,7 @@
                         <input type="text" id="promo-text-input" class="input" placeholder="Введите текст">
                         <div class="setting-row">
                             <select id="promo-text-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Open Sans', sans-serif">Open Sans</option>
@@ -1116,7 +1058,7 @@
                                 <option value="'Comfortaa', cursive">Comfortaa</option>
                                 <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
                             </select>
-                            <input type="number" id="promo-text-size" class="input" value="100" min="10" max="100">
+                            <input type="number" id="promo-text-size" class="input" value="32" min="10" max="100">
                             <input type="color" id="promo-text-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1126,6 +1068,7 @@
                         <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
                         <div class="setting-row">
                             <select id="promo-price-font-select" class="select">
+                                <option value="'Inter', sans-serif">Inter</option>
                                 <option value="'Roboto', sans-serif">Roboto</option>
                                 <option value="'Montserrat', sans-serif">Montserrat</option>
                                 <option value="'Oswald', sans-serif">Oswald</option>
@@ -1137,7 +1080,7 @@
                                 <option value="'Ubuntu', sans-serif">Ubuntu</option>
                                 <option value="'Lato', sans-serif">Lato</option>
                             </select>
-                            <input type="number" id="promo-price-size" class="input" value="120" min="10" max="180">
+                            <input type="number" id="promo-price-size" class="input" value="80" min="10" max="180">
                             <input type="color" id="promo-price-color-picker" value="#ffffff">
                         </div>
                     </div>
@@ -1146,24 +1089,24 @@
                         <label>Скидка:</label>
                         <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %" min="0" max="100">
                         <div class="setting-row">
-                            <input type="number" id="promo-discount-size" class="input" value="84" min="10" max="180">
-                            <input type="color" id="discount-color-picker" value="#ff5252">
-                            <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
+                            <input type="number" id="promo-discount-size" class="input" value="60" min="10" max="180">
+                            <input type="color" id="discount-color-picker" value="#ffffff">
+                            <input type="color" id="discount-bg-color-picker" value="#ff5252">
                         </div>
                     </div>
                     
                     <div class="control-group">
                         <label>Особенности:</label>
-                        <div class="promo-features">
-                            <div class="checkbox-group">
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <div class="checkbox-group" style="margin-bottom: 0;">
                                 <input type="checkbox" id="vegan-checkbox">
                                 <label for="vegan-checkbox">Веган</label>
                             </div>
-                            <div class="checkbox-group">
+                            <div class="checkbox-group" style="margin-bottom: 0;">
                                 <input type="checkbox" id="halal-checkbox">
                                 <label for="halal-checkbox">Халяль</label>
                             </div>
-                            <div class="checkbox-group">
+                            <div class="checkbox-group" style="margin-bottom: 0;">
                                 <input type="checkbox" id="glutenfree-checkbox">
                                 <label for="glutenfree-checkbox">Без глютена</label>
                             </div>
@@ -1206,25 +1149,11 @@
                 
                 <div id="combined-controls" style="display: none;">
                     <div class="control-group">
-                        <label>Верстка меню:</label>
-                        <div class="layout-buttons">
-                           <button class="layout-btn active" data-combined-layout="list">
-                                <img src="menu.svg" alt="">
-                                Список
-                            </button>
-                            <button class="layout-btn" data-combined-layout="grid">
-                                <img src="2v1.svg" alt="">
-                                2x2
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Затемнение предупреждения:</label>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="100" value="50" class="slider" id="overlay-opacity-slider">
-                            <div class="slider-value" id="overlay-opacity-value">50%</div>
-                        </div>
+                         <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.5;">
+                            Внесите нужные изменения в разделах <b>Меню</b> и <b>Акция</b>.
+                            <br><br>
+                            Эта комбинированная страница является совмещенным вариантом уже созданных вами страниц.
+                         </p>
                     </div>
                 </div>
             </div>
@@ -1236,9 +1165,9 @@
         </div>
         
         <div class="preview-wrapper">
-            <div class="preview-container">
+            <div class="preview-container" id="preview-container">
                 <div class="menu-preview" id="menu-preview">
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px; margin: auto;">
                         <h3>Здесь будет ваше меню</h3>
                         <p>Настройте параметры слева и загрузите данные</p>
                     </div>
@@ -1247,7 +1176,6 @@
         </div>
     </div>
     
-    <!-- Модальное окно выбора пропорций -->
     <div class="modal-overlay" id="aspect-ratio-modal" style="display: flex;">
         <div class="modal">
             <div class="modal-title">Выберите пропорции превью</div>
@@ -1263,7 +1191,6 @@
         </div>
     </div>
     
-    <!-- Модальное окно для сохранения MP4 -->
     <div class="modal-overlay" id="mp4-modal" style="display: none;">
         <div class="modal">
             <div class="modal-title">Сохранить как MP4</div>
@@ -1348,6 +1275,7 @@
                 bgColorPicker: getEl('bg-color-picker'),
                 gridPhotoUpload: getEl('grid-photo-upload'),
                 menuPreview: getEl('menu-preview'),
+                previewContainer: getEl('preview-container'),
                 downloadPngBtn: getEl('download-png-btn'),
                 downloadMp4Btn: getEl('download-mp4-btn'),
                 loadingOverlay: getEl('loading-overlay'),
@@ -1360,15 +1288,12 @@
                 mp4Duration: getEl('mp4-duration'),
                 cancelMp4: getEl('cancel-mp4'),
                 saveMp4: getEl('save-mp4'),
-                overlayOpacitySlider: getEl('overlay-opacity-slider'),
-                overlayOpacityValue: getEl('overlay-opacity-value')
             };
 
             // State
             let state = {
                 currentTab: 'menu',
                 layout: 'list',
-                combinedLayout: 'list',
                 excelData: null,
                 promoBgImage: null,
                 gridImages: {},
@@ -1378,13 +1303,8 @@
                 exportWidth: 1920,
                 exportHeight: 1080,
                 currency: '₽', // По умолчанию рубль
-                overlayOpacity: 0.5
             };
             
-            // --- API KEYS ---
-            const FUSION_BRAIN_API_KEY = '7BE81F273FA49A565F4BFFA787DE9D3C';
-            const FUSION_BRAIN_SECRET_KEY = '';
-
             // Определяем валюту по стране пользователя
             function detectCurrency() {
                 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1443,23 +1363,14 @@
                     render();
                 });
                 
-                // Combined layout buttons
-                document.querySelectorAll('[data-combined-layout]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        state.combinedLayout = btn.dataset.combinedLayout;
-                        document.querySelectorAll('[data-combined-layout]').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        render();
-                    });
-                });
-
                 // Menu Controls
                 [controls.showDescCheck, controls.multiPriceCheck, controls.menuBgPicker,
                  controls.categoryFont, controls.categorySize, controls.categoryColor,
                  controls.itemFont, controls.itemSize, controls.itemColor,
                  controls.descFont, controls.descSize, controls.descColor,
                  controls.priceFont, controls.priceSize, controls.priceColor,
-                 controls.gridBgColorPicker, controls.showDateCheck].forEach(el => {
+                 controls.gridBgColorPicker, 
+                 controls.showDateCheck].forEach(el => {
                     el.addEventListener('input', render);
                     el.addEventListener('change', render);
                  });
@@ -1506,6 +1417,7 @@
                 controls.confirmAspectRatio.addEventListener('click', () => {
                     controls.aspectRatioModal.style.display = 'none';
                     updatePreviewAspectRatio();
+                    render(); // Re-render to apply aspect ratio correctly
                 });
                 
                 // MP4 modal
@@ -1514,19 +1426,10 @@
                 });
                 
                 controls.saveMp4.addEventListener('click', downloadAsMP4);
-                
-                // Overlay opacity slider
-                controls.overlayOpacitySlider.addEventListener('input', function() {
-                    state.overlayOpacity = this.value / 100;
-                    controls.overlayOpacityValue.textContent = `${this.value}%`;
-                    render();
-                });
             }
             
             function updatePreviewAspectRatio() {
-                const previewContainer = document.querySelector('.preview-container');
-                const [width, height] = state.aspectRatio.split(':');
-                previewContainer.style.aspectRatio = `${width} / ${height}`;
+                controls.previewContainer.style.aspectRatio = state.aspectRatio.replace(':', ' / ');
             }
 
             // --- UI UPDATE FUNCTIONS ---
@@ -1574,7 +1477,6 @@
                     if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv')) {
                         handleExcelFile(file);
                     } else if (file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-                        // Для Word файлов можно использовать API для парсинга
                         alert('Парсинг Word файлов пока не реализован. Пожалуйста, используйте Excel или TXT.');
                     } else if (file.name.endsWith('.txt')) {
                         handleTextFile(file);
@@ -1592,18 +1494,17 @@
                             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                             const jsonData = XLSX.utils.sheet_to_json(worksheet);
                             
-                            // Нормализация ключей
                             state.excelData = jsonData.map(row => {
-                                const nameKeys = ['Название', 'Наименование', 'блюдо'];
-                                const descKeys = ['Описание', 'состав'];
-                                const priceKeys = ['Цена', 'Стоимость', 'с ндс'];
-                                const categoryKeys = ['Категория', 'тип'];
+                                const nameKeys = ['Название', 'Наименование', 'блюдо', 'Name'];
+                                const descKeys = ['Описание', 'состав', 'Description'];
+                                const priceKeys = ['Цена', 'Стоимость', 'с ндс', 'Price'];
+                                const categoryKeys = ['Категория', 'тип', 'Category'];
                                 
                                 return {
                                     name: findValueByKeys(row, nameKeys) || '',
                                     description: findValueByKeys(row, descKeys) || '',
                                     price: findValueByKeys(row, priceKeys) || '',
-                                    photo: row['Фото'] || '',
+                                    photo: row['Фото'] || row['Photo'] || '',
                                     category: findValueByKeys(row, categoryKeys) || 'Основное меню',
                                     S: row['S'] || '', 
                                     M: row['M'] || '', 
@@ -1611,7 +1512,7 @@
                                 };
                             });
                             
-                            state.gridImages = {}; // Сброс изображений при загрузке нового файла
+                            state.gridImages = {};
                             render();
                         } catch (error) { 
                             alert('Ошибка при чтении файла: ' + error.message); 
@@ -1633,25 +1534,20 @@
                                 line = line.trim();
                                 if (!line) return;
                                 
-                                // Определяем категорию
                                 if (line.startsWith('#') || line.startsWith('*') || line.endsWith(':')) {
-                                    currentCategory = line.replace(/[#*:]/, '').trim();
+                                    currentCategory = line.replace(/[#*:]/g, '').trim();
                                     return;
                                 }
                                 
-                                // Парсим строку в формате: Название - Описание - Цена
                                 const parts = line.split(' - ');
-                                const priceMatch = parts[2]?.match(/(\d+)\s*(₽|руб|₸|BYN)/i);
-                                const price = priceMatch ? priceMatch[1] : parts[2]?.trim() || '';
-                                
-                                const item = {
-                                    name: parts[0]?.trim() || '',
-                                    description: parts[1]?.trim() || '',
-                                    price: price,
-                                    category: currentCategory
-                                };
-                                
-                                result.push(item);
+                                const priceMatch = parts[parts.length - 1]?.match(/(\d+[,.]?\d*)/);
+                                const price = priceMatch ? priceMatch[1] : '';
+                                const name = parts[0]?.trim() || '';
+                                const description = parts.length > 2 ? parts.slice(1, -1).join(' - ').trim() : '';
+
+                                if (name) {
+                                    result.push({ name, description, price, category: currentCategory });
+                                }
                             });
                             
                             state.excelData = result;
@@ -1666,8 +1562,13 @@
                 
                 function findValueByKeys(obj, keys) {
                     for (const key of keys) {
-                        if (obj[key] !== undefined) {
-                            return obj[key];
+                        if (obj[key] !== undefined) return obj[key];
+                        // Case-insensitive check
+                        const lowerKey = key.toLowerCase();
+                        for (const objKey in obj) {
+                            if (objKey.toLowerCase() === lowerKey) {
+                                return obj[objKey];
+                            }
                         }
                     }
                     return '';
@@ -1683,13 +1584,12 @@
             // --- IMAGE HANDLING ---
             function handleLogoUpload(e) {
                 if (e.target.files && e.target.files[0]) {
-                    const file = e.target.files[0];
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.logoImage = event.target.result;
                         render();
                     };
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(e.target.files[0]);
                 }
             }
 
@@ -1715,15 +1615,14 @@
 
             function handleGridPhotoFileChange(e) {
                 if (e.target.files && e.target.files[0] && state.currentGridTarget !== null) {
-                    const file = e.target.files[0];
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.gridImages[state.currentGridTarget] = event.target.result;
                         render();
                         state.currentGridTarget = null;
                     };
-                    reader.readAsDataURL(file);
-                    e.target.value = ''; // Reset input
+                    reader.readAsDataURL(e.target.files[0]);
+                    e.target.value = '';
                 }
             }
 
@@ -1755,27 +1654,33 @@
                 root.setProperty('--promo-price-font-color', controls.promoPriceColor.value);
                 root.setProperty('--discount-font-color', controls.discountColor.value);
                 root.setProperty('--discount-bg-color', controls.discountBgColor.value);
-                root.setProperty('--promo-text-align', controls.promoTextAlign.value);
-                root.setProperty('--overlay-opacity', state.overlayOpacity);
+                
+                const alignValue = controls.promoTextAlign.value;
+                let flexAlignItems = 'flex-start';
+                if (alignValue === 'center') flexAlignItems = 'center';
+                if (alignValue === 'right') flexAlignItems = 'flex-end';
+                root.setProperty('--promo-text-align', alignValue);
+                root.setProperty('--promo-align-items', flexAlignItems);
             }
             
-            function renderMenuHTML() {
-                if (!state.excelData) return '';
-                
-                // Добавляем логотип и дату
-                let headerHTML = '';
-                if (state.logoImage || controls.showDateCheck.checked) {
-                    headerHTML = `<div class="menu-header">
+            function renderMenuHeader() {
+                 if (state.logoImage || controls.showDateCheck.checked) {
+                    return `<div class="menu-header">
                         ${state.logoImage ? `<img src="${state.logoImage}" alt="Логотип" class="menu-logo">` : '<div></div>'}
                         ${controls.showDateCheck.checked ? `<div class="menu-date">${formatDate(new Date())}</div>` : ''}
                     </div>`;
                 }
+                return '';
+            }
+
+            function renderMenuContent() {
+                if (!state.excelData) return '';
                 
                 switch (state.layout) {
-                    case 'grid': return headerHTML + renderGridMenu();
-                    case 'grid3x3': return headerHTML + renderGrid3x3Menu();
+                    case 'grid': return renderGridMenu();
+                    case 'grid3x3': return renderGrid3x3Menu();
                     case 'list':
-                    default: return headerHTML + renderListMenu();
+                    default: return renderListMenu();
                 }
             }
 
@@ -1789,7 +1694,7 @@
                         const volumePrices = controls.multiPriceCheck.checked ? 
                             ['S', 'M', 'L'].map(v => item[v] ? `<span class="volume-price">${v}: ${formatPrice(item[v])}</span>` : '').join(' ') : '';
                         
-                        const priceToShow = volumePrices || formatPrice(item.price) || formatPrice('0');
+                        const priceToShow = volumePrices || formatPrice(item.price) || '';
                         
                         html += `
                         <div class="menu-item">
@@ -1805,22 +1710,19 @@
                     html += `</div>`;
                 });
 
-                const container = document.createElement('div');
-                container.className = 'menu-list-template';
-                container.innerHTML = `<div class="menu-items-container">${html}</div>`;
-                return container.outerHTML;
+                return `<div class="menu-list-template"><div class="menu-items-container">${html}</div></div>`;
             }
             
             function renderGridCellHTML(item, index) {
                  const imgSrc = state.gridImages[index] || item.photo;
                  return `
                     <div class="grid-cell">
-                        <div class="item-name">${item.name}</div>
-                        ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : '<div></div>'}
-                        <div class="item-price">${formatPrice(item.price) || formatPrice('0')}</div>
                         <div class="item-photo-container">
-                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn" data-index="${index}">+</button>`}
+                             ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn" data-index="${index}">+</button>`}
                         </div>
+                        <div class="item-name">${item.name}</div>
+                        ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                        <div class="item-price">${formatPrice(item.price) || ''}</div>
                     </div>`;
             }
 
@@ -1849,14 +1751,13 @@
                 const discount = controls.promoDiscount.value;
                 if (!title && !text && !price) return '';
 
-                // Добавляем иконки особенностей
                 let iconsHTML = '';
-                if (controls.veganCheck.checked) iconsHTML += `<img src="vegan.svg" alt="Веган" class="promo-icon">`;
-                if (controls.halalCheck.checked) iconsHTML += `<img src="halal.svg" alt="Халяль" class="promo-icon">`;
-                if (controls.glutenfreeCheck.checked) iconsHTML += `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon">`;
+                const iconHeight = parseFloat(controls.promoTitleSize.value) * 0.8;
+                if (controls.veganCheck.checked) iconsHTML += `<img src="vegan.svg" alt="Веган" class="promo-icon" style="height: ${iconHeight}px;">`;
+                if (controls.halalCheck.checked) iconsHTML += `<img src="halal.svg" alt="Халяль" class="promo-icon" style="height: ${iconHeight}px;">`;
+                if (controls.glutenfreeCheck.checked) iconsHTML += `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon" style="height: ${iconHeight}px;">`;
 
-                // Добавляем скидку если указана
-                const discountHTML = discount ? `<div class="promo-discount">-${discount}%</div>` : '';
+                const discountHTML = discount ? `<div class="promo-discount" style="font-size: ${controls.promoDiscountSize.value}px">-${discount}%</div>` : '';
 
                 return `
                     <div class="promo-content">
@@ -1875,16 +1776,15 @@
                 applyStyles();
                 let html = '';
                 
-                const isCombinedGrid = state.currentTab === 'combined' && (state.combinedLayout === 'grid');
+                const isCombinedGrid = state.currentTab === 'combined' && (state.layout === 'grid' || state.layout === 'grid3x3');
                 controls.menuPreview.classList.toggle('combined-grid-active', isCombinedGrid);
                 
-                // Показываем начальный плейсхолдер если нет данных
                 if ( (state.currentTab === 'menu' && !state.excelData) ||
-                     (state.currentTab === 'promo' && !controls.promoTitle.value && !controls.promoText.value) ||
-                     (state.currentTab === 'combined' && !state.excelData && (!controls.promoTitle.value && !controls.promoText.value))
+                     (state.currentTab === 'promo' && !controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value) ||
+                     (state.currentTab === 'combined' && !state.excelData && (!controls.promoTitle.value && !controls.promoText.value && !controls.promoPrice.value))
                 ) {
                     controls.menuPreview.innerHTML = `
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px;">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px; margin: auto;">
                         <h3>Здесь будет ваше меню</h3>
                         <p>Настройте параметры слева и загрузите данные</p>
                     </div>`;
@@ -1893,7 +1793,7 @@
                 }
 
                 if (state.currentTab === 'menu') {
-                    html = renderMenuHTML();
+                    html = renderMenuHeader() + renderMenuContent();
                     controls.menuPreview.style.backgroundImage = 'none';
                 } else if (state.currentTab === 'promo') {
                     const promoContainer = document.createElement('div');
@@ -1904,12 +1804,7 @@
                 } else if (state.currentTab === 'combined') {
                     const menuPart = document.createElement('div');
                     menuPart.className = 'combined-menu-part';
-                    
-                    // Для комбинированного вида используем выбранный layout (list или grid)
-                    const tempLayout = state.layout;
-                    state.layout = state.combinedLayout;
-                    menuPart.innerHTML = renderMenuHTML();
-                    state.layout = tempLayout;
+                    menuPart.innerHTML = renderMenuHeader() + renderMenuContent();
                     
                     const promoPart = document.createElement('div');
                     promoPart.className = 'combined-promo-part';
@@ -1940,8 +1835,11 @@
             
             // --- API & DOWNLOAD ---
             function download(generator, filename) {
-                const target = document.querySelector('.preview-container');
-                if (!target) return;
+                const target = controls.menuPreview;
+                if (!target.children.length || target.children[0].textContent.includes('Здесь будет ваше меню')) {
+                    alert('Нечего сохранять. Сначала сгенерируйте меню.');
+                    return;
+                }
                 
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
@@ -1949,8 +1847,8 @@
                 html2canvas(target, { 
                     backgroundColor: null, 
                     scale: 2,
-                    width: state.exportWidth,
-                    height: state.exportHeight
+                    width: target.offsetWidth,
+                    height: target.offsetHeight
                 }).then(canvas => {
                     generator(canvas, filename);
                     controls.loadingOverlay.style.display = 'none';
@@ -1985,63 +1883,29 @@
                 controls.loadingOverlay.style.display = 'flex';
                 
                 try {
-                    // Создаем canvas с нужным разрешением
-                    const target = document.querySelector('.preview-container');
+                    const target = controls.menuPreview;
                     const canvas = await html2canvas(target, { 
                         backgroundColor: null, 
-                        scale: 2,
+                        scale: 1, // Keep scale at 1 to match export dimensions
                         width: state.exportWidth,
-                        height: state.exportHeight,
-                        windowWidth: state.exportWidth,
-                        windowHeight: state.exportHeight
+                        height: state.exportHeight
                     });
                     
-                    // Создаем временный canvas для записи видео
-                    const offcanvas = document.createElement('canvas');
-                    offcanvas.width = state.exportWidth;
-                    offcanvas.height = state.exportHeight;
-                    const ctx = offcanvas.getContext('2d');
+                    const stream = canvas.captureStream(30);
                     
-                    // Заливаем белым фоном (если нужно)
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, offcanvas.width, offcanvas.height);
-                    
-                    // Копируем содержимое
-                    ctx.drawImage(canvas, 0, 0, offcanvas.width, offcanvas.height);
-                    
-                    // Создаем поток из canvas
-                    const fps = 30;
-                    const stream = offcanvas.captureStream(fps);
-                    
-                    // Проверяем поддерживаемые форматы
-                    let mimeType = '';
-                    const supportedTypes = [
-                        'video/mp4',
-                        'video/webm;codecs=vp9',
-                        'video/webm;codecs=vp8',
-                        'video/webm'
-                    ];
-                    
-                    for (const type of supportedTypes) {
-                        if (MediaRecorder.isTypeSupported(type)) {
-                            mimeType = type;
-                            break;
+                    let mimeType = 'video/mp4';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'video/webm;codecs=vp8';
+                         if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            throw new Error('Браузер не поддерживает ни один из доступных форматов видео (MP4, WebM)');
                         }
                     }
                     
-                    if (!mimeType) {
-                        throw new Error('Браузер не поддерживает ни один из доступных форматов видео');
-                    }
-                    
-                    // Настройки для MediaRecorder
-                    const options = { mimeType };
+                    const recorder = new MediaRecorder(stream, { mimeType });
                     const recordedChunks = [];
-                    const recorder = new MediaRecorder(stream, options);
                     
                     recorder.ondataavailable = e => {
-                        if (e.data.size > 0) {
-                            recordedChunks.push(e.data);
-                        }
+                        if (e.data.size > 0) recordedChunks.push(e.data);
                     };
                     
                     recorder.onstop = () => {
@@ -2057,10 +1921,8 @@
                         alert('Произошла ошибка при записи видео');
                     };
                     
-                    // Начинаем запись
                     recorder.start();
                     
-                    // Останавливаем запись после указанной длительности
                     setTimeout(() => {
                         recorder.stop();
                         stream.getTracks().forEach(track => track.stop());
