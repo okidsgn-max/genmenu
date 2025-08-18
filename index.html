@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
+        /* Основные стили из cssstyle3.css */
         :root {
             --primary: #00b398;
             --primary-hover: #008f79;
@@ -41,6 +42,8 @@
             --transition-fast: 0.15s;
             --transition-medium: 0.3s;
             --transition-slow: 0.5s;
+
+            /* Grid specific */
             --grid-bg-color: transparent;
             --cell-bg-color: rgba(255, 255, 255, 0.85);
             --menu-bg-color: #eeeeee;
@@ -63,6 +66,7 @@
             overflow: hidden;
         }
         
+        /* Новый хедер */
         .header {
             height: 60px;
             width: 100%;
@@ -75,7 +79,6 @@
             padding: 0 20px;
             position: relative;
             z-index: 100;
-            flex-shrink: 0;
         }
         
         .header-logo-container {
@@ -140,6 +143,7 @@
             padding: 20px;
         }
         
+        /* Кнопки */
         .btn {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
@@ -161,10 +165,14 @@
         
         .btn:hover {
             background-color: var(--primary-hover);
+            transform: translateY(0px);
+            box-shadow: 0 0px 0px rgba(0,0,0,0.15);
         }
         
         .btn:active {
             background-color: var(--primary-active);
+            transform: translateY(0);
+            box-shadow: 0 0px 0px rgba(0,0,0,0.1);
         }
         
         .btn-secondary {
@@ -177,6 +185,7 @@
             background-color: #e8e8f0;
         }
         
+        /* Поля ввода */
         .input, .select {
             font-size: 14px;
             font-weight: 500;
@@ -211,6 +220,7 @@
             box-shadow: 0 0 0 2px rgba(0, 179, 152, 0.1);
         }
         
+        /* Чекбоксы */
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -237,6 +247,7 @@
             margin-bottom: 0;
         }
         
+        /* Остальные стили из оригинального файла */
         .controls-panel {
             background: white;
             padding: 20px;
@@ -245,7 +256,6 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            flex-shrink: 0;
         }
         
         .controls-content {
@@ -313,13 +323,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-width: 0;
         }
         
         .preview-container {
             width: 100%;
-            max-width: 100%;
-            max-height: 100%;
             background: transparent;
             border-radius: var(--border-radius);
             aspect-ratio: 16 / 9;
@@ -328,6 +335,14 @@
             align-items: center;
             overflow: hidden;
             border: 1px solid var(--border);
+        }
+                
+        .preview-actions {
+            padding: 15px 0 0 0;
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
         }
         
         .menu-preview {
@@ -342,6 +357,7 @@
             overflow: hidden;
         }
         
+        /* Стили для шаблона списка */
         .menu-list-template {
             width: 100%;
             height: 100%;
@@ -352,7 +368,7 @@
         
         .menu-items-container {
             flex: 1;
-            overflow-y: auto;
+            overflow: auto;
             display: grid;
             gap: 20px 40px;
             padding: 30px;
@@ -409,6 +425,7 @@
             min-width: 80px;
         }
         
+        /* Стили для шаблонов сетки */
         .menu-grid-template, .menu-grid-template-3x3 {
             width: 100%;
             height: 100%;
@@ -444,8 +461,10 @@
         .grid-cell .item-price {
             position: relative;
             z-index: 3;
+            /* background-color: rgba(0,0,0,0.5); */ /* Removed as requested */
             padding: 5px;
             color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* Added for readability on complex backgrounds */
         }
 
         .grid-cell .item-name { 
@@ -472,12 +491,11 @@
         
         .grid-cell .item-photo-container {
             position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 50%;
-            height: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #f0f0f0;
-            border-radius: 4px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -500,8 +518,11 @@
             height: 40px;
             border-radius: 50%;
             color: #888;
+            position: relative;
+            z-index: 2;
         }
 
+        /* Стили для шаблона "Акция" */
         .promo-template {
             position: relative;
             width: 100%;
@@ -527,6 +548,10 @@
             text-align: var(--promo-text-align, left);
         }
         
+        .promo-title, .promo-text, .promo-price {
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Added for readability */
+        }
+
         .promo-title {
             font-size: var(--promo-title-font-size);
             font-family: var(--promo-title-font-family);
@@ -585,8 +610,10 @@
         .promo-icon {
             height: 1em;
             width: auto;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); /* Added for readability */
         }
         
+        /* Стили для комбинированного шаблона */
         .combined-template {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -608,6 +635,18 @@
             background-position: center;
         }
         
+        /* Special styles for 2-in-1 with grid */
+        .combined-grid-active .combined-promo-part {
+            display: grid;
+            place-items: center;
+        }
+        
+        .combined-grid-active .combined-promo-content {
+             width: 90%;
+             height: 90%;
+             padding: 30px;
+        }
+        
         .combined-promo-content {
             position: relative;
             z-index: 2;
@@ -619,6 +658,7 @@
             color: white;
         }
         
+        /* Стили для логотипа и даты */
         .menu-header {
             display: flex;
             justify-content: space-between;
@@ -642,6 +682,25 @@
             border-radius: 4px;
         }
         
+        /* Оверлей для 3x3 предупреждения */
+        .warning-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, var(--overlay-opacity, 0.5));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+        }
+        
+        /* Модальные окна */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -728,6 +787,7 @@
             100% { transform: rotate(360deg); } 
         }
         
+        /* Область для перетаскивания файлов */
         .drop-area {
             border: 2px dashed var(--border); 
             border-radius: var(--border-radius);
@@ -750,6 +810,7 @@
             margin-top: 5px; 
         }
 
+        /* Кнопки выбора макета */
         .layout-buttons {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -793,6 +854,7 @@
              filter: brightness(0) invert(1);
         }
 
+        /* Выбор цвета */
         .color-picker-row {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -818,6 +880,41 @@
             display: none;
         }
         
+        /* Ползунок */
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--background-light);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            font-size: 12px;
+            color: var(--text-inactive);
+            text-align: right;
+        }
+        
+        /* Строки настроек */
         .setting-row {
             display: flex;
             gap: 10px;
@@ -931,859 +1028,4 @@
                         <div class="setting-row">
                             <select id="category-font-select" class="select">
                                 <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Playfair Display', serif">Playfair Display</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Merriweather', serif">Merriweather</option>
-                                <option value="'Noto Serif', serif">Noto Serif</option>
-                                <option value="'Bad Script', cursive">Bad Script</option>
-                                <option value="'Marck Script', cursive">Marck Script</option>
-                            </select>
-                            <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
-                            <input type="color" id="category-color-picker" value="#00b398">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Шрифт пунктов:</label>
-                        <div class="setting-row">
-                            <select id="item-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Raleway', sans-serif">Raleway</option>
-                                <option value="'PT Sans', sans-serif">PT Sans</option>
-                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                <option value="'Exo 2', sans-serif">Exo 2</option>
-                            </select>
-                            <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
-                            <input type="color" id="item-color-picker" value="#3d435c">
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <label>Шрифт описания:</label>
-                        <div class="setting-row">
-                            <select id="desc-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                                <option value="'PT Sans', sans-serif">PT Sans</option>
-                            </select>
-                            <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
-                            <input type="color" id="desc-color-picker" value="#667099">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group grid-color-item">
-                        <label>Шрифт стоимости (для сетки):</label>
-                        <div class="setting-row">
-                            <select id="price-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Playfair Display', serif">Playfair Display</option>
-                                <option value="'Merriweather', serif">Merriweather</option>
-                            </select>
-                            <input type="number" id="price-font-size" class="input" value="60" min="10" max="100">
-                            <input type="color" id="price-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="promo-controls" style="display: none;">
-                    <div class="control-group">
-                        <label>Заголовок акции:</label>
-                        <input type="text" id="promo-title-input" class="input" placeholder="Введите заголовок">
-                        <div class="setting-row">
-                            <select id="promo-title-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Playfair Display', serif">Playfair Display</option>
-                                <option value="'Merriweather', serif">Merriweather</option>
-                                <option value="'Noto Serif', serif">Noto Serif</option>
-                                <option value="'Bad Script', cursive">Bad Script</option>
-                                <option value="'Marck Script', cursive">Marck Script</option>
-                                <option value="'Comfortaa', cursive">Comfortaa</option>
-                                <option value="'Exo 2', sans-serif">Exo 2</option>
-                            </select>
-                            <input type="number" id="promo-title-size" class="input" value="145" min="10" max="180">
-                            <input type="color" id="promo-title-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Текст акции:</label>
-                        <input type="text" id="promo-text-input" class="input" placeholder="Введите текст">
-                        <div class="setting-row">
-                            <select id="promo-text-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Open Sans', sans-serif">Open Sans</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                                <option value="'Raleway', sans-serif">Raleway</option>
-                                <option value="'PT Sans', sans-serif">PT Sans</option>
-                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                <option value="'Exo 2', sans-serif">Exo 2</option>
-                                <option value="'Comfortaa', cursive">Comfortaa</option>
-                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            </select>
-                            <input type="number" id="promo-text-size" class="input" value="100" min="10" max="100">
-                            <input type="color" id="promo-text-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Цена:</label>
-                        <input type="number" id="promo-price-input" class="input" placeholder="Введите цену">
-                        <div class="setting-row">
-                            <select id="promo-price-font-select" class="select">
-                                <option value="'Roboto', sans-serif">Roboto</option>
-                                <option value="'Montserrat', sans-serif">Montserrat</option>
-                                <option value="'Oswald', sans-serif">Oswald</option>
-                                <option value="'Playfair Display', serif">Playfair Display</option>
-                                <option value="'Merriweather', serif">Merriweather</option>
-                                <option value="'Noto Serif', serif">Noto Serif</option>
-                                <option value="'Exo 2', sans-serif">Exo 2</option>
-                                <option value="'Raleway', sans-serif">Raleway</option>
-                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                <option value="'Lato', sans-serif">Lato</option>
-                            </select>
-                            <input type="number" id="promo-price-size" class="input" value="120" min="10" max="180">
-                            <input type="color" id="promo-price-color-picker" value="#ffffff">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Скидка:</label>
-                        <input type="number" id="promo-discount-input" class="input" placeholder="Введите скидку в %" min="0" max="100">
-                        <div class="setting-row">
-                            <input type="number" id="promo-discount-size" class="input" value="84" min="10" max="180">
-                            <input type="color" id="discount-color-picker" value="#ff5252">
-                            <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Особенности:</label>
-                        <div class="features-group">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="vegan-checkbox">
-                                <label for="vegan-checkbox">Веган</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="halal-checkbox">
-                                <label for="halal-checkbox">Халяль</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="glutenfree-checkbox">
-                                <label for="glutenfree-checkbox">Без глютена</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Выравнивание текста:</label>
-                        <select id="promo-text-align-select" class="select">
-                            <option value="left">По левой стороне</option>
-                            <option value="center">По центру</option>
-                            <option value="right">По правой стороне</option>
-                        </select>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label>Фон:</label>
-                         <select id="promo-bg-type-select" class="select">
-                            <option value="color">Сплошной цвет</option>
-                            <option value="image">Загрузить изображение</option>
-                        </select>
-                         <div id="bg-position-container" style="display: none;">
-                            <label>Расположение картинки:</label>
-                            <select id="promo-bg-position-select" class="select">
-                                <option value="center">По центру</option>
-                                <option value="left">Слева</option>
-                                <option value="right">Справа</option>
-                            </select>
-                        </div>
-                        <div id="bg-color-container">
-                            <input type="color" id="bg-color-picker" value="#333333" style="width: 100%; height: 40px;">
-                        </div>
-                        <div id="bg-image-container" style="display: none;">
-                            <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Выберите файл</button>
-                            <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
-                            <div class="file-info" id="bg-file-info">Изображение не загружено</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="combined-controls" style="display: none;">
-                    <div class="control-group">
-                        <label>Настройки для комбинированного меню</label>
-                        <p style="font-size: 14px; color: var(--text-secondary);">Внесите нужные изменения в предыдущих разделах "Меню" и "Акция", ведь комбинированная страница, это совмещенный вариант уже созданных страниц.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="controls-footer">
-                <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
-                <button class="btn btn-secondary" id="download-mp4-btn">Сохранить в MP4</button>
-            </div>
-        </div>
-        
-        <div class="preview-wrapper">
-            <div class="preview-container" id="export-container">
-                <div class="menu-preview" id="menu-preview">
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px; justify-content: center; height: 100%; display: flex; flex-direction: column;">
-                        <h3>Здесь будет ваше меню</h3>
-                        <p>Настройте параметры слева и загрузите данные</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="aspect-ratio-modal" style="display: flex;">
-        <div class="modal">
-            <div class="modal-title">Выберите пропорции превью</div>
-            <div class="aspect-ratio-buttons">
-                <button class="aspect-ratio-btn active" data-ratio="16/9" data-width="1920" data-height="1080">16:9 (1920x1080)</button>
-                <button class="aspect-ratio-btn" data-ratio="9/16" data-width="1080" data-height="1920">9:16 (1080x1920)</button>
-                <button class="aspect-ratio-btn" data-ratio="4/3" data-width="1600" data-height="1200">4:3 (1600x1200)</button>
-                <button class="aspect-ratio-btn" data-ratio="3/2" data-width="1920" data-height="1280">3:2 (1920x1280)</button>
-            </div>
-            <div class="modal-actions">
-                <button class="btn" id="confirm-aspect-ratio">Подтвердить</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="mp4-modal" style="display: none;">
-        <div class="modal">
-            <div class="modal-title">Сохранить как MP4</div>
-            <input type="text" id="mp4-filename" class="input" placeholder="Имя файла (без расширения)" value="менюборд">
-            <div class="setting-row">
-                <label>Длительность (секунды):</label>
-                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="60">
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" id="cancel-mp4">Отмена</button>
-                <button class="btn" id="save-mp4">Сохранить</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text">Генерация...</div>
-    </div>
-    
-    <input type="file" id="grid-photo-upload" accept="image/*" style="display: none;">
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const getEl = (id) => document.getElementById(id);
-            const controls = {
-                tabButtons: document.querySelectorAll('.tab-btn'),
-                menuControls: getEl('menu-controls'),
-                promoControls: getEl('promo-controls'),
-                combinedControls: getEl('combined-controls'),
-                fileInput: getEl('file-input'),
-                menuDropArea: getEl('menu-drop-area'),
-                menuFileInfo: getEl('menu-file-info'),
-                layoutButtons: getEl('layout-buttons'),
-                showDescCheck: getEl('show-description-checkbox'),
-                multiPriceCheck: getEl('multiple-prices-checkbox'),
-                showDateCheck: getEl('show-date-checkbox'),
-                logoUpload: getEl('logo-upload'),
-                menuBgPicker: getEl('menu-bg-color-picker'),
-                cellBgColorPicker: getEl('cell-bg-color-picker'),
-                gridColorItems: document.querySelectorAll('.grid-color-item'),
-                categoryFont: getEl('category-font-select'),
-                categorySize: getEl('category-font-size'),
-                categoryColor: getEl('category-color-picker'),
-                itemFont: getEl('item-font-select'),
-                itemSize: getEl('item-font-size'),
-                itemColor: getEl('item-color-picker'),
-                descFont: getEl('desc-font-select'),
-                descSize: getEl('desc-font-size'),
-                descColor: getEl('desc-color-picker'),
-                priceFont: getEl('price-font-select'),
-                priceSize: getEl('price-font-size'),
-                priceColor: getEl('price-color-picker'),
-                promoTitle: getEl('promo-title-input'),
-                promoText: getEl('promo-text-input'),
-                promoPrice: getEl('promo-price-input'),
-                promoDiscount: getEl('promo-discount-input'),
-                promoDiscountSize: getEl('promo-discount-size'),
-                discountColor: getEl('discount-color-picker'),
-                discountBgColor: getEl('discount-bg-color-picker'),
-                veganCheck: getEl('vegan-checkbox'),
-                halalCheck: getEl('halal-checkbox'),
-                glutenfreeCheck: getEl('glutenfree-checkbox'),
-                promoTextAlign: getEl('promo-text-align-select'),
-                promoTitleFont: getEl('promo-title-font-select'),
-                promoTitleSize: getEl('promo-title-size'),
-                promoTitleColor: getEl('promo-title-color-picker'),
-                promoTextFont: getEl('promo-text-font-select'),
-                promoTextSize: getEl('promo-text-size'),
-                promoTextColor: getEl('promo-text-color-picker'),
-                promoPriceFont: getEl('promo-price-font-select'),
-                promoPriceSize: getEl('promo-price-size'),
-                promoPriceColor: getEl('promo-price-color-picker'),
-                promoBgType: getEl('promo-bg-type-select'),
-                promoBgPos: getEl('promo-bg-position-select'),
-                bgColorContainer: getEl('bg-color-container'),
-                bgImageContainer: getEl('bg-image-container'),
-                bgPositionContainer: getEl('bg-position-container'),
-                promoBgUpload: getEl('promo-background-upload'),
-                promoBgInfo: getEl('bg-file-info'),
-                bgColorPicker: getEl('bg-color-picker'),
-                gridPhotoUpload: getEl('grid-photo-upload'),
-                menuPreview: getEl('menu-preview'),
-                exportContainer: getEl('export-container'),
-                downloadPngBtn: getEl('download-png-btn'),
-                downloadMp4Btn: getEl('download-mp4-btn'),
-                loadingOverlay: getEl('loading-overlay'),
-                loadingText: getEl('loading-text'),
-                aspectRatioModal: getEl('aspect-ratio-modal'),
-                aspectRatioBtns: document.querySelectorAll('.aspect-ratio-btn'),
-                confirmAspectRatio: getEl('confirm-aspect-ratio'),
-                mp4Modal: getEl('mp4-modal'),
-                mp4Filename: getEl('mp4-filename'),
-                mp4Duration: getEl('mp4-duration'),
-                cancelMp4: getEl('cancel-mp4'),
-                saveMp4: getEl('save-mp4'),
-            };
-
-            let state = {
-                currentTab: 'menu',
-                layout: 'list',
-                excelData: null,
-                promoBgImage: null,
-                gridImages: {},
-                currentGridTarget: null,
-                logoImage: null,
-                aspectRatio: '16/9',
-                exportWidth: 1920,
-                exportHeight: 1080,
-                currency: '₽', 
-            };
-            
-            function detectCurrency() {
-                try {
-                    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    if (timezone.includes('America/')) {
-                        state.currency = '$';
-                    } else if (timezone.includes('Asia/Almaty') || timezone.includes('Asia/Aqtobe')) {
-                        state.currency = '₸';
-                    } else if (timezone.includes('Europe/Minsk')) {
-                        state.currency = 'Br';
-                    } else {
-                        state.currency = '₽';
-                    }
-                } catch (e) {
-                    console.warn("Could not detect timezone, defaulting to ₽.");
-                    state.currency = '₽';
-                }
-            }
-            
-            function formatDate(date) {
-                const months = [
-                    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
-                ];
-                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-            }
-
-            function init() {
-                detectCurrency();
-                setupEventListeners();
-                const initialActiveBtn = document.querySelector('.aspect-ratio-btn.active');
-                if (initialActiveBtn) {
-                    state.aspectRatio = initialActiveBtn.dataset.ratio;
-                    state.exportWidth = parseInt(initialActiveBtn.dataset.width);
-                    state.exportHeight = parseInt(initialActiveBtn.dataset.height);
-                    updatePreviewAspectRatio();
-                }
-            }
-
-            function setupEventListeners() {
-                controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
-                    state.currentTab = btn.dataset.tab;
-                    controls.tabButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    updateTabVisibility();
-                    render();
-                }));
-
-                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo);
-
-                controls.layoutButtons.addEventListener('click', (e) => {
-                    const targetButton = e.target.closest('.layout-btn');
-                    if (!targetButton) return;
-                    state.layout = targetButton.dataset.layout;
-                    controls.layoutButtons.querySelectorAll('.layout-btn').forEach(btn => btn.classList.remove('active'));
-                    targetButton.classList.add('active');
-                    updateGridColorVisibility();
-                    render();
-                });
-
-                const allControls = [
-                    ...Object.values(controls.menuControls.querySelectorAll('input, select')),
-                    ...Object.values(controls.promoControls.querySelectorAll('input, select')),
-                ];
-                allControls.forEach(el => {
-                    el.addEventListener('input', render);
-                    el.addEventListener('change', render);
-                });
-                
-                controls.promoDiscount.addEventListener('input', () => {
-                    if (parseInt(controls.promoDiscount.value, 10) > 100) {
-                        controls.promoDiscount.value = 100;
-                    }
-                });
-
-                controls.promoBgType.addEventListener('change', updatePromoBgControls);
-                controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
-                controls.logoUpload.addEventListener('change', handleLogoUpload);
-                controls.downloadPngBtn.addEventListener('click', downloadAsPNG);
-                controls.downloadMp4Btn.addEventListener('click', showMp4Modal);
-                controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
-                controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
-                
-                controls.aspectRatioBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        controls.aspectRatioBtns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        state.aspectRatio = btn.dataset.ratio;
-                        state.exportWidth = parseInt(btn.dataset.width);
-                        state.exportHeight = parseInt(btn.dataset.height);
-                        updatePreviewAspectRatio();
-                    });
-                });
-                
-                controls.confirmAspectRatio.addEventListener('click', () => {
-                    controls.aspectRatioModal.style.display = 'none';
-                    render(); 
-                });
-                
-                controls.cancelMp4.addEventListener('click', () => controls.mp4Modal.style.display = 'none');
-                controls.saveMp4.addEventListener('click', downloadAsMP4);
-            }
-            
-            function updatePreviewAspectRatio() {
-                const previewContainer = document.querySelector('.preview-container');
-                previewContainer.style.aspectRatio = state.aspectRatio;
-            }
-
-            function updateTabVisibility() {
-                controls.menuControls.style.display = (state.currentTab === 'menu') ? 'block' : 'none';
-                controls.promoControls.style.display = (state.currentTab === 'promo') ? 'block' : 'none';
-                controls.combinedControls.style.display = (state.currentTab === 'combined') ? 'block' : 'none';
-                updateGridColorVisibility();
-            }
-            
-            function updateGridColorVisibility() {
-                const show = state.layout === 'grid' || state.layout === 'grid3x3';
-                 controls.gridColorItems.forEach(item => {
-                    item.style.display = show ? 'block' : 'none';
-                });
-            }
-
-            function updatePromoBgControls() {
-                const type = controls.promoBgType.value;
-                controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
-                controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
-                controls.bgPositionContainer.style.display = (type === 'image') ? 'block' : 'none';
-                render();
-            }
-
-            function setupDropArea(dropArea, fileInput, fileInfo) {
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
-                });
-                ['dragenter', 'dragover'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight')));
-                ['dragleave', 'drop'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight')));
-                
-                dropArea.addEventListener('drop', e => {
-                    if (e.dataTransfer.files.length) {
-                        fileInput.files = e.dataTransfer.files;
-                        handleFile(e.dataTransfer.files[0]);
-                    }
-                });
-                fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
-
-                function handleFile(file) {
-                    fileInfo.textContent = file.name;
-                    if (file.name.match(/\.(xlsx|xls|csv)$/i)) {
-                        handleExcelFile(file);
-                    } else if (file.name.endsWith('.txt')) {
-                        handleTextFile(file);
-                    } else {
-                        alert('Неподдерживаемый формат файла. Используйте Excel или TXT.');
-                    }
-                }
-                
-                function handleExcelFile(file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const data = new Uint8Array(e.target.result);
-                            const workbook = XLSX.read(data, { type: 'array' });
-                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                            
-                            state.excelData = jsonData.map(row => {
-                                const findValueByKeys = (obj, keys) => {
-                                    for (const key of keys) {
-                                        const objKey = Object.keys(obj).find(k => k.toLowerCase() === key.toLowerCase());
-                                        if (objKey && obj[objKey] !== undefined) return obj[objKey];
-                                    }
-                                    return '';
-                                };
-                                return {
-                                    name: findValueByKeys(row, ['Название', 'Наименование', 'блюдо']) || '',
-                                    description: findValueByKeys(row, ['Описание', 'состав']) || '',
-                                    price: findValueByKeys(row, ['Цена', 'Стоимость', 'с ндс']) || '',
-                                    photo: row['Фото'] || '',
-                                    category: findValueByKeys(row, ['Категория', 'тип']) || 'Основное меню',
-                                    S: row['S'] || '', M: row['M'] || '', L: row['L'] || ''
-                                };
-                            });
-                            state.gridImages = {};
-                            render();
-                        } catch (error) { alert('Ошибка при чтении файла Excel: ' + error.message); }
-                    };
-                    reader.readAsArrayBuffer(file);
-                }
-                
-                function handleTextFile(file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const lines = e.target.result.split('\n');
-                            const result = [];
-                            let currentCategory = 'Основное меню';
-                            lines.forEach(line => {
-                                line = line.trim();
-                                if (!line) return;
-                                if (line.startsWith('#') || line.startsWith('*') || line.endsWith(':')) {
-                                    currentCategory = line.replace(/[#*:]/g, '').trim();
-                                    return;
-                                }
-                                const parts = line.split(' - ');
-                                const priceMatch = parts[2]?.match(/(\d+)/);
-                                result.push({
-                                    name: parts[0]?.trim() || '',
-                                    description: parts[1]?.trim() || '',
-                                    price: priceMatch ? priceMatch[1] : (parts[2]?.trim() || ''),
-                                    category: currentCategory
-                                });
-                            });
-                            state.excelData = result;
-                            state.gridImages = {};
-                            render();
-                        } catch (error) { alert('Ошибка при чтении TXT файла: ' + error.message); }
-                    };
-                    reader.readAsText(file);
-                }
-            }
-
-            function formatPrice(price) {
-                if (price === null || price === undefined || price === '') return '';
-                const num = parseFloat(String(price).replace(',', '.'));
-                return isNaN(num) ? price : `${num.toFixed(0)} ${state.currency}`;
-            }
-
-            function handleLogoUpload(e) {
-                if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.logoImage = event.target.result;
-                        render();
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                }
-            }
-
-            function handlePromoBgUpload(e) {
-                if (e.target.files && e.target.files[0]) {
-                    const file = e.target.files[0];
-                    controls.promoBgInfo.textContent = file.name;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.promoBgImage = event.target.result;
-                        render();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-
-            function handleGridPhotoUploadClick(e) {
-                if (e.target.matches('.upload-photo-btn')) {
-                    state.currentGridTarget = e.target.dataset.index;
-                    controls.gridPhotoUpload.click();
-                }
-            }
-
-            function handleGridPhotoFileChange(e) {
-                if (e.target.files && e.target.files[0] && state.currentGridTarget !== null) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        state.gridImages[state.currentGridTarget] = event.target.result;
-                        render();
-                        state.currentGridTarget = null;
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                    e.target.value = '';
-                }
-            }
-
-            function applyStyles() {
-                const styles = {
-                    '--menu-bg-color': controls.menuBgPicker.value,
-                    '--cell-bg-color': controls.cellBgColorPicker.value,
-                    '--category-font-family': controls.categoryFont.value,
-                    '--category-font-size': controls.categorySize.value + 'px',
-                    '--category-font-color': controls.categoryColor.value,
-                    '--item-font-family': controls.itemFont.value,
-                    '--item-font-size': controls.itemSize.value + 'px',
-                    '--item-font-color': controls.itemColor.value,
-                    '--desc-font-family': controls.descFont.value,
-                    '--desc-font-size': controls.descSize.value + 'px',
-                    '--desc-font-color': controls.descColor.value,
-                    '--price-font-family': controls.priceFont.value,
-                    '--price-font-size': controls.priceSize.value + 'px',
-                    '--price-font-color': controls.priceColor.value,
-                    '--promo-title-font-family': controls.promoTitleFont.value,
-                    '--promo-title-font-size': controls.promoTitleSize.value + 'px',
-                    '--promo-title-font-color': controls.promoTitleColor.value,
-                    '--promo-text-font-family': controls.promoTextFont.value,
-                    '--promo-text-font-size': controls.promoTextSize.value + 'px',
-                    '--promo-text-font-color': controls.promoTextColor.value,
-                    '--promo-price-font-family': controls.promoPriceFont.value,
-                    '--promo-price-font-size': controls.promoPriceSize.value + 'px',
-                    '--promo-price-font-color': controls.promoPriceColor.value,
-                    '--discount-font-color': controls.discountColor.value,
-                    '--discount-bg-color': controls.discountBgColor.value,
-                    '--promo-text-align': controls.promoTextAlign.value,
-                };
-                for (const [key, value] of Object.entries(styles)) {
-                    document.documentElement.style.setProperty(key, value);
-                }
-            }
-            
-            function renderMenuHTML(currentLayout) {
-                if (!state.excelData) return '';
-                let headerHTML = (state.logoImage || controls.showDateCheck.checked) ? `
-                    <div class="menu-header">
-                        ${state.logoImage ? `<img src="${state.logoImage}" alt="Логотип" class="menu-logo">` : '<div></div>'}
-                        ${controls.showDateCheck.checked ? `<div class="menu-date">${formatDate(new Date())}</div>` : ''}
-                    </div>` : '';
-                
-                switch (currentLayout) {
-                    case 'grid': return headerHTML + renderGridMenu(4, 'menu-grid-template');
-                    case 'grid3x3': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x3');
-                    default: return headerHTML + renderListMenu();
-                }
-            }
-
-            function renderListMenu() {
-                const categories = [...new Set(state.excelData.map(item => item.category))];
-                let itemsHTML = categories.map(category => `
-                    <div class="menu-section">
-                        <div class="section-title">${category}</div>
-                        ${state.excelData.filter(item => item.category === category).map(item => {
-                            const volumePrices = controls.multiPriceCheck.checked ? 
-                                ['S', 'M', 'L'].map(v => item[v] ? `<span class="volume-price">${v}: ${formatPrice(item[v])}</span>` : '').join(' ') : '';
-                            return `
-                            <div class="menu-item">
-                                <div class="item-content">
-                                    <div class="item-name">${item.name}</div>
-                                    ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                                </div>
-                                <div class="item-price">${volumePrices || formatPrice(item.price) || formatPrice('0')}</div>
-                            </div>`;
-                        }).join('')}
-                    </div>`
-                ).join('');
-                return `<div class="menu-list-template"><div class="menu-items-container">${itemsHTML}</div></div>`;
-            }
-            
-            function renderGridMenu(limit, className) {
-                const renderCell = (item, index) => {
-                    const imgSrc = state.gridImages[index] || item.photo;
-                    return `
-                    <div class="grid-cell">
-                        <div class="item-name">${item.name}</div>
-                        ${controls.showDescCheck.checked && item.description ? `<div class="item-description">${item.description}</div>` : '<div></div>'}
-                        <div class="item-price">${formatPrice(item.price) || formatPrice('0')}</div>
-                        <div class="item-photo-container">
-                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn" data-index="${index}">+</button>`}
-                        </div>
-                    </div>`;
-                };
-                let cellsHTML = state.excelData.slice(0, limit).map(renderCell).join('');
-                return `<div class="${className}">${cellsHTML}</div>`;
-            }
-
-            function renderPromoHTML() {
-                const { value: title } = controls.promoTitle;
-                const { value: text } = controls.promoText;
-                const { value: price } = controls.promoPrice;
-                const { value: discount } = controls.promoDiscount;
-                if (!title && !text && !price) return '';
-
-                let iconsHTML = [
-                    controls.veganCheck.checked && `<img src="vegan.svg" alt="Веган" class="promo-icon">`,
-                    controls.halalCheck.checked && `<img src="halal.svg" alt="Халяль" class="promo-icon">`,
-                    controls.glutenfreeCheck.checked && `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon">`
-                ].filter(Boolean).join('');
-
-                return `
-                    <div class="promo-content" style="text-align: ${controls.promoTextAlign.value};">
-                        ${title ? `<div class="promo-title">${title}${iconsHTML}</div>` : ''}
-                        ${text ? `<div class="promo-text">${text}</div>` : ''}
-                        ${price ? `
-                        <div class="promo-price-container">
-                            <div class="promo-price">${formatPrice(price)}</div>
-                            ${discount ? `<div class="promo-discount">-${discount}%</div>` : ''}
-                        </div>` : ''}
-                    </div>`;
-            }
-
-            function render() {
-                applyStyles();
-                let html = '';
-                const isMenuEmpty = !state.excelData;
-                const isPromoEmpty = !controls.promoTitle.value && !controls.promoText.value;
-
-                if ((state.currentTab === 'menu' && isMenuEmpty) || (state.currentTab === 'promo' && isPromoEmpty) || (state.currentTab === 'combined' && isMenuEmpty && isPromoEmpty)) {
-                    controls.menuPreview.innerHTML = `
-                    <div style="text-align: center; color: #a3a9c2; padding: 40px; justify-content: center; height: 100%; display: flex; flex-direction: column;">
-                        <h3>Здесь будет ваше меню</h3>
-                        <p>Настройте параметры слева и загрузите данные</p>
-                    </div>`;
-                    controls.menuPreview.style.backgroundImage = 'none';
-                    return;
-                }
-
-                if (state.currentTab === 'menu') {
-                    html = renderMenuHTML(state.layout);
-                } else if (state.currentTab === 'promo') {
-                    const promoContainer = document.createElement('div');
-                    promoContainer.className = 'promo-template';
-                    promoContainer.innerHTML = renderPromoHTML();
-                    setPromoBackground(promoContainer);
-                    html = promoContainer.outerHTML;
-                } else if (state.currentTab === 'combined') {
-                    const promoPart = document.createElement('div');
-                    promoPart.className = 'combined-promo-part';
-                    promoPart.innerHTML = renderPromoHTML();
-                    setPromoBackground(promoPart);
-                    html = `<div class="combined-template"><div class="combined-menu-part">${renderMenuHTML(state.layout)}</div>${promoPart.outerHTML}</div>`;
-                }
-                
-                controls.menuPreview.innerHTML = html;
-            }
-
-            function setPromoBackground(element) {
-                const type = controls.promoBgType.value;
-                element.style.backgroundPosition = controls.promoBgPos.value;
-                if (type === 'image' && state.promoBgImage) {
-                    element.style.backgroundImage = `url(${state.promoBgImage})`;
-                    element.style.backgroundColor = '';
-                } else {
-                    element.style.backgroundColor = controls.bgColorPicker.value;
-                    element.style.backgroundImage = 'none';
-                }
-            }
-            
-            function download(generator, filename) {
-                controls.loadingText.textContent = 'Сохранение...';
-                controls.loadingOverlay.style.display = 'flex';
-
-                html2canvas(controls.exportContainer, { 
-                    backgroundColor: null,
-                    width: state.exportWidth,
-                    height: state.exportHeight,
-                    scale: 1
-                }).then(canvas => {
-                    generator(canvas, filename);
-                    controls.loadingOverlay.style.display = 'none';
-                }).catch(err => {
-                    console.error('Download error:', err);
-                    alert('Ошибка сохранения файла.');
-                    controls.loadingOverlay.style.display = 'none';
-                });
-            }
-
-            function downloadAsPNG() {
-                download((canvas, filename) => {
-                    canvas.toBlob(blob => saveAs(blob, filename), 'image/jpeg');
-                }, 'menuboard.jpeg');
-            }
-            
-            function showMp4Modal() {
-                controls.mp4Modal.style.display = 'flex';
-            }
-            
-            async function downloadAsMP4() {
-                const filenameBase = (controls.mp4Filename.value || 'menuboard').trim().replace(/\s+/g, '_');
-                const duration = Math.max(1, parseInt(controls.mp4Duration.value, 10) || 5);
-                
-                if (duration < 1 || duration > 60) {
-                    alert('Длительность должна быть от 1 до 60 секунд');
-                    return;
-                }
-                
-                controls.mp4Modal.style.display = 'none';
-                controls.loadingText.textContent = 'Сохраняем видео, это может занять время...';
-                controls.loadingOverlay.style.display = 'flex';
-                
-                try {
-                    const canvas = await html2canvas(controls.exportContainer, { 
-                        backgroundColor: '#ffffff',
-                        width: state.exportWidth,
-                        height: state.exportHeight,
-                        scale: 1
-                    });
-                    
-                    const stream = canvas.captureStream(30);
-                    let mimeType = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(type => MediaRecorder.isTypeSupported(type));
-                    if (!mimeType) {
-                        throw new Error('No supported video format found for recording.');
-                    }
-                    
-                    const recordedChunks = [];
-                    const recorder = new MediaRecorder(stream, { mimeType });
-                    
-                    recorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-                    
-                    recorder.onstop = () => {
-                        const blob = new Blob(recordedChunks, { type: mimeType });
-                        const extension = mimeType.includes('mp4') ? '.mp4' : '.webm';
-                        saveAs(blob, `${filenameBase}${extension}`);
-                        controls.loadingOverlay.style.display = 'none';
-                    };
-                    
-                    recorder.start();
-                    setTimeout(() => recorder.stop(), duration * 1000);
-                    
-                } catch (error) {
-                    console.error('Ошибка создания видео:', error);
-                    controls.loadingOverlay.style.display = 'none';
-                    alert(`Ошибка при создании видео: ${error.message}`);
-                }
-            }
-
-            init();
-        });
-    </script>
-</body>
-</html>
+                                <option value="'Montserrat', sans-serif">...
