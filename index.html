@@ -461,7 +461,7 @@
         .grid-cell .item-price {
             position: relative;
             z-index: 3;
-            background-color: rgba(0,0,0,0.5);
+            /* background-color: rgba(0,0,0,0.5); */ /* Removed as requested */
             padding: 5px;
             color: white;
         }
@@ -1368,10 +1368,12 @@
                 currency: '₽', 
             };
             
-            // Определяем валюту по стране пользователя
+            // --- NEW --- Определяем валюту по стране пользователя
             function detectCurrency() {
                 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                if (timezone.includes('Asia/Almaty') || timezone.includes('Asia/Aqtobe')) {
+                if (timezone.includes('America/')) {
+                    state.currency = '$';
+                } else if (timezone.includes('Asia/Almaty') || timezone.includes('Asia/Aqtobe')) {
                     state.currency = '₸';
                 } else if (timezone.includes('Europe/Minsk')) {
                     state.currency = 'BYN';
@@ -1393,9 +1395,17 @@
                 detectCurrency();
                 setupEventListeners();
                 updateTabVisibility();
-                render();
+                // --- MODIFIED --- Render is now called after aspect ratio is confirmed
                 
-                controls.aspectRatioModal.style.display = 'flex';
+                // --- MODIFIED --- Modal is visible by default, so we set initial aspect ratio
+                // and then wait for confirmation.
+                const initialActiveBtn = document.querySelector('.aspect-ratio-btn.active');
+                if (initialActiveBtn) {
+                    state.aspectRatio = initialActiveBtn.dataset.ratio;
+                    state.exportWidth = parseInt(initialActiveBtn.dataset.width);
+                    state.exportHeight = parseInt(initialActiveBtn.dataset.height);
+                    updatePreviewAspectRatio();
+                }
             }
 
             function setupEventListeners() {
@@ -1474,11 +1484,12 @@
                 controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
                 controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
                 
-                // Aspect ratio modal
+                // --- MODIFIED --- Aspect ratio modal
                 controls.aspectRatioBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
                         controls.aspectRatioBtns.forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
+                        // Update state immediately on click for visual feedback
                         state.aspectRatio = btn.dataset.ratio;
                         state.exportWidth = parseInt(btn.dataset.width);
                         state.exportHeight = parseInt(btn.dataset.height);
@@ -1488,7 +1499,8 @@
                 
                 controls.confirmAspectRatio.addEventListener('click', () => {
                     controls.aspectRatioModal.style.display = 'none';
-                    updatePreviewAspectRatio();
+                    // Final confirmation of aspect ratio, then render initial view
+                    render(); 
                 });
                 
                 // MP4 modal
@@ -1613,7 +1625,7 @@
                                 }
                                 
                                 const parts = line.split(' - ');
-                                const priceMatch = parts[2]?.match(/(\d+)\s*(₽|руб|₸|BYN)/i);
+                                const priceMatch = parts[2]?.match(/(\d+)\s*(₽|руб|₸|BYN|\$)/i);
                                 const price = priceMatch ? priceMatch[1] : parts[2]?.trim() || '';
                                 
                                 const item = {
@@ -1638,8 +1650,10 @@
                 
                 function findValueByKeys(obj, keys) {
                     for (const key of keys) {
-                        if (obj[key] !== undefined) {
-                            return obj[key];
+                        const objKeys = Object.keys(obj);
+                        const foundKey = objKeys.find(k => k.toLowerCase() === key.toLowerCase());
+                        if (foundKey && obj[foundKey] !== undefined) {
+                            return obj[foundKey];
                         }
                     }
                     return '';
@@ -1896,6 +1910,7 @@
                 }
             }
             
+            // --- MODIFIED --- Download function now uses state for dimensions
             function download(generator, filename) {
                 const target = controls.exportContainer;
                 if (!target) return;
@@ -1903,11 +1918,13 @@
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
 
+                // --- KEY CHANGE --- Using state.exportWidth and state.exportHeight
+                // instead of calculating from on-screen dimensions.
                 html2canvas(target, { 
                     backgroundColor: null,
-                    width: target.offsetWidth,
-                    height: target.offsetHeight,
-                    scale: state.exportWidth / target.offsetWidth
+                    width: state.exportWidth,
+                    height: state.exportHeight,
+                    scale: 1 // Scale is 1 because we are setting explicit width/height
                 }).then(canvas => {
                     generator(canvas, filename);
                     controls.loadingOverlay.style.display = 'none';
@@ -1943,11 +1960,12 @@
                 
                 try {
                     const target = controls.exportContainer;
+                    // --- KEY CHANGE --- Using state.exportWidth and state.exportHeight
                     const canvas = await html2canvas(target, { 
                         backgroundColor: '#ffffff',
-                        width: target.offsetWidth,
-                        height: target.offsetHeight,
-                        scale: state.exportWidth / target.offsetWidth
+                        width: state.exportWidth,
+                        height: state.exportHeight,
+                        scale: 1
                     });
                     
                     const stream = canvas.captureStream(30);
