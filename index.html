@@ -885,9 +885,9 @@
         <div class="header-logo-container">
             <img src="logo.svg" alt="Логотип" class="header-logo">
         </div>
-        <div class="header-text">12+1 подписки на год, месяц в подарок</div>
+        <div class="header-text">12+1 купи подписку на год, месяц в подарок</div>
         <div class="header-buttons">
-            <a href="https://zvuk-b2b.com" class="header-btn trial">Попробовать сервис</a>
+            <a href="https://zvuk-b2b.com" class="header-btn trial">Подключить</a>
             <a href="https://app.zvuk-b2b.com" class="header-btn login">Вход в ЛК</a>
         </div>
     </div>
@@ -1171,8 +1171,8 @@
             </div>
             
             <div class="controls-footer">
-                <button class="btn" id="download-png-btn">Сохранить в JPEG</button>
-                <button class="btn btn-secondary" id="download-mp4-btn">Сохранить в MP4</button>
+                <button class="btn" id="download-png-btn">Сохранить изображение </button>
+                <button class="btn btn-secondary" id="download-mp4-btn">Сохранить видео</button>
             </div>
         </div>
         
@@ -1316,21 +1316,57 @@
                 currency: '₽', 
             };
             
-            function detectCurrency() {
+            // Функция для определения валюты по IP-адресу
+            async function detectCurrencyByIP() {
                 try {
-                    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    if (timezone.includes('America/')) {
-                        state.currency = '$';
-                    } else if (timezone.includes('Asia/Almaty') || timezone.includes('Asia/Aqtobe')) {
-                        state.currency = '₸';
-                    } else if (timezone.includes('Europe/Minsk')) {
-                        state.currency = 'Br';
-                    } else {
-                        state.currency = '₽';
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    
+                    // Определяем валюту по коду страны
+                    const countryCurrencyMap = {
+                        'RU': '₽', // Россия
+                        'KZ': '₸', // Казахстан
+                        'BY': 'Br', // Беларусь
+                        'US': '$', // США
+                        'EU': '€', // Евросоюз
+                        'GB': '£', // Великобритания
+                        'UA': '₴', // Украина
+                        'CN': '¥', // Китай
+                        'JP': '¥', // Япония
+                        'IN': '₹', // Индия
+                        'TR': '₺', // Турция
+                        // Добавьте другие страны по необходимости
+                    };
+                    
+                    // Получаем код страны из ответа
+                    const countryCode = data.country_code;
+                    
+                    // Если страна найдена в маппинге, используем соответствующую валюту
+                    if (countryCurrencyMap[countryCode]) {
+                        return countryCurrencyMap[countryCode];
                     }
-                } catch (e) {
-                    console.warn("Could not detect timezone, defaulting to ₽.");
-                    state.currency = '₽';
+                    
+                    // Если страна не найдена, используем валюту по умолчанию для региона
+                    const continentCurrencyMap = {
+                        'EU': '€', // Европа
+                        'NA': '$', // Северная Америка
+                        'SA': '$', // Южная Америка
+                        'AS': '¥', // Азия
+                        'AF': '$', // Африка
+                        'OC': '$', // Океания
+                    };
+                    
+                    const continent = data.continent_code;
+                    if (continentCurrencyMap[continent]) {
+                        return continentCurrencyMap[continent];
+                    }
+                    
+                    // Если ничего не найдено, возвращаем рубль по умолчанию
+                    return '₽';
+                    
+                } catch (error) {
+                    console.warn("Could not detect currency by IP, using default:", error);
+                    return '₽';
                 }
             }
             
@@ -1342,8 +1378,9 @@
                 return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
             }
 
-            function init() {
-                detectCurrency();
+            async function init() {
+                // Определяем валюту по IP
+                state.currency = await detectCurrencyByIP();
                 setupEventListeners();
                 const initialActiveBtn = document.querySelector('.aspect-ratio-btn.active');
                 if (initialActiveBtn) {
