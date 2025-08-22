@@ -287,6 +287,13 @@
             padding-top: 16px;
             border-top: 1px solid var(--border);
             margin-top: auto;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .controls-footer .btn {
+            margin-bottom: 0;
+            flex: 1;
         }
         
         .tab-buttons {
@@ -452,6 +459,13 @@
             min-width: 80px;
         }
         
+        .volume-price {
+            display: block;
+            font-size: calc(var(--item-font-size) - 2px);
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+        
         .menu-grid-template, .menu-grid-template-3x3 {
             width: 100%;
             height: 100%;
@@ -534,7 +548,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            cursor: pointer;
         }
         
         .grid-cell .upload-photo-btn {
@@ -602,6 +615,18 @@
             color: var(--promo-text-font-color);
             margin-bottom: 30px; 
             line-height: 1.3;
+        }
+        
+        .promo-comment {
+            font-size: calc(var(--desc-font-size) * 0.7);
+            font-family: var(--desc-font-family);
+            color: var(--desc-font-color);
+            margin-top: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .promo-price-container {
@@ -697,6 +722,16 @@
             background-color: var(--menu-bg-color);
             padding: 5px 10px;
             border-radius: 4px;
+        }
+        
+        .grid-category-title {
+            font-family: var(--category-font-family);
+            font-size: var(--category-font-size);
+            font-weight: 700;
+            color: var(--category-font-color);
+            padding: 15px 30px;
+            text-align: left;
+            background-color: var(--menu-bg-color);
         }
         
         .modal-overlay {
@@ -1074,6 +1109,29 @@
             padding: 4px;
         }
         
+        .manual-editor-volume-prices {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .manual-editor-volume-price {
+            font-size: 11px;
+            padding: 2px 5px;
+            background: rgba(0, 179, 152, 0.1);
+            border-radius: 4px;
+        }
+        
+        .manual-editor-add-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .manual-editor-add-buttons .btn {
+            margin-bottom: 0;
+        }
+        
         /* Combined template specific styles */
         .combined-template .grid-cell {
             padding: 10px;
@@ -1130,75 +1188,16 @@
         .combined-template .item-price {
             font-size: calc(var(--item-font-size) * 0.9);
         }
-
-        /* Новые стили для иконки "Новинка" */
-        .new-icon {
-            width: 40px;
-            height: 40px;
-            margin-left: 10px;
-        }
-
-        /* Автоматическое определение цвета даты */
-        .menu-date.auto-contrast {
-            color: var(--date-contrast-color, #1A1D1F);
-        }
-
-        /* Новые стили для комментария в акции */
-        .promo-comment {
-            font-family: var(--desc-font-family);
-            font-size: calc(var(--desc-font-size) * 0.7);
-            color: var(--desc-font-color);
-            margin-top: auto;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.3);
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Стили для цен по объемам */
-        .volume-prices {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-        }
         
-        .volume-price {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            background-color: var(--background-light);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* Стили для категории в сетке */
-        .grid-category-title {
-            font-family: var(--category-font-family);
-            font-size: var(--category-font-size);
-            font-weight: 700;
-            color: var(--category-font-color);
-            padding: 10px 15px;
-            text-align: left;
-            grid-column: 1 / -1;
-        }
-
-        /* Кнопки рядом */
-        .buttons-row {
+        .save-buttons-row {
             display: flex;
             gap: 10px;
             margin-top: 15px;
         }
         
-        .buttons-row .btn {
+        .save-buttons-row .btn {
             margin-bottom: 0;
             flex: 1;
-        }
-
-        /* Стили для редактора цен */
-        .price-editor {
-            margin-top: 10px;
-            border-top: 1px solid var(--border);
-            padding-top: 10px;
         }
         
         .price-input-group {
@@ -1207,50 +1206,44 @@
             margin-bottom: 10px;
         }
         
-        .price-input-group input {
-            flex: 1;
+        .price-input-group .input {
+            margin-bottom: 0;
         }
         
-        .price-input-group button {
+        .add-price-btn {
             padding: 8px 12px;
-        }
-
-        .prices-list {
-            margin-top: 10px;
-        }
-        
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px;
-            background: var(--background-light);
-            border-radius: 4px;
-            margin-bottom: 5px;
-        }
-        
-        .price-item button {
-            background: none;
+            background-color: var(--primary);
+            color: white;
             border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-medium);
+        }
+        
+        .add-price-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .volume-prices-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .volume-price-tag {
+            background-color: rgba(0, 179, 152, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .remove-volume-price {
+            margin-left: 5px;
             cursor: pointer;
             color: #ff4757;
-        }
-
-        /* Стили для скролла в вертикальном режиме */
-        .vertical-scroll {
-            overflow-y: auto;
-            max-height: 400px;
-        }
-
-        /* Убираем тень под текстом */
-        .grid-cell .item-name,
-        .grid-cell .item-description,
-        .grid-cell .item-price,
-        .item-name,
-        .item-description,
-        .item-price,
-        .section-title {
-            text-shadow: none !important;
         }
     </style>
 </head>
@@ -1260,7 +1253,7 @@
             <span class="header-text">Генератор менюборда</span>
         </div>
         <div class="header-buttons">
-            <a href="#" class="header-btn trial">Бесплатный пробный период</a>
+            <a href="#" class="header-btn trial">Бесплатный доступ</a>
             <a href="#" class="header-btn login">Войти</a>
         </div>
     </div>
@@ -1268,869 +1261,1049 @@
     <div class="main-container">
         <div class="controls-panel">
             <div class="controls-content">
-                <div class="header-title">Настройки меню</div>
-                
                 <div class="tab-buttons">
-                    <button class="tab-btn active" id="tab-excel">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDJINkMyLjUgMiAyIDIuNSAyIDZWMThDMiAyMS41IDIuNSAyMiA2IDIySDE4QzIxLjUgMjIgMjIgMjEuNSAyMiAxOFY4TDE0IDJaIiBzdHJva2U9IiM5QTlGQTUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTE0IDJWMThIMjJNNyAxM0wxMCAxNkwxMyMTNNMTMgOEwxMCAxMUw3IDgiIHN0cm9rZT0iIzlBOUZBNSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt="Excel">
-                        Excel
+                    <button class="tab-btn active" data-tab="upload">
+                        <span>Загрузка</span>
                     </button>
-                    <button class="tab-btn" id="tab-manual">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExIDJIOSBDOC40NDc3MiAyIDggMi40NDc3MiA4IDMgQzggMy41NTIyOCA4LjQ0NzcyIDQgOSA0SDE1IEMxNS41NTIzIDQgMTYgMy41NTIyOCAxNiAzIEMxNiAyLjQ0NzcyIDE1LjU1MjMgMiAxNSAySDEzTTEyIDJIMTJWN0gxMlYyWiIgZmlsbD0iIzlBOUZBNSIvPgo8cGF0aCBkPSJNNSA0SDRDMy40NDc3MiA0IDMgNC40NDc3MiAzIDVWMTlDMyAxOS41NTIzIDMuNDQ3NzIgMjAgNCAyMEgyMEMyMC41NTIzIDIwIDIxIDE5LjU1MjMgMjEgMTlWNUMyMSA0LjQ0NzcyIDIwLjU1MjMgNCAyMCA0SDE5TTUgNEgxOU01IDRWN0gxOVY0IiBzdHJva2U9IiM5QTlGQTUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggZD0iTTEyIDEySDE3TTcgMTJIMTBWN0g3VjEyWiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt="Ручное">
-                        Ручное
+                    <button class="tab-btn" data-tab="manual">
+                        <span>Вручную</span>
+                    </button>
+                    <button class="tab-btn" data-tab="design">
+                        <span>Дизайн</span>
                     </button>
                 </div>
                 
-                <div id="excel-content">
+                <div id="upload-tab" class="tab-content active">
                     <div class="control-group">
-                        <label for="excel-file">Загрузить Excel файл</label>
+                        <label for="excel-file">Загрузите Excel файл</label>
                         <div class="drop-area" id="drop-area">
-                            <p>Перетащите файл сюда или кликните для выбора</p>
-                            <p class="file-info">Поддерживаются файлы .xlsx, .xls</p>
+                            Перетащите файл сюда или кликните для выбора
+                            <input type="file" id="excel-file" accept=".xlsx, .xls" style="display: none;">
+                            <div class="file-info">Поддерживаются файлы .xlsx и .xls</div>
                         </div>
-                        <input type="file" id="excel-file" accept=".xlsx, .xls" style="display: none;">
-                        <div class="buttons-row">
-                            <button class="btn" id="add-category-btn">Добавить категорию</button>
-                            <button class="btn" id="process-excel-btn">Загрузить Excel</button>
-                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Или</label>
+                        <button class="btn btn-secondary" id="add-category-btn">Добавить категорию</button>
+                        <button class="btn btn-secondary" id="download-template-btn">Скачать шаблон Excel</button>
                     </div>
                 </div>
                 
-                <div id="manual-content" style="display: none;">
-                    <div class="control-group manual-editor">
-                        <label>Ручное добавление данных</label>
-                        <input type="text" class="input" id="category-name" placeholder="Название категории">
-                        <input type="text" class="input" id="item-name" placeholder="Название блюда">
-                        <input type="text" class="input" id="item-description" placeholder="Описание блюда">
-                        
-                        <div class="price-editor">
-                            <label>Цены (разные объемы)</label>
-                            <div class="price-input-group">
-                                <input type="text" class="input" id="volume-name" placeholder="Объем (S, M, L)">
-                                <input type="number" class="input" id="item-price" placeholder="Цена">
-                                <button class="btn btn-small" id="add-price-btn">+</button>
+                <div id="manual-tab" class="tab-content" style="display: none;">
+                    <div class="control-group">
+                        <div class="manual-editor" id="manual-editor">
+                            <div class="manual-editor-categories" id="manual-categories">
+                                <!-- Categories will be added here -->
                             </div>
-                            <div class="prices-list" id="prices-container"></div>
-                        </div>
-                        
-                        <button class="btn" id="add-item-btn">Добавить блюдо</button>
-                        <div id="manual-items-container"></div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label>Выберите шаблон</label>
-                    <div class="layout-buttons">
-                        <button class="layout-btn active" data-layout="list">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjIiLz4KPHJlY3QgeD0iOCIgeT0iOCIgd2lkdGg9IjgiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM5QTlGQTUiLz4KPHJlY3QgeD0iOCIgeT0iMTIiIHdpZHRoPSI4IiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjgiIHk9IjE2IiB3aWR0aD0iOCIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8L3N2Zz4K" alt="Список">
-                            Список
-                        </button>
-                        <button class="layout-btn" data-layout="grid">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjIiLz4KPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjQiIGhlaWdodD0iNCIgcng9IjEiIGZpbGw9IiM5QTlGQTUiLz4KPHJlY3QgeD0iMTQiIHk9IjYiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjYiIHk9IjE0IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8cmVjdCB4PSIxNCIgeT0iMTQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+Cjwvc3ZnPgo=" alt="Сетка 2x2">
-                            2x2
-                        </button>
-                        <button class="layout-btn" data-layout="grid-3x3">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjIiLz4KPHJlY3QgeD0iNSIgeT0iNSIgd2lkdGg9IjMiIGhlaWdodD0iMyIgcng9IjEiIGZpbGw9IiM5QTlGQTUiLz4KPHJlY3QgeD0iMTEiIHk9IjUiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjE3IiB5PSI1IiB3aWR0aD0iMyIgaGVpZ2h0PSIzIiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8cmVjdCB4PSI1IiB5PSIxMSIgd2lkdGg9IjMiIGhlaWdodD0iMyIgcng9IjEiIGZpbGw9IiM5QTlGQTUiLz4KPHJlY3QgeD0iMTEiIHk9IjExIiB3aWR0aD0iMyIgaGVpZ2h0PSIzIiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8cmVjdCB4PSIxNyIgeT0iMTEiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjUiIHk9IjE3IiB3aWR0aD0iMyIgaGVpZ2h0PSIzIiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8cmVjdCB4PSIxMSIgeT0iMTciIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjE3IiB5PSIxNyIgd2lkdGg9IjMiIGhlaWdodD0iMyIgcng9IjEiIGZpbGw9IiM5QTlGQTUiLz4KPC9zdmc+Cg==" alt="Сетка 3x3">
-                            3x3
-                        </button>
-                    </div>
-                    <div class="layout-buttons">
-                        <button class="layout-btn" data-layout="promo">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNCIgZmlsbD0iIzlBOUZBNSIvPgo8cGF0aCBkPSJNMTIgOFYxMk0xMiAxMkwxNCAxNCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==" alt="Акция">
-                            Акция
-                        </button>
-                        <button class="layout-btn" data-layout="combined">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOUE5RkE1IiBzdHJva2Utd2lkdGg9IjIiLz4KPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+CjxyZWN0IHg9IjYiIHk9IjE0IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiByeD0iMSIgZmlsbD0iIzlBOUZBNSIvPgo8cmVjdCB4PSIxNCIgeT0iMTQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIHJ4PSIxIiBmaWxsPSIjOUE5RkE1Ii8+Cjwvc3ZnPgo=" alt="Комбинированный">
-                            Комби
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label for="aspect-ratio">Соотношение сторон</label>
-                    <select class="select" id="aspect-ratio">
-                        <option value="16:9">16:9 (Горизонтальное)</option>
-                        <option value="9:16">9:16 (Вертикальное)</option>
-                        <option value="4:3">4:3 (Квадратное)</option>
-                        <option value="3:2">3:2 (Классическое)</option>
-                        <option value="1:1">1:1 (Квадрат)</option>
-                        <option value="21:9">21:9 (Широкоэкранное)</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <label>Настройки фона</label>
-                    <input type="file" id="background-image" accept="image/*" style="display: none;">
-                    <div class="drop-area" id="background-drop-area">
-                        <p>Перетащите фоновое изображение</p>
-                        <p class="file-info">JPG, PNG, SVG (до 5MB)</p>
-                    </div>
-                    <div class="color-picker-row">
-                        <div class="color-picker-item">
-                            <label>Цвет фона</label>
-                            <input type="color" id="background-color" value="#eeeeee">
-                        </div>
-                        <div class="color-picker-item">
-                            <label>Цвет сетки</label>
-                            <input type="color" id="grid-color" value="#ffffff">
-                        </div>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="background-opacity" min="0" max="100" value="100">
-                        <div class="slider-value">Непрозрачность: <span id="opacity-value">100%</span></div>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <details class="accordion" open>
-                        <summary>Шрифты и цвета</summary>
-                        <div class="accordion-content">
-                            <div class="setting-row">
-                                <select class="select" id="category-font-family">
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Open Sans', sans-serif">Open Sans</option>
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="'Lato', sans-serif">Lato</option>
-                                    <option value="'Oswald', sans-serif">Oswald</option>
-                                    <option value="'Raleway', sans-serif">Raleway</option>
-                                    <option value="'PT Sans', sans-serif">PT Sans</option>
-                                    <option value="'Merriweather', serif">Merriweather</option>
-                                    <option value="'Noto Serif', serif">Noto Serif</option>
-                                    <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                    <option value="'Exo 2', sans-serif">Exo 2</option>
-                                    <option value="'Comfortaa', cursive">Comfortaa</option>
-                                    <option value="'Bad Script', cursive">Bad Script</option>
-                                    <option value="'Marck Script', cursive">Marck Script</option>
-                                </select>
-                                <input type="number" class="input" id="category-font-size" value="24" min="8" max="72">
-                                <input type="color" id="category-font-color" value="#1A1D1F">
-                            </div>
-                            
-                            <div class="setting-row">
-                                <select class="select" id="item-font-family">
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Open Sans', sans-serif" selected>Open Sans</option>
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="'Lato', sans-serif">Lato</option>
-                                    <option value="'Oswald', sans-serif">Oswald</option>
-                                    <option value="'Raleway', sans-serif">Raleway</option>
-                                    <option value="'PT Sans', sans-serif">PT Sans</option>
-                                    <option value="'Merriweather', serif">Merriweather</option>
-                                    <option value="'Noto Serif', serif">Noto Serif</option>
-                                    <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                    <option value="'Exo 2', sans-serif">Exo 2</option>
-                                    <option value="'Comfortaa', cursive">Comfortaa</option>
-                                    <option value="'Bad Script', cursive">Bad Script</option>
-                                    <option value="'Marck Script', cursive">Marck Script</option>
-                                </select>
-                                <input type="number" class="input" id="item-font-size" value="18" min="8" max="72">
-                                <input type="color" id="item-font-color" value="#1A1D1F">
-                            </div>
-                            
-                            <div class="setting-row">
-                                <select class="select" id="desc-font-family">
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Open Sans', sans-serif" selected>Open Sans</option>
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="'Lato', sans-serif">Lato</option>
-                                    <option value="'Oswald', sans-serif">Oswald</option>
-                                    <option value="'Raleway', sans-serif">Raleway</option>
-                                    <option value="'PT Sans', sans-serif">PT Sans</option>
-                                    <option value="'Merriweather', serif">Merriweather</option>
-                                    <option value="'Noto Serif', serif">Noto Serif</option>
-                                    <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                    <option value="'Exo 2', sans-serif">Exo 2</option>
-                                    <option value="'Comfortaa', cursive">Comfortaa</option>
-                                    <option value="'Bad Script', cursive">Bad Script</option>
-                                    <option value="'Marck Script', cursive">Marck Script</option>
-                                </select>
-                                <input type="number" class="input" id="desc-font-size" value="14" min="8" max="72">
-                                <input type="color" id="desc-font-color" value="#3d435c">
-                            </div>
-                            
-                            <div class="setting-row">
-                                <select class="select" id="price-font-family">
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Open Sans', sans-serif">Open Sans</option>
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="'Lato', sans-serif">Lato</option>
-                                    <option value="'Oswald', sans-serif" selected>Oswald</option>
-                                    <option value="'Raleway', sans-serif">Raleway</option>
-                                    <option value="'PT Sans', sans-serif">PT Sans</option>
-                                    <option value="'Merriweather', serif">Merriweather</option>
-                                    <option value="'Noto Serif', serif">Noto Serif</option>
-                                    <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                                    <option value="'Ubuntu', sans-serif">Ubuntu</option>
-                                    <option value="'Exo 2', sans-serif">Exo 2</option>
-                                    <option value="'Comfortaa', cursive">Comfortaa</option>
-                                    <option value="'Bad Script', cursive">Bad Script</option>
-                                    <option value="'Marck Script', cursive">Marck Script</option>
-                                </select>
-                                <input type="number" class="input" id="price-font-size" value="20" min="8" max="72">
-                                <input type="color" id="price-font-color" value="#00b398">
+                            <div class="manual-editor-add-buttons">
+                                <button class="btn btn-secondary" id="manual-add-category">Добавить категорию</button>
+                                <button class="btn btn-secondary" id="manual-add-item">Добавить блюдо</button>
                             </div>
                         </div>
-                    </details>
+                    </div>
                 </div>
                 
-                <div class="control-group">
-                    <label>Логотип и дата</label>
-                    <input type="file" id="logo-upload" accept="image/*" style="display: none;">
-                    <div class="drop-area" id="logo-drop-area">
-                        <p>Перетащите логотип</p>
-                        <p class="file-info">PNG, SVG с прозрачностью</p>
+                <div id="design-tab" class="tab-content" style="display: none;">
+                    <div class="control-group">
+                        <label>Шаблон меню</label>
+                        <div class="layout-buttons">
+                            <button class="layout-btn active" data-layout="list">
+                                <span>Список</span>
+                            </button>
+                            <button class="layout-btn" data-layout="grid">
+                                <span>2x2</span>
+                            </button>
+                            <button class="layout-btn" data-layout="grid3x3">
+                                <span>3x3</span>
+                            </button>
+                            <button class="layout-btn" data-layout="promo">
+                                <span>Акция</span>
+                            </button>
+                            <button class="layout-btn" data-layout="combined">
+                                <span>Комби</span>
+                            </button>
+                        </div>
                     </div>
-                    <input type="text" class="input" id="menu-date" placeholder="Дата (например, 15 ноября 2023)">
+                    
+                    <div class="control-group">
+                        <label>Пропорции экрана</label>
+                        <div class="aspect-ratio-buttons">
+                            <button class="aspect-ratio-btn active" data-ratio="16/9">16:9</button>
+                            <button class="aspect-ratio-btn" data-ratio="3/2">3:2</button>
+                            <button class="aspect-ratio-btn" data-ratio="4/3">4:3</button>
+                            <button class="aspect-ratio-btn" data-ratio="9/16">9:16</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Фон меню</label>
+                        <input type="color" id="menu-bg-color" value="#eeeeee">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Цвет сетки</label>
+                        <input type="color" id="grid-bg-color" value="transparent">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Цвет ячеек</label>
+                        <input type="color" id="cell-bg-color" value="rgba(255, 255, 255, 0.85)">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Шрифт категорий</label>
+                        <div class="setting-row">
+                            <select class="select" id="category-font-family">
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Exo 2', sans-serif">Exo 2</option>
+                                <option value="'Comfortaa', cursive">Comfortaa</option>
+                                <option value="'Bad Script', cursive">Bad Script</option>
+                                <option value="'Marck Script', cursive">Marck Script</option>
+                            </select>
+                            <input type="color" id="category-font-color" value="#1A1D1F">
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="category-font-size" min="16" max="40" value="24">
+                            <div class="slider-value" id="category-font-size-value">24px</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Шрифт названий</label>
+                        <div class="setting-row">
+                            <select class="select" id="item-font-family">
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Exo 2', sans-serif">Exo 2</option>
+                                <option value="'Comfortaa', cursive">Comfortaa</option>
+                                <option value="'Bad Script', cursive">Bad Script</option>
+                                <option value="'Marck Script', cursive">Marck Script</option>
+                            </select>
+                            <input type="color" id="item-font-color" value="#1A1D1F">
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="item-font-size" min="12" max="32" value="18">
+                            <div class="slider-value" id="item-font-size-value">18px</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Шрифт описаний</label>
+                        <div class="setting-row">
+                            <select class="select" id="desc-font-family">
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Exo 2', sans-serif">Exo 2</option>
+                                <option value="'Comfortaa', cursive">Comfortaa</option>
+                                <option value="'Bad Script', cursive">Bad Script</option>
+                                <option value="'Marck Script', cursive">Marck Script</option>
+                            </select>
+                            <input type="color" id="desc-font-color" value="#3d435c">
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="desc-font-size" min="10" max="24" value="14">
+                            <div class="slider-value" id="desc-font-size-value">14px</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Шрифт цен</label>
+                        <div class="setting-row">
+                            <select class="select" id="price-font-family">
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Playfair Display', serif">Playfair Display</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Noto Serif', serif">Noto Serif</option>
+                                <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Exo 2', sans-serif">Exo 2</option>
+                                <option value="'Comfortaa', cursive">Comfortaa</option>
+                                <option value="'Bad Script', cursive">Bad Script</option>
+                                <option value="'Marck Script', cursive">Marck Script</option>
+                            </select>
+                            <input type="color" id="price-font-color" value="#1A1D1F">
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="price-font-size" min="12" max="32" value="18">
+                            <div class="slider-value" id="price-font-size-value">18px</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group grid-color-item">
+                        <label>Цвет фона ячеек</label>
+                        <input type="color" id="cell-bg-color" value="rgba(255, 255, 255, 0.85)">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Логотип</label>
+                        <input type="file" id="logo-upload" accept="image/*" style="display: none;">
+                        <button class="btn btn-secondary" id="logo-upload-btn">Загрузить логотип</button>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="show-logo" checked>
+                            <label for="show-logo">Показывать логотип</label>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Дата</label>
+                        <input type="text" class="input" id="menu-date" placeholder="Например: 15 ноября 2023">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="show-date" checked>
+                            <label for="show-date">Показывать дату</label>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="controls-footer">
-                <div class="buttons-row">
-                    <button class="btn" id="save-jpeg-btn">Сохранить JPEG</button>
-                    <button class="btn" id="save-video-btn">Сохранить видео</button>
-                </div>
+                <button class="btn btn-secondary" id="reset-btn">Сбросить</button>
+                <button class="btn" id="save-btn">Сохранить</button>
             </div>
         </div>
         
         <div class="preview-wrapper">
             <div class="preview-container" id="preview-container">
                 <div class="menu-preview" id="menu-preview">
-                    <!-- Контент будет генерироваться динамически -->
+                    <div class="menu-header">
+                        <img src="" class="menu-logo" id="menu-logo" style="display: none;">
+                        <div class="menu-date" id="menu-date-display" style="display: none;"></div>
+                    </div>
+                    <div class="menu-list-template" id="menu-list-template">
+                        <div class="menu-items-container two-columns" id="menu-items-container">
+                            <!-- Menu items will be rendered here -->
+                        </div>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="save-buttons-row">
+                <button class="btn" id="save-jpeg-btn">Сохранить в JPEG</button>
+                <button class="btn" id="save-video-btn">Сохранить видео</button>
             </div>
         </div>
     </div>
     
     <div class="loading-overlay" id="loading-overlay">
         <div class="spinner"></div>
-        <div>Генерация файла...</div>
+        <div>Сохранение...</div>
     </div>
     
     <script>
-        // Основные переменные
+        // Global variables
         let menuData = [];
         let currentLayout = 'list';
-        let backgroundImage = null;
+        let currentRatio = '16/9';
         let logoImage = null;
-        let aspectRatio = '16:9';
-        let pricesList = [];
         
-        // DOM элементы
-        const menuPreview = document.getElementById('menu-preview');
+        // DOM elements
         const previewContainer = document.getElementById('preview-container');
+        const menuPreview = document.getElementById('menu-preview');
+        const menuItemsContainer = document.getElementById('menu-items-container');
+        const menuListTemplate = document.getElementById('menu-list-template');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const excelFileInput = document.getElementById('excel-file');
         const dropArea = document.getElementById('drop-area');
-        const backgroundDropArea = document.getElementById('background-drop-area');
-        const logoDropArea = document.getElementById('logo-drop-area');
-        const backgroundImageInput = document.getElementById('background-image');
+        const excelFileInput = document.getElementById('excel-file');
         const logoUploadInput = document.getElementById('logo-upload');
-        const aspectRatioSelect = document.getElementById('aspect-ratio');
-        const layoutButtons = document.querySelectorAll('.layout-btn');
+        const logoUploadBtn = document.getElementById('logo-upload-btn');
+        const menuLogo = document.getElementById('menu-logo');
+        const menuDateDisplay = document.getElementById('menu-date-display');
+        const menuDateInput = document.getElementById('menu-date');
+        const showLogoCheckbox = document.getElementById('show-logo');
+        const showDateCheckbox = document.getElementById('show-date');
+        const saveJpegBtn = document.getElementById('save-jpeg-btn');
+        const saveVideoBtn = document.getElementById('save-video-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const downloadTemplateBtn = document.getElementById('download-template-btn');
+        const addCategoryBtn = document.getElementById('add-category-btn');
+        
+        // Tab switching
         const tabButtons = document.querySelectorAll('.tab-btn');
-        const excelContent = document.getElementById('excel-content');
-        const manualContent = document.getElementById('manual-content');
+        const tabContents = document.querySelectorAll('.tab-content');
         
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            // Настройка обработчиков событий
-            setupEventListeners();
-            // Установка начального макета
-            updateLayout();
-            // Обновление соотношения сторон
-            updateAspectRatio();
-        });
-        
-        // Настройка обработчиков событий
-        function setupEventListeners() {
-            // Переключение табов
-            tabButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    tabButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    if (this.id === 'tab-excel') {
-                        excelContent.style.display = 'block';
-                        manualContent.style.display = 'none';
-                    } else {
-                        excelContent.style.display = 'none';
-                        manualContent.style.display = 'block';
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tab = button.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show corresponding tab content
+                tabContents.forEach(content => {
+                    content.style.display = 'none';
+                    if (content.id === `${tab}-tab`) {
+                        content.style.display = 'block';
                     }
                 });
             });
-            
-            // Загрузка Excel файла
-            dropArea.addEventListener('click', () => excelFileInput.click());
-            excelFileInput.addEventListener('change', handleExcelUpload);
-            
-            // Drag and drop для Excel
-            setupDragAndDrop(dropArea, handleExcelUpload);
-            
-            // Загрузка фонового изображения
-            backgroundDropArea.addEventListener('click', () => backgroundImageInput.click());
-            backgroundImageInput.addEventListener('change', handleBackgroundUpload);
-            setupDragAndDrop(backgroundDropArea, handleBackgroundUpload);
-            
-            // Загрузка логотипа
-            logoDropArea.addEventListener('click', () => logoUploadInput.click());
-            logoUploadInput.addEventListener('change', handleLogoUpload);
-            setupDragAndDrop(logoDropArea, handleLogoUpload);
-            
-            // Изменение соотношения сторон
-            aspectRatioSelect.addEventListener('change', function() {
-                aspectRatio = this.value;
+        });
+        
+        // Layout switching
+        const layoutButtons = document.querySelectorAll('.layout-btn');
+        
+        layoutButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                layoutButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentLayout = button.getAttribute('data-layout');
+                renderMenu();
+            });
+        });
+        
+        // Aspect ratio switching
+        const aspectRatioButtons = document.querySelectorAll('.aspect-ratio-btn');
+        
+        aspectRatioButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                aspectRatioButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentRatio = button.getAttribute('data-ratio');
                 updateAspectRatio();
             });
-            
-            // Переключение макетов
-            layoutButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    layoutButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentLayout = this.getAttribute('data-layout');
-                    updateLayout();
-                });
-            });
-            
-            // Сохранение JPEG
-            document.getElementById('save-jpeg-btn').addEventListener('click', saveAsJPEG);
-            
-            // Сохранение видео
-            document.getElementById('save-video-btn').addEventListener('click', saveAsVideo);
-            
-            // Обработка opacity фона
-            const opacitySlider = document.getElementById('background-opacity');
-            const opacityValue = document.getElementById('opacity-value');
-            opacitySlider.addEventListener('input', function() {
-                opacityValue.textContent = this.value + '%';
-                updateBackgroundOpacity(this.value);
-            });
-            
-            // Обновление шрифтов и цветов в реальном времени
-            const styleControls = [
-                'category-font-family', 'category-font-size', 'category-font-color',
-                'item-font-family', 'item-font-size', 'item-font-color',
-                'desc-font-family', 'desc-font-size', 'desc-font-color',
-                'price-font-family', 'price-font-size', 'price-font-color'
-            ];
-            
-            styleControls.forEach(control => {
-                document.getElementById(control).addEventListener('input', updateStyles);
-            });
-            
-            // Обновление цвета фона
-            document.getElementById('background-color').addEventListener('input', function() {
-                document.documentElement.style.setProperty('--menu-bg-color', this.value);
-                updateLayout();
-            });
-            
-            // Обновление цвета сетки
-            document.getElementById('grid-color').addEventListener('input', function() {
-                document.documentElement.style.setProperty('--cell-bg-color', this.value);
-                updateLayout();
-            });
-            
-            // Обновление даты меню
-            document.getElementById('menu-date').addEventListener('input', updateMenuDate);
-            
-            // Ручное добавление данных
-            document.getElementById('add-item-btn').addEventListener('click', addManualItem);
-            document.getElementById('add-price-btn').addEventListener('click', addPrice);
-            document.getElementById('add-category-btn').addEventListener('click', addCategory);
-            document.getElementById('process-excel-btn').addEventListener('click', processExcel);
+        });
+        
+        // Update preview container aspect ratio
+        function updateAspectRatio() {
+            previewContainer.style.aspectRatio = currentRatio;
         }
         
-        // Настройка drag and drop
-        function setupDragAndDrop(dropZone, callback) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                dropZone.classList.add('highlight');
-            }
-            
-            function unhighlight() {
-                dropZone.classList.remove('highlight');
-            }
-            
-            dropZone.addEventListener('drop', handleDrop, false);
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                callback({target: {files: files}});
-            }
-        }
+        // File drop handling
+        dropArea.addEventListener('click', () => {
+            excelFileInput.click();
+        });
         
-        // Обработка загрузки Excel
-        function handleExcelUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('highlight');
+        });
+        
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('highlight');
+        });
+        
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('highlight');
             
+            if (e.dataTransfer.files.length) {
+                handleExcelFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        excelFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleExcelFile(e.target.files[0]);
+            }
+        });
+        
+        // Handle Excel file upload
+        function handleExcelFile(file) {
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                processExcelData(e.target.result);
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                // Get first worksheet
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                // Process data
+                processMenuData(jsonData);
             };
+            
             reader.readAsArrayBuffer(file);
         }
         
-        // Обработка данных Excel
-        function processExcelData(data) {
-            try {
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+        // Process menu data from Excel
+        function processMenuData(data) {
+            menuData = [];
+            let currentCategory = null;
+            
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
                 
-                // Преобразование данных в структурированный формат
-                menuData = [];
-                let currentCategory = null;
+                if (row.length === 0) continue;
                 
-                for (let i = 0; i < jsonData.length; i++) {
-                    const row = jsonData[i];
-                    if (row.length === 0) continue;
-                    
-                    // Если первая ячейка содержит текст и следующие пустые - это категория
-                    if (row[0] && typeof row[0] === 'string' && 
-                        (row.length === 1 || (row.length > 1 && !row[1]))) {
-                        currentCategory = row[0].trim();
-                    } else if (currentCategory && row[0]) {
-                        // Это элемент меню
-                        const item = {
-                            category: currentCategory,
-                            name: row[0],
-                            description: row[1] || '',
-                            prices: {}
-                        };
-                        
-                        // Обработка цен (S, M, L или другие объемы)
-                        for (let j = 2; j < row.length; j++) {
-                            if (row[j]) {
-                                const priceMatch = String(row[j]).match(/([A-Za-zА-Яа-я]+)?\s*([\d,.]+)/);
-                                if (priceMatch) {
-                                    const volume = priceMatch[1] ? priceMatch[1].trim().toUpperCase() : 'STANDARD';
-                                    const price = parseFloat(priceMatch[2].replace(',', '.'));
-                                    if (!isNaN(price)) {
-                                        item.prices[volume] = price;
-                                    }
-                                }
-                            }
+                // Check if this row is a category (first cell has value, others might be empty)
+                if (row[0] && (!row[1] || row[1].toString().trim() === '')) {
+                    currentCategory = {
+                        name: row[0],
+                        items: []
+                    };
+                    menuData.push(currentCategory);
+                } 
+                // Otherwise it's a menu item (has name and price)
+                else if (currentCategory && row[0] && row[1]) {
+                    // Check if there are volume prices
+                    const volumePrices = [];
+                    for (let j = 2; j < row.length; j++) {
+                        if (row[j]) {
+                            volumePrices.push(row[j]);
                         }
-                        
-                        menuData.push(item);
                     }
+                    
+                    currentCategory.items.push({
+                        name: row[0],
+                        description: row[2] || '',
+                        price: row[1],
+                        volumePrices: volumePrices
+                    });
                 }
-                
-                updateLayout();
-            } catch (error) {
-                console.error('Ошибка обработки Excel:', error);
-                alert('Ошибка при обработке файла Excel. Проверьте формат файла.');
-            }
-        }
-        
-        // Обработка загрузки фона
-        function handleBackgroundUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                backgroundImage = e.target.result;
-                updateBackground();
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // Обработка загрузки логотипа
-        function handleLogoUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoImage = e.target.result;
-                updateLogo();
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // Обновление соотношения сторон
-        function updateAspectRatio() {
-            const [width, height] = aspectRatio.split(':').map(Number);
-            previewContainer.style.aspectRatio = `${width}/${height}`;
-            updateLayout();
-        }
-        
-        // Обновление макета
-        function updateLayout() {
-            let html = '';
-            
-            switch (currentLayout) {
-                case 'list':
-                    html = generateListLayout();
-                    break;
-                case 'grid':
-                    html = generateGridLayout(4);
-                    break;
-                case 'grid-3x3':
-                    html = generateGridLayout(9);
-                    break;
-                case 'promo':
-                    html = generatePromoLayout();
-                    break;
-                case 'combined':
-                    html = generateCombinedLayout();
-                    break;
             }
             
-            menuPreview.innerHTML = html;
-            updateBackground();
-            updateLogo();
+            renderMenu();
         }
         
-        // Генерация списка
-        function generateListLayout() {
+        // Render menu based on current layout
+        function renderMenu() {
+            menuItemsContainer.innerHTML = '';
+            
             if (menuData.length === 0) {
-                return '<div class="empty-state"><p>Загрузите данные или добавьте элементы вручную</p></div>';
+                menuItemsContainer.innerHTML = '<div class="empty-state">Загрузите данные меню для отображения</div>';
+                return;
             }
             
-            let html = '';
-            let currentCategory = '';
+            // Show/hide logo and date based on settings
+            menuLogo.style.display = showLogoCheckbox.checked && logoImage ? 'block' : 'none';
+            menuDateDisplay.style.display = showDateCheckbox.checked && menuDateInput.value ? 'block' : 'none';
             
-            menuData.forEach(item => {
-                if (item.category !== currentCategory) {
-                    currentCategory = item.category;
-                    html += `<div class="section-title">${currentCategory}</div>`;
-                }
-                
-                const pricesHtml = Object.keys(item.prices).length > 0 
-                    ? Object.entries(item.prices).map(([volume, price]) => 
-                        `<span class="volume-price">${volume}: ${formatPrice(price)}</span>`
-                      ).join(' ')
-                    : '';
-                
-                html += `
-                    <div class="menu-item">
-                        <div class="item-content">
-                            <div class="item-name">${item.name}</div>
-                            ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                            ${pricesHtml ? `<div class="volume-prices">${pricesHtml}</div>` : ''}
-                        </div>
-                        ${Object.keys(item.prices).length === 1 ? 
-                            `<div class="item-price">${formatPrice(Object.values(item.prices)[0])}</div>` : ''}
-                    </div>
-                `;
-            });
-            
-            return `<div class="menu-list-template"><div class="menu-items-container">${html}</div></div>`;
-        }
-        
-        // Генерация сетки
-        function generateGridLayout(maxItems) {
-            if (menuData.length === 0) {
-                return '<div class="empty-state"><p>Загрузите данные или добавьте элементы вручную</p></div>';
+            if (showDateCheckbox.checked && menuDateInput.value) {
+                menuDateDisplay.textContent = menuDateInput.value;
             }
             
-            let html = '';
-            let currentCategory = '';
-            let itemCount = 0;
-            
-            menuData.forEach((item, index) => {
-                if (itemCount >= maxItems) return;
-                
-                if (item.category !== currentCategory) {
-                    currentCategory = item.category;
-                    html += `<div class="grid-category-title">${currentCategory}</div>`;
-                }
-                
-                const price = Object.values(item.prices)[0] || 0;
-                
-                html += `
-                    <div class="grid-cell" data-index="${index}">
-                        <div class="item-name">${item.name}</div>
-                        ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
-                        <div class="item-price">${formatPrice(price)}</div>
-                        <div class="item-photo-container">
-                            <button class="upload-photo-btn" onclick="replaceGridPhoto(${index})">+</button>
-                        </div>
-                    </div>
-                `;
-                
-                itemCount++;
-            });
-            
-            const gridClass = maxItems === 4 ? 'menu-grid-template' : 'menu-grid-template-3x3';
-            return `<div class="${gridClass}">${html}</div>`;
-        }
-        
-        // Генерация акционного макета
-        function generatePromoLayout() {
-            return `
-                <div class="promo-template">
-                    <div class="promo-content">
-                        <div class="promo-title">Специальное предложение</div>
-                        <div class="promo-text">Попробуйте нашу новинку со скидкой 20%</div>
-                        <div class="promo-price-container">
-                            <div class="promo-price">₽990</div>
-                            <div class="promo-discount">-20%</div>
-                        </div>
-                        <div class="promo-comment">*Акция действительна до конца месяца</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Генерация комбинированного макета
-        function generateCombinedLayout() {
-            const listContent = generateListLayout();
-            const promoContent = generatePromoLayout();
-            
-            return `
-                <div class="combined-template">
-                    <div class="combined-menu-part">${listContent}</div>
-                    <div class="combined-promo-part">${promoContent}</div>
-                </div>
-            `;
-        }
-        
-        // Обновление фона
-        function updateBackground() {
-            if (backgroundImage) {
-                menuPreview.style.backgroundImage = `url(${backgroundImage})`;
-                menuPreview.style.backgroundSize = 'cover';
-                menuPreview.style.backgroundPosition = 'center';
-            } else {
-                const bgColor = document.getElementById('background-color').value;
-                menuPreview.style.backgroundImage = 'none';
-                menuPreview.style.backgroundColor = bgColor;
+            // Render based on selected layout
+            if (currentLayout === 'list') {
+                renderListLayout();
+            } else if (currentLayout === 'grid') {
+                renderGridLayout(2);
+            } else if (currentLayout === 'grid3x3') {
+                renderGridLayout(3);
+            } else if (currentLayout === 'promo') {
+                renderPromoLayout();
+            } else if (currentLayout === 'combined') {
+                renderCombinedLayout();
             }
         }
         
-        // Обновление непрозрачности фона
-        function updateBackgroundOpacity(opacity) {
-            menuPreview.style.opacity = opacity / 100;
-        }
-        
-        // Обновление логотипа
-        function updateLogo() {
-            const logoElements = document.querySelectorAll('.menu-logo');
-            logoElements.forEach(logo => {
-                if (logoImage) {
-                    logo.src = logoImage;
-                    logo.style.display = 'block';
-                } else {
-                    logo.style.display = 'none';
-                }
+        // Render list layout (default)
+        function renderListLayout() {
+            menuItemsContainer.className = 'menu-items-container two-columns';
+            
+            menuData.forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'menu-section';
+                
+                const title = document.createElement('div');
+                title.className = 'section-title';
+                title.textContent = category.name;
+                section.appendChild(title);
+                
+                category.items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'menu-item';
+                    
+                    const itemContent = document.createElement('div');
+                    itemContent.className = 'item-content';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'item-name';
+                    name.textContent = item.name;
+                    itemContent.appendChild(name);
+                    
+                    if (item.description) {
+                        const description = document.createElement('div');
+                        description.className = 'item-description';
+                        description.textContent = item.description;
+                        itemContent.appendChild(description);
+                    }
+                    
+                    const price = document.createElement('div');
+                    price.className = 'item-price';
+                    
+                    if (item.volumePrices && item.volumePrices.length > 0) {
+                        // Show all volume prices
+                        item.volumePrices.forEach(volPrice => {
+                            const volPriceElement = document.createElement('div');
+                            volPriceElement.className = 'volume-price';
+                            volPriceElement.textContent = volPrice;
+                            price.appendChild(volPriceElement);
+                        });
+                    } else {
+                        // Show single price
+                        price.textContent = item.price;
+                    }
+                    
+                    itemElement.appendChild(itemContent);
+                    itemElement.appendChild(price);
+                    section.appendChild(itemElement);
+                });
+                
+                menuItemsContainer.appendChild(section);
             });
         }
         
-        // Обновление даты меню
-        function updateMenuDate() {
-            const dateInput = document.getElementById('menu-date');
-            const dateElements = document.querySelectorAll('.menu-date');
+        // Render grid layout (2x2 or 3x3)
+        function renderGridLayout(columns) {
+            menuItemsContainer.className = `menu-items-container ${columns === 2 ? 'two-columns' : 'three-columns'}`;
+            menuItemsContainer.innerHTML = '';
             
-            dateElements.forEach(element => {
-                element.textContent = dateInput.value || new Date().toLocaleDateString('ru-RU', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
+            // Create grid container
+            const gridContainer = document.createElement('div');
+            gridContainer.className = columns === 2 ? 'menu-grid-template' : 'menu-grid-template-3x3';
+            
+            // Add category title at the top
+            if (menuData.length > 0) {
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'grid-category-title';
+                categoryTitle.textContent = menuData[0].name;
+                menuItemsContainer.appendChild(categoryTitle);
+            }
+            
+            // Flatten all items from all categories
+            const allItems = [];
+            menuData.forEach(category => {
+                category.items.forEach(item => {
+                    allItems.push({...item, category: category.name});
                 });
             });
-        }
-        
-        // Обновление стилей
-        function updateStyles() {
-            const styles = {
-                '--category-font-family': document.getElementById('category-font-family').value,
-                '--category-font-size': document.getElementById('category-font-size').value + 'px',
-                '--category-font-color': document.getElementById('category-font-color').value,
-                '--item-font-family': document.getElementById('item-font-family').value,
-                '--item-font-size': document.getElementById('item-font-size').value + 'px',
-                '--item-font-color': document.getElementById('item-font-color').value,
-                '--desc-font-family': document.getElementById('desc-font-family').value,
-                '--desc-font-size': document.getElementById('desc-font-size').value + 'px',
-                '--desc-font-color': document.getElementById('desc-font-color').value,
-                '--price-font-family': document.getElementById('price-font-family').value,
-                '--price-font-size': document.getElementById('price-font-size').value + 'px',
-                '--price-font-color': document.getElementById('price-font-color').value
-            };
             
-            for (const [property, value] of Object.entries(styles)) {
-                document.documentElement.style.setProperty(property, value);
-            }
-        }
-        
-        // Форматирование цены
-        function formatPrice(price) {
-            return new Intl.NumberFormat('ru-RU', {
-                style: 'currency',
-                currency: 'RUB',
-                minimumFractionDigits: 0
-            }).format(price);
-        }
-        
-        // Замена фото в сетке
-        function replaceGridPhoto(index) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+            // Add items to grid
+            allItems.slice(0, columns * 2).forEach(item => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
                 
+                const name = document.createElement('div');
+                name.className = 'item-name';
+                name.textContent = item.name;
+                cell.appendChild(name);
+                
+                if (item.description) {
+                    const description = document.createElement('div');
+                    description.className = 'item-description';
+                    description.textContent = item.description;
+                    cell.appendChild(description);
+                }
+                
+                const priceContainer = document.createElement('div');
+                priceContainer.className = 'item-price';
+                
+                if (item.volumePrices && item.volumePrices.length > 0) {
+                    // Show all volume prices
+                    item.volumePrices.forEach(volPrice => {
+                        const volPriceElement = document.createElement('div');
+                        volPriceElement.className = 'volume-price';
+                        volPriceElement.textContent = volPrice;
+                        priceContainer.appendChild(volPriceElement);
+                    });
+                } else {
+                    // Show single price
+                    priceContainer.textContent = item.price;
+                }
+                
+                cell.appendChild(priceContainer);
+                
+                // Add photo container with upload button
+                const photoContainer = document.createElement('div');
+                photoContainer.className = 'item-photo-container';
+                
+                const uploadBtn = document.createElement('button');
+                uploadBtn.className = 'upload-photo-btn';
+                uploadBtn.innerHTML = '+';
+                uploadBtn.title = 'Загрузить фото';
+                uploadBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = function(e) {
+                        if (e.target.files.length) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                photoContainer.innerHTML = '';
+                                const img = document.createElement('img');
+                                img.className = 'item-photo';
+                                img.src = e.target.result;
+                                photoContainer.appendChild(img);
+                                
+                                // Add change photo button
+                                const changeBtn = document.createElement('button');
+                                changeBtn.className = 'upload-photo-btn';
+                                changeBtn.innerHTML = '↻';
+                                changeBtn.title = 'Изменить фото';
+                                changeBtn.onclick = function(e) {
+                                    e.stopPropagation();
+                                    input.click();
+                                };
+                                photoContainer.appendChild(changeBtn);
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                        }
+                    };
+                    input.click();
+                };
+                
+                photoContainer.appendChild(uploadBtn);
+                cell.appendChild(photoContainer);
+                
+                gridContainer.appendChild(cell);
+            });
+            
+            menuItemsContainer.appendChild(gridContainer);
+        }
+        
+        // Render promo layout
+        function renderPromoLayout() {
+            menuItemsContainer.innerHTML = '';
+            
+            const promoContainer = document.createElement('div');
+            promoContainer.className = 'promo-template';
+            
+            const promoContent = document.createElement('div');
+            promoContent.className = 'promo-content';
+            
+            // Use first item from first category for promo
+            if (menuData.length > 0 && menuData[0].items.length > 0) {
+                const promoItem = menuData[0].items[0];
+                
+                const title = document.createElement('div');
+                title.className = 'promo-title';
+                title.textContent = promoItem.name;
+                promoContent.appendChild(title);
+                
+                if (promoItem.description) {
+                    const text = document.createElement('div');
+                    text.className = 'promo-text';
+                    text.textContent = promoItem.description;
+                    promoContent.appendChild(text);
+                }
+                
+                const priceContainer = document.createElement('div');
+                priceContainer.className = 'promo-price-container';
+                
+                const price = document.createElement('div');
+                price.className = 'promo-price';
+                price.textContent = promoItem.price;
+                priceContainer.appendChild(price);
+                
+                if (promoItem.volumePrices && promoItem.volumePrices.length > 0) {
+                    promoItem.volumePrices.forEach(volPrice => {
+                        const discount = document.createElement('div');
+                        discount.className = 'promo-discount';
+                        discount.textContent = volPrice;
+                        priceContainer.appendChild(discount);
+                    });
+                }
+                
+                promoContent.appendChild(priceContainer);
+                
+                // Add comment field
+                const comment = document.createElement('div');
+                comment.className = 'promo-comment';
+                comment.textContent = 'Акция действует до конца месяца';
+                promoContent.appendChild(comment);
+            }
+            
+            promoContainer.appendChild(promoContent);
+            menuItemsContainer.appendChild(promoContainer);
+        }
+        
+        // Render combined layout
+        function renderCombinedLayout() {
+            menuItemsContainer.innerHTML = '';
+            
+            const combinedContainer = document.createElement('div');
+            combinedContainer.className = 'combined-template';
+            
+            // Menu part (left)
+            const menuPart = document.createElement('div');
+            menuPart.className = 'combined-menu-part';
+            
+            const menuList = document.createElement('div');
+            menuList.className = 'menu-list-template';
+            
+            const menuItems = document.createElement('div');
+            menuItems.className = 'menu-items-container';
+            
+            // Add a few items from first category
+            if (menuData.length > 0) {
+                const category = menuData[0];
+                
+                const title = document.createElement('div');
+                title.className = 'section-title';
+                title.textContent = category.name;
+                menuItems.appendChild(title);
+                
+                category.items.slice(0, 3).forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'menu-item';
+                    
+                    const itemContent = document.createElement('div');
+                    itemContent.className = 'item-content';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'item-name';
+                    name.textContent = item.name;
+                    itemContent.appendChild(name);
+                    
+                    if (item.description) {
+                        const description = document.createElement('div');
+                        description.className = 'item-description';
+                        description.textContent = item.description;
+                        itemContent.appendChild(description);
+                    }
+                    
+                    const price = document.createElement('div');
+                    price.className = 'item-price';
+                    
+                    if (item.volumePrices && item.volumePrices.length > 0) {
+                        // Show all volume prices
+                        item.volumePrices.forEach(volPrice => {
+                            const volPriceElement = document.createElement('div');
+                            volPriceElement.className = 'volume-price';
+                            volPriceElement.textContent = volPrice;
+                            price.appendChild(volPriceElement);
+                        });
+                    } else {
+                        // Show single price
+                        price.textContent = item.price;
+                    }
+                    
+                    itemElement.appendChild(itemContent);
+                    itemElement.appendChild(price);
+                    menuItems.appendChild(itemElement);
+                });
+            }
+            
+            menuList.appendChild(menuItems);
+            menuPart.appendChild(menuList);
+            combinedContainer.appendChild(menuPart);
+            
+            // Promo part (right)
+            const promoPart = document.createElement('div');
+            promoPart.className = 'combined-promo-part';
+            
+            const promoContent = document.createElement('div');
+            promoContent.className = 'combined-promo-content';
+            
+            // Use an item from the menu for promo
+            if (menuData.length > 0 && menuData[0].items.length > 0) {
+                const promoItem = menuData[0].items[0];
+                
+                const title = document.createElement('div');
+                title.className = 'promo-title';
+                title.textContent = promoItem.name;
+                promoContent.appendChild(title);
+                
+                if (promoItem.description) {
+                    const text = document.createElement('div');
+                    text.className = 'promo-text';
+                    text.textContent = promoItem.description;
+                    promoContent.appendChild(text);
+                }
+                
+                const priceContainer = document.createElement('div');
+                priceContainer.className = 'promo-price-container';
+                
+                const price = document.createElement('div');
+                price.className = 'promo-price';
+                price.textContent = promoItem.price;
+                priceContainer.appendChild(price);
+                
+                if (promoItem.volumePrices && promoItem.volumePrices.length > 0) {
+                    promoItem.volumePrices.forEach(volPrice => {
+                        const discount = document.createElement('div');
+                        discount.className = 'promo-discount';
+                        discount.textContent = volPrice;
+                        priceContainer.appendChild(discount);
+                    });
+                }
+                
+                promoContent.appendChild(priceContainer);
+            }
+            
+            promoPart.appendChild(promoContent);
+            combinedContainer.appendChild(promoPart);
+            
+            menuItemsContainer.appendChild(combinedContainer);
+        }
+        
+        // Logo upload handling
+        logoUploadBtn.addEventListener('click', () => {
+            logoUploadInput.click();
+        });
+        
+        logoUploadInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const photoContainer = document.querySelector(`.grid-cell[data-index="${index}"] .item-photo-container`);
-                    photoContainer.innerHTML = `<img src="${e.target.result}" class="item-photo" onclick="replaceGridPhoto(${index})">`;
+                    logoImage = e.target.result;
+                    menuLogo.src = logoImage;
+                    renderMenu();
                 };
-                reader.readAsDataURL(file);
-            };
-            input.click();
-        }
-        
-        // Добавление цены в ручном редакторе
-        function addPrice() {
-            const volumeName = document.getElementById('volume-name').value.trim().toUpperCase() || 'S';
-            const priceValue = document.getElementById('item-price').value;
-            
-            if (!priceValue) {
-                alert('Введите цену');
-                return;
+                reader.readAsDataURL(e.target.files[0]);
             }
-            
-            const price = parseFloat(priceValue);
-            if (isNaN(price)) {
-                alert('Введите корректную цену');
-                return;
-            }
-            
-            pricesList.push({ volume: volumeName, price: price });
-            updatePricesList();
-            
-            // Очистка полей
-            document.getElementById('volume-name').value = '';
-            document.getElementById('item-price').value = '';
-        }
+        });
         
-        // Обновление списка цен
-        function updatePricesList() {
-            const container = document.getElementById('prices-container');
-            container.innerHTML = '';
-            
-            pricesList.forEach((item, index) => {
-                const priceElement = document.createElement('div');
-                priceElement.className = 'price-item';
-                priceElement.innerHTML = `
-                    <span>${item.volume}: ${formatPrice(item.price)}</span>
-                    <button onclick="removePrice(${index})">✕</button>
-                `;
-                container.appendChild(priceElement);
-            });
-        }
+        // Event listeners for design controls
+        showLogoCheckbox.addEventListener('change', renderMenu);
+        showDateCheckbox.addEventListener('change', renderMenu);
+        menuDateInput.addEventListener('input', renderMenu);
         
-        // Удаление цены
-        function removePrice(index) {
-            pricesList.splice(index, 1);
-            updatePricesList();
-        }
+        // Font controls
+        const fontControls = [
+            { id: 'category-font-family', prop: '--category-font-family' },
+            { id: 'category-font-size', prop: '--category-font-size', suffix: 'px' },
+            { id: 'category-font-color', prop: '--category-font-color' },
+            { id: 'item-font-family', prop: '--item-font-family' },
+            { id: 'item-font-size', prop: '--item-font-size', suffix: 'px' },
+            { id: 'item-font-color', prop: '--item-font-color' },
+            { id: 'desc-font-family', prop: '--desc-font-family' },
+            { id: 'desc-font-size', prop: '--desc-font-size', suffix: 'px' },
+            { id: 'desc-font-color', prop: '--desc-font-color' },
+            { id: 'price-font-family', prop: '--price-font-family' },
+            { id: 'price-font-size', prop: '--price-font-size', suffix: 'px' },
+            { id: 'price-font-color', prop: '--price-font-color' }
+        ];
         
-        // Добавление элемента вручную
-        function addManualItem() {
-            const category = document.getElementById('category-name').value.trim();
-            const name = document.getElementById('item-name').value.trim();
-            const description = document.getElementById('item-description').value.trim();
-            
-            if (!category || !name) {
-                alert('Заполните название категории и блюда');
-                return;
-            }
-            
-            const prices = {};
-            if (pricesList.length > 0) {
-                pricesList.forEach(item => {
-                    prices[item.volume] = item.price;
+        fontControls.forEach(control => {
+            const element = document.getElementById(control.id);
+            if (element) {
+                element.addEventListener('input', () => {
+                    let value = element.value;
+                    if (control.suffix) value += control.suffix;
+                    document.documentElement.style.setProperty(control.prop, value);
+                    
+                    // Update value display for sliders
+                    if (element.type === 'range') {
+                        const valueDisplay = document.getElementById(`${control.id}-value`);
+                        if (valueDisplay) {
+                            valueDisplay.textContent = element.value + (control.suffix || '');
+                        }
+                    }
                 });
             }
-            
-            menuData.push({
-                category: category,
-                name: name,
-                description: description,
-                prices: prices
-            });
-            
-            // Очистка полей
-            document.getElementById('item-name').value = '';
-            document.getElementById('item-description').value = '';
-            pricesList = [];
-            updatePricesList();
-            
-            updateLayout();
-        }
+        });
         
-        // Добавление категории
-        function addCategory() {
-            const categoryName = prompt('Введите название категории:');
-            if (categoryName) {
-                menuData.push({
-                    category: categoryName.trim(),
-                    name: 'Новый элемент',
-                    description: '',
-                    prices: { 'S': 0 }
+        // Color controls
+        const colorControls = [
+            { id: 'menu-bg-color', prop: '--menu-bg-color' },
+            { id: 'grid-bg-color', prop: '--grid-bg-color' },
+            { id: 'cell-bg-color', prop: '--cell-bg-color' }
+        ];
+        
+        colorControls.forEach(control => {
+            const element = document.getElementById(control.id);
+            if (element) {
+                element.addEventListener('input', () => {
+                    document.documentElement.style.setProperty(control.prop, element.value);
                 });
-                updateLayout();
             }
-        }
+        });
         
-        // Обработка Excel
-        function processExcel() {
-            alert('Для обработки Excel файла используйте вкладку "Excel" и загрузите файл');
-        }
-        
-        // Сохранение как JPEG
-        function saveAsJPEG() {
+        // Save as JPEG
+        saveJpegBtn.addEventListener('click', () => {
             loadingOverlay.style.display = 'flex';
             
-            // Определяем размеры на основе соотношения сторон
-            const [widthRatio, heightRatio] = aspectRatio.split(':').map(Number);
-            const scale = 2; // Увеличиваем для лучшего качества
-            const width = widthRatio * 100 * scale;
-            const height = heightRatio * 100 * scale;
+            setTimeout(() => {
+                html2canvas(menuPreview, {
+                    scale: 2,
+                    backgroundColor: null
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        saveAs(blob, 'menu-board.jpeg');
+                        loadingOverlay.style.display = 'none';
+                    }, 'image/jpeg', 0.95);
+                });
+            }, 500);
+        });
+        
+        // Save as Video (placeholder)
+        saveVideoBtn.addEventListener('click', () => {
+            alert('Функция сохранения видео находится в разработке');
+        });
+        
+        // Reset button
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Вы уверены, что хотите сбросить все настройки?')) {
+                menuData = [];
+                logoImage = null;
+                menuLogo.src = '';
+                menuDateInput.value = '';
+                renderMenu();
+            }
+        });
+        
+        // Save button
+        saveBtn.addEventListener('click', () => {
+            alert('Функция сохранения проекта находится в разработке');
+        });
+        
+        // Download template
+        downloadTemplateBtn.addEventListener('click', () => {
+            // Create a simple template workbook
+            const wb = XLSX.utils.book_new();
+            const wsData = [
+                ['Завтраки', '', ''],
+                ['Омлет с ветчиной', '250 руб', 'Свежие яйца, ветчина, сыр'],
+                ['Блинчики с творогом', '180 руб', 'Домашние блины с творожной начинкой'],
+                ['', '', ''],
+                ['Основные блюда', '', ''],
+                ['Стейк из лосося', '590 руб', 'Подается с овощами на гриле'],
+                ['Паста Карбонара', '320 руб', 'С беконом и сливочным соусом'],
+                ['', '', ''],
+                ['Напитки', '', ''],
+                ['Капучино', '120 руб', '150 мл', '180 руб/250 мл'],
+                ['Свежевыжатый сок', '180 руб', 'Апельсиновый, яблочный, мультифрукт']
+            ];
             
-            html2canvas(menuPreview, {
-                scale: scale,
-                width: width,
-                height: height,
-                backgroundColor: null
-            }).then(canvas => {
-                canvas.toBlob(function(blob) {
-                    saveAs(blob, 'menuboard.jpg');
-                    loadingOverlay.style.display = 'none';
-                }, 'image/jpeg', 0.9);
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Меню');
+            XLSX.writeFile(wb, 'шаблон-меню.xlsx');
+        });
+        
+        // Add category button
+        addCategoryBtn.addEventListener('click', () => {
+            menuData.push({
+                name: 'Новая категория',
+                items: []
+            });
+            renderMenu();
+        });
+        
+        // Initialize
+        updateAspectRatio();
+        renderMenu();
+        
+        // Set up manual editor
+        const manualCategories = document.getElementById('manual-categories');
+        const manualAddCategoryBtn = document.getElementById('manual-add-category');
+        const manualAddItemBtn = document.getElementById('manual-add-item');
+        
+        manualAddCategoryBtn.addEventListener('click', () => {
+            const categoryId = 'category-' + Date.now();
+            const categoryHtml = `
+                <div class="manual-editor-category" data-id="${categoryId}">
+                    <div class="manual-editor-category-header">
+                        <input type="text" class="input" placeholder="Название категории" value="Новая категория">
+                        <button class="btn-small btn-secondary remove-category">Удалить</button>
+                    </div>
+                    <div class="manual-editor-items"></div>
+                    <button class="btn-small add-item-to-category">Добавить блюдо</button>
+                </div>
+            `;
+            
+            manualCategories.insertAdjacentHTML('beforeend', categoryHtml);
+            
+            // Set up event listeners for the new category
+            const newCategory = manualCategories.querySelector(`[data-id="${categoryId}"]`);
+            newCategory.querySelector('.remove-category').addEventListener('click', function() {
+                newCategory.remove();
+            });
+            
+            newCategory.querySelector('.add-item-to-category').addEventListener('click', function() {
+                addItemToCategory(newCategory);
+            });
+        });
+        
+        manualAddItemBtn.addEventListener('click', () => {
+            if (manualCategories.children.length === 0) {
+                manualAddCategoryBtn.click();
+            }
+            addItemToCategory(manualCategories.lastElementChild);
+        });
+        
+        function addItemToCategory(categoryElement) {
+            const itemId = 'item-' + Date.now();
+            const itemsContainer = categoryElement.querySelector('.manual-editor-items');
+            
+            const itemHtml = `
+                <div class="manual-editor-item" data-id="${itemId}">
+                    <div class="manual-editor-item-name">
+                        <input type="text" placeholder="Название блюда" class="input">
+                    </div>
+                    <div class="manual-editor-item-price">
+                        <input type="text" placeholder="Цена" class="input">
+                    </div>
+                    <div class="manual-editor-actions">
+                        <button class="btn-small add-volume-price">Объем</button>
+                        <button class="btn-small remove-item">✕</button>
+                    </div>
+                </div>
+            `;
+            
+            itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+            
+            // Set up event listeners for the new item
+            const newItem = itemsContainer.querySelector(`[data-id="${itemId}"]`);
+            newItem.querySelector('.remove-item').addEventListener('click', function() {
+                newItem.remove();
+            });
+            
+            newItem.querySelector('.add-volume-price').addEventListener('click', function() {
+                const volumePricesContainer = newItem.querySelector('.volume-prices-container') || 
+                    createVolumePricesContainer(newItem);
+                
+                const priceId = 'price-' + Date.now();
+                const priceHtml = `
+                    <div class="volume-price-tag" data-id="${priceId}">
+                        <input type="text" placeholder="Цена/объем" class="input">
+                        <span class="remove-volume-price">✕</span>
+                    </div>
+                `;
+                
+                volumePricesContainer.insertAdjacentHTML('beforeend', priceHtml);
+                
+                // Set up event listener for the remove button
+                volumePricesContainer.querySelector(`[data-id="${priceId}"] .remove-volume-price`)
+                    .addEventListener('click', function() {
+                        this.parentElement.remove();
+                    });
             });
         }
         
-        // Сохранение как видео
-        function saveAsVideo() {
-            alert('Функция сохранения видео в разработке');
-            loadingOverlay.style.display = 'none';
+        function createVolumePricesContainer(itemElement) {
+            const container = document.createElement('div');
+            container.className = 'volume-prices-container';
+            itemElement.appendChild(container);
+            return container;
         }
     </script>
 </body>
