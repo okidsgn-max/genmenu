@@ -37,7 +37,7 @@
             --background-light: #f6f6f9;
             --background-dark: #f0f0f5;
             --placeholder: #9A9FA5;
-            --border-radius: 12px;
+            --border-radius: 8px;
             --transition-fast: 0.15s;
             --transition-medium: 0.3s;
             --transition-slow: 0.5s;
@@ -216,11 +216,27 @@
         .control-group { border: 1px solid var(--border); border-radius: var(--border-radius); margin-bottom: 16px; }
         .control-group summary {
             font-size: 15px; font-weight: 600; color: var(--text-main); padding: 12px 16px; cursor: pointer; list-style: none;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s ease;
         }
+        .control-group summary:hover { background-color: var(--primary-light); }
         .control-group summary::-webkit-details-marker { display: none; }
-        .control-group summary::after { content: '−'; font-size: 18px; font-weight: bold; transition: transform var(--transition-medium); }
-        .control-group:not([open]) summary::after { content: '+'; }
+        .control-group summary::after {
+            content: '+';
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--primary);
+            transition: transform var(--transition-medium) ease-out;
+            transform: rotate(0deg);
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .control-group[open] summary::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
         .control-group-content { padding: 0 16px 16px; }
         
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--text-secondary); }
@@ -301,7 +317,7 @@
         }
         .promo-title {
             font-size: var(--promo-title-font-size); font-family: var(--promo-title-font-family); color: var(--promo-title-font-color);
-            font-weight: 700; margin-bottom: 20px; line-height: 1.1; display: inline-flex; align-items: center; gap: 15px;
+            font-weight: 700; margin-bottom: 20px; line-height: 1.1; display: inline-flex; align-items: flex-start; gap: 15px;
         }
         .promo-text { font-size: var(--promo-text-font-size); font-family: var(--promo-text-font-family); color: var(--promo-text-font-color); margin-bottom: 30px; line-height: 1.3; }
         .promo-comment {
@@ -479,17 +495,17 @@
                          <div class="control-group-content">
                              <label>Макет</label>
                              <div class="layout-buttons" id="layout-buttons">
-                               <button class="layout-btn active" data-layout="list">
-                                    <img src="menu.svg" alt="">
-                                    Список
-                                </button>
-                                <button class="layout-btn" data-layout="grid">
+                                <button class="layout-btn active" data-layout="grid">
                                     <img src="2v1.svg" alt="">
                                     2x2
                                 </button>
                                 <button class="layout-btn" data-layout="grid3x3">
                                     <img src="acii.svg" alt="">
                                     3x3
+                                </button>
+                                <button class="layout-btn" data-layout="list">
+                                    <img src="menu.svg" alt="">
+                                    Список
                                 </button>
                             </div>
 
@@ -500,10 +516,6 @@
                              <div class="checkbox-group">
                                 <input type="checkbox" id="show-date-checkbox" checked>
                                 <label for="show-date-checkbox">Показывать текущую дату</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="multiple-prices-checkbox">
-                                <label for="multiple-prices-checkbox">Цены для объемов (S/M/L)</label>
                             </div>
                          </div>
                     </details>
@@ -630,7 +642,6 @@
                                 <div class="slider-value" id="promo-discount-value">0%</div>
                             </div>
                             <div class="setting-row">
-                                <input type="number" id="promo-discount-size" class="input" value="84" min="10" max="180">
                                 <input type="color" id="discount-color-picker" value="#ff5252">
                                 <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
                             </div>
@@ -760,7 +771,6 @@
                 menuFileInfo: getEl('menu-file-info'),
                 layoutButtons: getEl('layout-buttons'),
                 showDescCheck: getEl('show-description-checkbox'),
-                multiPriceCheck: getEl('multiple-prices-checkbox'),
                 showDateCheck: getEl('show-date-checkbox'),
                 menuBgPicker: getEl('menu-bg-color-picker'),
                 cellBgColorPicker: getEl('cell-bg-color-picker'),
@@ -785,7 +795,6 @@
                 promoPriceColor: getEl('promo-price-color-picker'),
                 promoDiscountSlider: getEl('promo-discount-slider'),
                 promoDiscountValue: getEl('promo-discount-value'),
-                promoDiscountSize: getEl('promo-discount-size'),
                 discountColor: getEl('discount-color-picker'),
                 discountBgColor: getEl('discount-bg-color-picker'),
                 veganCheck: getEl('vegan-checkbox'),
@@ -829,7 +838,7 @@
 
             let state = {
                 currentTab: 'menu',
-                layout: 'list',
+                layout: 'grid',
                 excelData: [],
                 promoTitle: 'Заголовок акции',
                 promoText: 'Текст акции с описанием',
@@ -1238,7 +1247,7 @@
                             const originalIndex = state.excelData.indexOf(item);
                             let priceHTML;
                             const hasVolumePrices = item.S || item.M || item.L;
-                            if (controls.multiPriceCheck.checked && hasVolumePrices) {
+                            if (hasVolumePrices) {
                                 priceHTML = [
                                     item.S ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="price" data-volume="s">S: ${formatPrice(item.S)}</span>` : '',
                                     item.M ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="price" data-volume="m">M: ${formatPrice(item.M)}</span>` : '',
