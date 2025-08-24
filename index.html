@@ -289,7 +289,7 @@
         }
         .grid-cell::after {
             content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 60%); z-index: 2; pointer-events: none;
+            background: linear-gradient(to right, rgba(0,0,0, var(--grid-gradient-opacity, 0.4)) 0%, rgba(0,0,0,0) 60%); z-index: 2; pointer-events: none;
         }
         .grid-cell-content { flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; }
         .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price { color: var(--item-font-color); }
@@ -333,10 +333,14 @@
             font-size: calc(var(--promo-price-font-size) * 0.7); font-family: var(--promo-price-font-family); color: var(--discount-font-color);
             font-weight: bold; background: var(--discount-bg-color); padding: 5px 10px; border-radius: 20px;
         }
-        .promo-icon { height: 1em; width: auto; }
+        .promo-icon-wrapper {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 8px; border-radius: 8px; background-color: var(--discount-bg-color);
+        }
+        .promo-icon { height: 1.2em; width: auto; filter: brightness(0) invert(1); }
         
         .combined-template { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; overflow: hidden; position: relative; }
-        .combined-promo-part { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background-size: cover; background-position: center; }
+        .combined-promo-part { position: relative; z-index: 1; background-size: cover; background-position: center; overflow: hidden; color: white; }
         .combined-menu-part { z-index: 2; grid-column: 1 / 2; background-color: var(--menu-bg-color); position: relative; overflow: auto;}
         
         .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background-color: var(--menu-bg-color); flex-shrink: 0; }
@@ -424,6 +428,17 @@
         
         .btn-group { display: flex; gap: 10px; }
         
+        .combined-template .promo-content { padding: 25px; justify-content: flex-start; }
+        .combined-template .promo-content > div:first-child { justify-content: flex-start; }
+        .combined-template .promo-title { font-size: calc(var(--promo-title-font-size) * 0.4); margin-bottom: 10px; gap: 10px; }
+        .combined-template .promo-text { font-size: calc(var(--promo-text-font-size) * 0.4); margin-bottom: 15px; }
+        .combined-template .promo-price-container { gap: 10px; margin-top: auto; }
+        .combined-template .promo-price { font-size: calc(var(--promo-price-font-size) * 0.45); }
+        .combined-template .promo-discount { font-size: calc(var(--promo-price-font-size) * 0.3); padding: 3px 8px; }
+        .combined-template .promo-icon-wrapper { padding: 4px; border-radius: 4px; }
+        .combined-template .promo-icon { height: 1em; }
+        .combined-template .promo-comment { display: none; }
+        
         .combined-template .combined-menu-part .grid-cell-content .item-name { color: var(--item-font-color); }
         .combined-template .combined-menu-part .grid-cell-content .item-description { color: var(--desc-font-color); }
         .combined-template .combined-menu-part .grid-cell-content .item-price { color: var(--item-font-color); }
@@ -437,6 +452,11 @@
         .combined-template .item-name { font-size: calc(var(--item-font-size) * 0.9); }
         .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
         .combined-template .item-price { font-size: calc(var(--item-font-size) * 0.9); }
+
+        .combined-template .grid-cell { display: block; position: relative; }
+        .combined-template .grid-cell-content { height: 100%; width: 100%; }
+        .combined-template .grid-cell .item-photo-container { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; flex: none; z-index: 5; }
+        .combined-template .grid-cell::after { display: none; }
 
         .menu-date.auto-contrast { color: var(--date-contrast-color, #1A1D1F); }
     </style>
@@ -589,6 +609,13 @@
                                     </select>
                                     <input type="number" id="price-font-size" class="input" value="24" min="10" max="100">
                                     <input type="color" id="price-color-picker" value="#00b398">
+                                </div>
+                            </div>
+                            <div class="grid-color-item" style="margin-top: 15px;">
+                                <label>Затемнение ячейки</label>
+                                <div class="slider-container">
+                                    <input type="range" id="grid-gradient-slider" min="0" max="100" value="40">
+                                    <div class="slider-value" id="grid-gradient-value">40%</div>
                                 </div>
                             </div>
                         </div>
@@ -787,6 +814,8 @@
                 priceFont: getEl('price-font-select'),
                 priceSize: getEl('price-font-size'),
                 priceColor: getEl('price-color-picker'),
+                gridGradientSlider: getEl('grid-gradient-slider'),
+                gridGradientValue: getEl('grid-gradient-value'),
                 promoTitleSize: getEl('promo-title-size'),
                 promoTitleColor: getEl('promo-title-color-picker'),
                 promoTextSize: getEl('promo-text-size'),
@@ -941,6 +970,11 @@
                 
                 controls.promoDiscountSlider.addEventListener('input', () => {
                     controls.promoDiscountValue.textContent = `${controls.promoDiscountSlider.value}%`;
+                    render();
+                });
+
+                controls.gridGradientSlider.addEventListener('input', () => {
+                    controls.gridGradientValue.textContent = `${controls.gridGradientSlider.value}%`;
                     render();
                 });
                 
@@ -1204,6 +1238,7 @@
                     '--promo-price-font-color': controls.promoPriceColor.value, '--discount-font-color': controls.discountColor.value,
                     '--discount-bg-color': controls.discountBgColor.value, '--promo-text-align': controls.promoTextAlign.value,
                     '--date-contrast-color': getContrastColor(controls.menuBgPicker.value),
+                    '--grid-gradient-opacity': parseFloat(controls.gridGradientSlider.value) / 100,
                 };
                 for (const [key, value] of Object.entries(styles)) { document.documentElement.style.setProperty(key, value); }
             }
@@ -1297,11 +1332,13 @@
                     ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
                 </div>` : '';
 
+                const createIcon = (src, alt) => `<span class="promo-icon-wrapper"><img src="${src}" alt="${alt}" class="promo-icon"></span>`;
+
                 const iconsHTML = [
-                    controls.veganCheck.checked && `<img src="vegan.svg" alt="Веган" class="promo-icon">`,
-                    controls.halalCheck.checked && `<img src="halal.svg" alt="Халяль" class="promo-icon">`,
-                    controls.glutenfreeCheck.checked && `<img src="glutenfree.svg" alt="Без глютена" class="promo-icon">`,
-                    controls.newCheck.checked && `<img src="new.svg" alt="Новинка" class="promo-icon">`
+                    controls.veganCheck.checked && createIcon("vegan.svg", "Веган"),
+                    controls.halalCheck.checked && createIcon("halal.svg", "Халяль"),
+                    controls.glutenfreeCheck.checked && createIcon("glutenfree.svg", "Без глютена"),
+                    controls.newCheck.checked && createIcon("new.svg", "Новинка")
                 ].filter(Boolean).join('');
 
                 return `
@@ -1338,7 +1375,7 @@
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
                     const menuHTML = `<div class="combined-menu-part">${renderMenuHTML(state.layout)}</div>`;
-                    const promoHTML = `<div class="combined-promo-part"></div>`;
+                    const promoHTML = `<div class="combined-promo-part">${renderPromoHTML()}</div>`;
                     html = `<div class="combined-template">${menuHTML}${promoHTML}</div>`;
                 }
                 
@@ -1366,24 +1403,29 @@
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
 
-                const { style } = controls.exportContainer;
-                const originalStyles = { aspectRatio: style.aspectRatio, width: style.width, height: style.height };
+                const elementToCapture = controls.exportContainer;
+                const clone = elementToCapture.cloneNode(true);
 
-                style.width = state.exportWidth + 'px';
-                style.height = state.exportHeight + 'px';
-                style.aspectRatio = 'auto';
-                
+                clone.style.position = 'absolute';
+                clone.style.left = '-9999px';
+                clone.style.top = '0px';
+                clone.style.width = state.exportWidth + 'px';
+                clone.style.height = state.exportHeight + 'px';
+                clone.style.aspectRatio = 'auto';
+
+                document.body.appendChild(clone);
+
                 setTimeout(() => {
-                    html2canvas(controls.exportContainer, { 
+                    html2canvas(clone, { 
                         backgroundColor: null, width: state.exportWidth, height: state.exportHeight, scale: 1, useCORS: true 
                     }).then(generator).catch(err => {
                         console.error('Download error:', err);
                         alert('Ошибка сохранения файла.');
                     }).finally(() => {
-                        Object.assign(style, originalStyles);
+                        document.body.removeChild(clone);
                         controls.loadingOverlay.style.display = 'none';
                     });
-                }, 100);
+                }, 300);
             }
 
             function downloadAsPNG() {
