@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-    <link href="httpshttps://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
@@ -26,10 +26,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
-            --primary: #00b398;
-            --primary-hover: #008f79;
-            --primary-active: #005c4e;
-            --primary-light: rgba(0, 179, 152, 0.08);
+            --primary: #04C9B0;
+            --primary-hover: #139483;
+            --primary-active: #4DAB9E;
+            --primary-light: rgba(4, 201, 176, 0.08);
             --text-main: #1A1D1F;
             --text-secondary: #3d435c;
             --text-inactive: #667099;
@@ -181,7 +181,7 @@
             cursor: pointer;
         }
         
-        .input:focus, .select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 179, 152, 0.15); }
+        .input:focus, .select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(4, 201, 176, 0.15); }
         .checkbox-group { display: flex; align-items: center; margin-bottom: 16px; }
         .features-group { display: flex; gap: 15px; flex-wrap: wrap; }
         .checkbox-group input { width: 18px; height: 18px; margin-right: 10px; cursor: pointer; accent-color: var(--primary); }
@@ -259,9 +259,9 @@
         }
         
         .menu-list-template { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-        .menu-items-container { flex: 1; overflow-y: auto; display: grid; gap: 20px 40px; padding: 30px; }
-        .menu-items-container.two-columns { grid-template-columns: 1fr 1fr; }
-        .menu-section { margin-bottom: 30px; }
+        .menu-items-container { flex: 1; overflow-y: auto; display: block; padding: 30px; }
+        .menu-items-container.two-columns { column-count: 2; column-gap: 40px; }
+        .menu-section { break-inside: avoid; margin-bottom: 30px; }
         
         .section-title {
             font-family: var(--category-font-family); font-size: var(--category-font-size); font-weight: 700;
@@ -337,7 +337,7 @@
             display: inline-flex; align-items: center; justify-content: center;
             padding: 8px; border-radius: 8px; background-color: var(--discount-bg-color);
         }
-        .promo-icon { height: 1.2em; width: auto; filter: brightness(0) invert(1); }
+        .promo-icon { height: 1.2em; width: auto; }
         
         .combined-template { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; overflow: hidden; position: relative; }
         .combined-promo-part { position: relative; z-index: 1; background-size: cover; background-position: center; overflow: hidden; color: white; }
@@ -355,7 +355,7 @@
         .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         
-        .aspect-ratio-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .aspect-ratio-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .aspect-ratio-btn { padding: 12px; border: 1px solid var(--border); border-radius: var(--border-radius); cursor: pointer; text-align: center; transition: all var(--transition-medium); }
         .aspect-ratio-btn.active { border-color: var(--primary); background-color: var(--primary-light); color: var(--primary); }
         
@@ -373,7 +373,7 @@
             border: 2px dashed var(--border); border-radius: var(--border-radius); padding: 24px; text-align: center;
             margin-bottom: 15px; cursor: pointer; transition: all var(--transition-medium); background-color: var(--background-light);
         }
-        .drop-area:hover, .drop-area.highlight { border-color: var(--primary); background: rgba(0, 179, 152, 0.1); }
+        .drop-area:hover, .drop-area.highlight { border-color: var(--primary); background: var(--primary-light); }
         .file-info { font-size: 12px; color: var(--text-inactive); margin-top: 5px; }
 
         .layout-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -382,7 +382,7 @@
             border: 1px solid var(--border); border-radius: var(--border-radius); cursor: pointer;
             transition: all var(--transition-medium); background: var(--background-light); font-size: 12px; font-weight: 500;
         }
-        .layout-btn:hover { border-color: var(--primary); background: rgba(0, 179, 152, 0.1); }
+        .layout-btn:hover { border-color: var(--primary); background: var(--primary-light); }
         .layout-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
         .layout-btn img { width: 24px; height: 24px; margin-bottom: 8px; }
         .layout-btn.active img { filter: brightness(0) invert(1); }
@@ -425,7 +425,24 @@
         }
         .manual-item-name { flex-grow: 1; font-weight: 500; }
         .manual-item-actions button { background: none; border: none; cursor: pointer; padding: 4px; }
-        
+        .add-item-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            text-align: center;
+            margin: 10px 0 15px 0;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            background-color: var(--background-light);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .add-item-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
         .btn-group { display: flex; gap: 10px; }
         
         .combined-template .promo-content { padding: 25px; justify-content: flex-start; }
@@ -489,8 +506,8 @@
                         <summary>Шаг 1: Содержимое</summary>
                         <div class="control-group-content">
                             <div class="toggle-switch">
-                                <button id="toggle-upload" class="toggle-btn active" data-mode="upload">Загрузить файл</button>
                                 <button id="toggle-manual" class="toggle-btn" data-mode="manual">Ввести вручную</button>
+                                <button id="toggle-upload" class="toggle-btn active" data-mode="upload">Загрузить файл</button>
                             </div>
                             
                             <div id="upload-mode-content">
@@ -505,6 +522,7 @@
                             <div id="manual-mode-content" style="display: none;" class="manual-editor">
                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 15px;">Нажимая на поля текста в превью, вы можете заполнить свое меню, а после сохранить страницу как Excel.</p>
                                <div id="manual-item-list"></div>
+                               <div id="add-manual-item-btn" class="add-item-area">+ Добавить позицию</div>
                                <button id="export-excel-btn" class="btn btn-secondary">Сохранить как Excel</button>
                             </div>
                         </div>
@@ -753,7 +771,6 @@
             <div class="modal-title">Выберите пропорции превью</div>
             <div class="aspect-ratio-buttons">
                 <button class="aspect-ratio-btn active" data-ratio="16/9" data-width="1920" data-height="1080">16:9 (1920x1080)</button>
-                <button class="aspect-ratio-btn" data-ratio="9/16" data-width="1080" data-height="1920">9:16 (1080x1920)</button>
                 <button class="aspect-ratio-btn" data-ratio="4/3" data-width="1600" data-height="1200">4:3 (1600x1200)</button>
                 <button class="aspect-ratio-btn" data-ratio="3/2" data-width="1920" data-height="1280">3:2 (1920x1280)</button>
             </div>
@@ -862,6 +879,7 @@
                 uploadModeContent: getEl('upload-mode-content'),
                 manualModeContent: getEl('manual-mode-content'),
                 manualItemList: getEl('manual-item-list'),
+                addManualItemBtn: getEl('add-manual-item-btn'),
                 exportExcelBtn: getEl('export-excel-btn'),
             };
 
@@ -879,6 +897,7 @@
                 aspectRatio: '16/9',
                 exportWidth: 1920,
                 exportHeight: 1080,
+                displayDate: '',
                 currency: '₽', 
             };
             
@@ -942,6 +961,7 @@
             }
 
             async function init() {
+                state.displayDate = formatDate(new Date());
                 await detectCurrencyByIP();
                 setupEventListeners();
                 const initialActiveBtn = document.querySelector('.aspect-ratio-btn.active');
@@ -1042,6 +1062,7 @@
                 controls.toggleManual.addEventListener('click', switchInputMode);
                 controls.exportExcelBtn.addEventListener('click', exportToExcel);
                 controls.manualItemList.addEventListener('click', handleManualEditorActions);
+                controls.addManualItemBtn.addEventListener('click', addManualItem);
             }
             
             function updatePreviewAspectRatio() { controls.exportContainer.style.aspectRatio = state.aspectRatio; }
@@ -1078,6 +1099,22 @@
                     createDefaultMenuData();
                     render();
                 }
+            }
+            
+            function addManualItem() {
+                const lastItem = state.excelData.length > 0 ? state.excelData[state.excelData.length - 1] : null;
+                const newCategory = lastItem ? lastItem.category : 'Новая категория';
+                
+                const newItem = {
+                    name: 'Новое блюдо',
+                    description: 'Описание блюда',
+                    price: '100',
+                    category: newCategory,
+                    S: '', M: '', L: ''
+                };
+                state.excelData.push(newItem);
+                renderManualEditor();
+                render();
             }
 
             function setupDropArea(dropArea, fileInput, fileInfo) {
@@ -1118,7 +1155,7 @@
                             state.excelData = jsonData.map(row => ({
                                 name: findValue(row, ['Название', 'Наименование', 'блюдо']), description: findValue(row, ['Описание', 'состав']),
                                 price: findValue(row, ['Цена', 'Стоимость', 'с ндс']), photo: row['Фото'] || '',
-                                category: findValue(row, ['Категория', 'тип']) || 'Основное меню', S: findValue(row, ['S', 'Цена S']), 
+                                category: (findValue(row, ['Категория', 'тип']) || 'Основное меню').trim(), S: findValue(row, ['S', 'Цена S']), 
                                 M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L'])
                             }));
                             state.gridImages = {};
@@ -1184,7 +1221,10 @@
                 
                 if (field.startsWith('promo')) {
                     state[field] = newValue;
-                } else {
+                } else if (field === 'displayDate') {
+                    state.displayDate = newValue;
+                }
+                else {
                     const index = target.dataset.index;
                     if (index === undefined) return;
 
@@ -1290,15 +1330,15 @@
                 if (currentLayout !== 'default' || controls.showDateCheck.checked) {
                     headerHTML = `
                     <div class="menu-header">
-                        ${currentLayout !== 'default' ? `<div class="menu-grid-category-title" contenteditable="true" data-field="category">${firstCategory}</div>` : '<div></div>'}
-                        ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast">${formatDate(new Date())}</div>` : ''}
+                        ${currentLayout !== 'list' && currentLayout !== 'default' ? `<div class="menu-grid-category-title" contenteditable="true" data-field="category">${firstCategory}</div>` : '<div></div>'}
+                        ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
                     </div>`;
                 }
                 
                 switch (currentLayout) {
                     case 'grid': return headerHTML + renderGridMenu(4, 'menu-grid-template');
                     case 'grid3x3': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x3');
-                    default: return headerHTML + renderListMenu();
+                    default: return renderListMenu();
                 }
             }
 
@@ -1308,6 +1348,8 @@
                     if (!categories[item.category]) categories[item.category] = [];
                     categories[item.category].push(item);
                 });
+                
+                let headerHTML = controls.showDateCheck.checked ? `<div class="menu-header" style="justify-content:flex-end;"><div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div></div>` : '';
 
                 let itemsHTML = Object.keys(categories).map(categoryName => {
                     const itemsInCategory = categories[categoryName];
@@ -1338,19 +1380,34 @@
                         }).join('')}
                     </div>`;
                 }).join('');
-                return `<div class="menu-list-template"><div class="menu-items-container">${itemsHTML}</div></div>`;
+
+                const columnsClass = state.excelData.length > 10 ? 'two-columns' : '';
+                return `${headerHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
             }
             
              function renderGridMenu(limit, className) {
                 const renderCell = (item, index) => {
                     const originalIndex = state.excelData.indexOf(item);
                     const imgSrc = state.gridImages[originalIndex] || item.photo;
+                    
+                    let priceHTML;
+                    const hasVolumePrices = item.S || item.M || item.L;
+                    if (hasVolumePrices) {
+                        priceHTML = [
+                            item.S ? `S:${formatPrice(item.S)}` : '',
+                            item.M ? `M:${formatPrice(item.M)}` : '',
+                            item.L ? `L:${formatPrice(item.L)}` : ''
+                        ].filter(Boolean).join(' / ');
+                    } else {
+                        priceHTML = formatPrice(item.price) || formatPrice('0');
+                    }
+                    
                     return `
                     <div class="grid-cell">
                         <div class="grid-cell-content">
                             <div class="item-name" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
                             ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
-                            <div class="item-price" contenteditable="true" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</div>
+                            <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
                         </div>
                         <div class="item-photo-container" data-index="${originalIndex}">
                             ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn">+</button>`}
@@ -1439,30 +1496,46 @@
                 controls.loadingText.textContent = 'Сохранение...';
                 controls.loadingOverlay.style.display = 'flex';
 
-                const elementToCapture = controls.exportContainer;
-                const clone = elementToCapture.cloneNode(true);
+                const elementToCapture = controls.menuPreview;
+                const originalWidth = elementToCapture.offsetWidth;
 
+                if (originalWidth === 0) {
+                    console.error("Preview element has zero width. Aborting capture.");
+                    controls.loadingOverlay.style.display = 'none';
+                    alert("Ошибка: не удалось определить размер превью для сохранения.");
+                    return;
+                }
+
+                const scaleFactor = state.exportWidth / originalWidth;
+
+                const clone = elementToCapture.cloneNode(true);
                 clone.style.position = 'absolute';
                 clone.style.left = '-9999px';
                 clone.style.top = '0px';
-                clone.style.width = state.exportWidth + 'px';
-                clone.style.height = state.exportHeight + 'px';
-                clone.style.aspectRatio = 'auto';
+                clone.style.width = originalWidth + 'px';
+                clone.style.height = (originalWidth / (state.exportWidth / state.exportHeight)) + 'px';
+                clone.style.transform = `scale(${scaleFactor})`;
+                clone.style.transformOrigin = 'top left';
 
                 document.body.appendChild(clone);
 
                 setTimeout(() => {
-                    html2canvas(clone, { 
-                        backgroundColor: null, width: state.exportWidth, height: state.exportHeight, scale: 1, useCORS: true 
+                    html2canvas(clone, {
+                        width: state.exportWidth,
+                        height: state.exportHeight,
+                        scale: 1,
+                        useCORS: true,
+                        backgroundColor: null,
                     }).then(generator).catch(err => {
                         console.error('Download error:', err);
-                        alert('Ошибка сохранения файла.');
+                        alert('Ошибка сохранения файла: ' + err.message);
                     }).finally(() => {
                         document.body.removeChild(clone);
                         controls.loadingOverlay.style.display = 'none';
                     });
-                }, 300);
+                }, 500);
             }
+
 
             function downloadAsPNG() {
                 download(canvas => canvas.toBlob(blob => saveAs(blob, 'menuboard.jpeg'), 'image/jpeg', 0.95));
@@ -1499,3 +1572,4 @@
     </script>
 </body>
 </html>
+
