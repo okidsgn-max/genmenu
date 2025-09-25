@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор менюборда</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+    :root {
+        --primary: #04C9B0;
+        --primary-hover: #139483;
+        --primary-active: #4DAB9E;
+        --primary-light: rgba(4, 201, 176, 0.1);
+        --text-main: #FFFFFF;
+        --text-secondary: #b2b2b2;
+        --text-inactive: #667099;
+        --border: #000000;
+        --background-light: #191C1F;
+        --background-dark: #090909;
+        --placeholder: #667099;
+        --border-radius: 8px;
+        --transition-fast: 0.15s;
+        --transition-medium: 0.3s;
+        --transition-slow: 0.5s;
+        --grid-bg-color: transparent;
+        --cell-bg-color: #ffffff;
+        --menu-bg-color: #ffffff;
+        --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        --card-hover-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    [contenteditable] {
+        outline: 2px solid transparent;
+        transition: outline-color 0.2s;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    [contenteditable]:focus, [contenteditable]:hover {
+        outline-color: var(--primary);
+        background: rgba(0,0,0,0.5);
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-main);
+        background-color: var(--background-dark);
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .main-container {
+        display: flex;
+        flex: 1;
+        gap: 24px;
+        overflow: hidden;
+        height: 100%;
+        padding: 24px;
+    }
+    
+    .btn {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 11pt;
+        line-height: 20px;
+        border-radius: var(--border-radius);
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all var(--transition-medium);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary);
+        color: #FFFFFF;
+        width: 100%;
+    }
+
+    #download-png-btn {
+        background: linear-gradient(to right, #05B7A0, #083832);
+    }
+    #download-png-btn:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+    
+    #confirm-aspect-ratio {
+        background: linear-gradient(to right, #05B7A0, #083832);
+    }
+    #confirm-aspect-ratio:hover {
+       filter: brightness(1.1);
+    }
+
+
+    .controls-footer .btn {
+        border-radius: 30px;
+    }
+
+    .btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+    .btn:active { background-color: var(--primary-active); transform: translateY(0); }
+    
+   .btn-secondary {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1.5px solid #C6C6C6;
+    }
+   .btn-secondary:hover, .btn-secondary:active {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    }
+
+    #confirm-aspect-ratio, #export-excel-btn, .drop-area .btn {
+        border-radius: 30px;
+    }
+    
+    .btn-small { padding: 4px 8px; font-size: 12px; width: auto; margin: 0; }
+    
+    .input, .select {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--border-radius);
+        background-color: var(--background-light);
+        color: var(--text-secondary);
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all var(--transition-medium);
+        margin-bottom: 16px;
+    }
+    
+    .input:hover, .select:hover { border-color: var(--primary-hover); }
+    
+    .select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        cursor: pointer;
+    }
+    
+    .input:focus, .select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(4, 201, 176, 0.15); }
+    
+    .checkbox-group { display: flex; align-items: center; margin-bottom: 16px; cursor: pointer; }
+    .checkbox-group label { color: var(--text-secondary); font-weight: 400; font-size: 14px; cursor: pointer; margin-bottom: 0; }
+    .checkbox-group input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        border-radius: 4px;
+        border: 2px solid #808080;
+        background-color: transparent;
+        position: relative;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+    .checkbox-group input[type="checkbox"]:hover {
+        border-color: var(--primary);
+    }
+    .checkbox-group input[type="checkbox"]:checked {
+        border-color: #139483;
+        background-color: #139483;
+    }
+    .checkbox-group input[type="checkbox"]:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: translate(-50%, -60%) rotate(45deg);
+    }
+
+    .features-group { display: flex; gap: 15px; flex-wrap: wrap; }
+    
+    .controls-panel {
+        background: var(--background-dark);
+        padding: 24px;
+        border-radius: 16px;
+        width: 380px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        flex-shrink: 0;
+        box-shadow: var(--card-shadow);
+        border: 1px solid #00b398;
+    }
+    
+    .controls-content {
+        flex: 1; overflow-y: auto; padding-right: 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    
+    .controls-content::-webkit-scrollbar { width: 6px; }
+    .controls-content::-webkit-scrollbar-thumb { background-color: #787878; border-radius: 3px; }
+    .controls-footer { padding-top: 16px; border-top: 1px solid var(--border); margin-top: auto; }
+    
+    .tab-buttons {
+        display: flex; margin-bottom: 14px; position: sticky; top: 0; background: var(--background-dark); z-index: 10;
+        border-radius: var(--border-radius); padding: 2px; background: #191C1F;
+    }
+    
+    .tab-btn {
+        display: flex; align-items: center; padding: 10px 14px; background: none; border: none; cursor: pointer;
+        font-weight: 500; transition: all var(--transition-medium); color: #FFFFFF;
+        border-radius: 8px; flex: 1; justify-content: center;
+    }
+    
+    .tab-btn img {
+        width: 24px;
+        height: 24px;
+        margin-right: 2px;
+        filter: brightness(0) invert(1);
+    }
+    
+    .tab-btn.active {
+        color: #00b398;
+        background: var(--background-dark);
+        box-shadow: none;
+    }
+    .tab-btn.active img {
+        filter: invert(48%) sepia(98%) saturate(1499%) hue-rotate(130deg) brightness(94%) contrast(101%);
+    }
+    
+    .control-group { border: 1px solid var(--border); border-radius: var(--border-radius); margin-bottom: 16px; }
+    
+    /* MODIFIED: Accordion color transitions */
+    .control-group summary {
+        font-size: 16px; font-weight: 400; color: var(--text-main); padding: 12px 16px; cursor: pointer; list-style: none;
+        display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .control-group[open] summary {
+        color: #00b398;
+    }
+    .control-group summary:hover { background-color: var(--primary-light); }
+    .control-group summary::-webkit-details-marker { display: none; }
+    .control-group summary::after {
+        content: '+';
+        font-size: 28px;
+        font-weight: 400;
+        color: #FFFFFF;
+        transition: transform var(--transition-medium) ease-out, color 0.2s ease;
+        transform: rotate(0deg);
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .control-group[open] summary::after {
+        content: '−';
+        transform: rotate(180deg);
+        color: #00b398;
+    }
+    .control-group-content { padding: 0 16px 16px; }
+    .control-group-content p {
+        color: var(--text-secondary);
+        font-size: 10pt;
+    }
+    
+    label { display: block; margin-bottom: 8px; font-weight: 400; font-size: 14px; color: var(--text-main); }
+    
+    .preview-wrapper {
+        flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0;
+        overflow: auto; background: transparent; border-radius: var(--border-radius);
+        border: 1px solid var(--border); padding: 20px;
+    }
+    
+    .preview-container {
+        width: 100%; height: auto; aspect-ratio: 16/9; background: transparent; border-radius: var(--border-radius);
+        display: flex; justify-content: center; align-items: center; overflow: hidden;
+        border: 0px solid var(--border); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .menu-preview {
+        width: 100%; height: 100%; position: relative; background-color: #ffffff;
+        display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; overflow: hidden;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .menu-list-template { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .menu-items-container { flex: 1; overflow-y: auto; display: block; padding: 30px; }
+    .menu-items-container.two-columns { column-count: 2; column-gap: 40px; }
+    .menu-section { break-inside: avoid; margin-bottom: 30px; }
+    
+    .section-title {
+        font-family: var(--category-font-family); font-size: var(--category-font-size); font-weight: 700;
+        margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid var(--border); color: var(--category-font-color);
+    }
+    
+    .menu-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+    .item-content { flex-grow: 1; }
+    
+    .item-name {
+        font-family: var(--item-font-family);
+        font-weight: 500;
+        font-size: var(--item-font-size);
+        color: #000000;
+        margin-bottom: 5px;
+    }
+
+    .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: #1a1d1f; margin-bottom: 5px; font-weight: 300; }
+    .item-price {
+        font-family: var(--item-font-family); font-weight: 700; font-size: var(--item-font-size); color: var(--item-font-color);
+        white-space: nowrap; margin-left: 20px; text-align: right; min-width: 80px;
+    }
+
+    .volume-price { display: block; font-size: 0.9em; font-weight: 500; }
+    
+    .menu-grid-template, .menu-grid-template-3x3 { width: 100%; height: 100%; display: grid; gap: 15px; padding: 15px; background-color: var(--grid-bg-color); }
+    .menu-grid-template { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .menu-grid-template-3x3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    
+    .grid-cell {
+        background-color: #ffffff; border-radius: var(--border-radius); display: flex;
+        position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .grid-cell::after {
+        content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 100%;
+        background: linear-gradient(to right, rgba(0,0,0, var(--grid-gradient-opacity, 0.4)) 0%, rgba(0,0,0,0) 60%); z-index: 2; pointer-events: none;
+    }
+    .grid-cell-content { flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; }
+    .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price { color: var(--item-font-color); }
+    .grid-cell .item-description { flex-grow: 1; color: var(--text-secondary); }
+    .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
+    .grid-cell .item-photo-container {
+        flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center;
+        overflow: hidden; z-index: 1; cursor: pointer; position: relative;
+    }
+    .grid-cell .item-photo { width: 100%; height: 100%; object-fit: cover; }
+    .grid-cell .upload-photo-btn {
+        font-size: 30px; cursor: pointer; border: none; background: rgba(0, 0, 0, 0.3); width: 40px; height: 40px;
+        border-radius: 50%; color: #090909; transition: all var(--transition-medium); position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;
+    }
+    .grid-cell .upload-photo-btn:hover { background: rgba(0, 0, 0, 0.5); transform: translate(-50%, -50%) scale(1.05); }
+
+    .promo-template {
+        position: relative; width: 100%; height: 100%; overflow: hidden; background-size: cover;
+        background-position: center; background-color: #1A1D1F; display: flex; flex-direction: column; justify-content: center;
+    }
+    .promo-content {
+        position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column;
+        padding: 40px; box-sizing: border-box; text-align: var(--promo-text-align, left);
+    }
+    .promo-title {
+        font-size: var(--promo-title-font-size); font-family: var(--promo-title-font-family); color: var(--promo-title-font-color);
+        font-weight: 600; margin-bottom: 20px; line-height: 1.1; display: inline-flex; align-items: flex-start; gap: 15px;
+    }
+    .promo-text { font-size: var(--promo-text-font-size); font-family: var(--promo-text-font-family); color: var(--promo-text-font-color); margin-bottom: 30px; line-height: 1.3; }
+    .promo-comment {
+        font-family: var(--desc-font-family); font-size: 10px; color: var(--promo-text-font-color); margin-top: auto;
+        padding-top: 15px; width: 100%; box-sizing: border-box; align-self: flex-end; opacity: 0.8;
+    }
+    .promo-price-container { display: inline-flex; align-items: center; gap: 20px; }
+    .promo-content > div:first-child { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+    .promo-content[style*="text-align: center"] .promo-title, .promo-content[style*="text-align: center"] .promo-price-container { margin-left: auto; margin-right: auto; }
+    .promo-content[style*="text-align: right"] .promo-title, .promo-content[style*="text-align: right"] .promo-price-container { margin-left: auto; }
+    .promo-price { font-size: var(--promo-price-font-size); font-family: var(--promo-price-font-family); color: var(--promo-price-font-color); font-weight: bold; }
+    .promo-discount {
+        font-size: calc(var(--promo-price-font-size) * 0.7); font-family: var(--promo-price-font-family); color: var(--discount-font-color);
+        font-weight: bold; background: var(--discount-bg-color); padding: 5px 10px; border-radius: 20px;
+    }
+    .promo-icon-wrapper {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 8px; border-radius: 8px; 
+        background-color: transparent;
+    }
+    .promo-icon { height: 1.2em; width: auto; }
+    
+    .combined-template { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; overflow: hidden; position: relative; }
+    .combined-promo-part { position: relative; z-index: 1; background-size: cover; background-position: center; overflow: hidden; color: white; }
+    .combined-menu-part { 
+        z-index: 2; 
+        grid-column: 1 / 2; 
+        background-color: var(--menu-bg-color); 
+        position: relative; 
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x3 {
+        flex-grow: 1;
+    }
+    .combined-menu-part .grid-cell {
+        min-height: 0;
+    }
+    .combined-menu-part .item-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--menu-bg-color); flex-shrink: 0; }
+    .menu-grid-category-title { font-family: var(--category-font-family); font-size: var(--category-font-size); font-weight: 700; color: var(--category-font-color); }
+    .menu-date { font-family: var(--item-font-family); font-size: 14px; color: var(--text-secondary); background-color: transparent; padding: 5px 10px; border-radius: 4px; }
+    
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex;
+        justify-content: center; align-items: center; z-index: 1000;
+        backdrop-filter: blur(5px);
+    }
+    .modal { 
+        background: var(--background-dark); padding: 24px; border-radius: 8px; width: 400px; 
+        max-width: 90%; box-shadow: var(--card-hover-shadow); border: 1px solid #4D4D4D; 
+    }
+    .modal-title { font-size: 16px; font-weight: 400; margin-bottom: 20px; color: var(--text-main); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-radius:30px }
+    
+    .aspect-ratio-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .aspect-ratio-btn { padding: 12px; border: 1px solid var(--border); border-radius: var(--border-radius); cursor: pointer; text-align: center; transition: all var(--transition-medium); color: var(--text-secondary); background: var(--background-light); }
+    .aspect-ratio-btn.active { border-color: var(--primary); background-color: var(--primary-light); color: var(--primary); }
+    
+    .loading-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center;
+        align-items: center; z-index: 1000; color: white; font-size: 16px; flex-direction: column; text-align: center;
+    }
+    .spinner {
+        border: 5px solid #444; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px;
+        animation: spin 1s linear infinite; margin-bottom: 20px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .drop-area {
+        border: 2px dashed var(--border);
+        border-radius: var(--border-radius);
+        padding: 24px;
+        text-align: center;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all var(--transition-medium);
+        background-color: var(--background-light);
+        color: var(--text-secondary);
+        font-size: 10pt;
+    }
+    .drop-area .btn {
+        width: auto;
+        padding: 4px 6px;
+        margin-top: 10px;
+    }
+
+    .drop-area:hover, .drop-area.highlight { border-color:#191C1F); background: #191C1F; }
+    .file-info { font-size: 10px; color: #C6C6C6); margin-top: 5px; }
+
+    .layout-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .layout-btn {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px;
+        border: 1px solid var(--border); border-radius: var(--border-radius); cursor: pointer;
+        transition: all var(--transition-medium); background: var(--background-light); font-size: 12px; font-weight: 500; color: var(--text-secondary);
+    }
+    .layout-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--text-main); }
+    .layout-btn.active { border-color: var(--background-dark); background: var(--primary); color: white; }
+    .layout-btn img { width: 24px; height: 24px; margin-bottom: 8px; filter: brightness(0.8); }
+    .layout-btn.active img { filter: brightness(0) invert(1); }
+
+    .color-picker-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; align-items: center; }
+    .color-picker-item label { font-size: 12px; text-align: center; margin-bottom: 6px; }
+    .color-picker-item input[type="color"] { 
+        width: 100%; height: 32px; padding: 0; background: none; cursor: pointer;
+        border-radius: 4px; border: 1px solid var(--border);
+    }
+    .grid-color-item { display: none; }
+    
+    .setting-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .setting-row .select { flex: 2; margin-bottom: 0; }
+    .setting-row .input { flex: 1; margin-bottom: 0; }
+    .setting-row input[type="color"] {
+        width: 40px; height: 40px; padding: 0; background: none; cursor: pointer;
+        border-radius: 16px; border: 1px solid var(--border);
+    }
+
+    .slider-container { width: 100%; margin-bottom: 16px; }
+    .slider-container input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; background: #2a2e30; border-radius: 4px; outline: none; }
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
+        background: var(--primary); cursor: pointer; transition: all var(--transition-medium);
+    }
+    .slider-container input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+    .slider-value { text-align: center; font-size: 14px; color: var(--text-secondary); margin-top: 5px; }
+    
+    .header-title { 
+        font-size: 30px; 
+        font-weight: 300; 
+        margin-bottom: 20px; 
+        color: var(--text-main);
+    }
+    
+    .toggle-switch {
+        display: flex; border-radius: var(--border-radius); background: #191C1F; padding: 2px; margin-bottom: 16px;
+    }
+    .toggle-btn {
+        flex: 1; padding: 8px 12px; border: none; background: transparent; cursor: pointer; font-weight: 500;
+        color: var(--text-secondary); border-radius: 8px; transition: all var(--transition-medium);
+    }
+    .toggle-btn.active { background: var(--background-dark); color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+    .manual-editor .input { margin-bottom: 10px; }
+    .manual-item-list { margin-bottom: 15px; }
+    .manual-item {
+        display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 8px;
+        margin-bottom: 5px; background: var(--background-light); font-size: 13px; color: var(--text-secondary);
+    }
+    .manual-item-name { flex-grow: 1; font-weight: 500; color: var(--text-main); }
+    .manual-item-actions button { background: none; border: none; cursor: pointer; padding: 4px; }
+    .add-item-area {
+        border: 2px dashed var(--border);
+        border-radius: var(--border-radius);
+        padding: 8px;
+        text-align: center;
+        margin: 10px 0 15px 0;
+        cursor: pointer;
+        transition: all var(--transition-medium);
+        background-color: var(--background-light);
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 10pt;
+    }
+    .add-item-area:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+    
+    .combined-template .promo-content { padding: 25px; justify-content: flex-start; }
+    .combined-template .promo-content > div:first-child { justify-content: flex-start; }
+    .combined-template .promo-title { font-size: calc(var(--promo-title-font-size) * 0.4); margin-bottom: 10px; gap: 10px; }
+    .combined-template .promo-text { font-size: calc(var(--promo-text-font-size) * 0.4); margin-bottom: 15px; }
+    .combined-template .promo-price-container { gap: 10px; margin-top: auto; }
+    .combined-template .promo-price { font-size: calc(var(--promo-price-font-size) * 0.45); }
+    .combined-template .promo-discount { font-size: calc(var(--promo-price-font-size) * 0.3); padding: 3px 8px; }
+    .combined-template .promo-icon-wrapper { padding: 4px; border-radius: 4px; }
+    .combined-template .promo-icon { height: 1em; }
+    .combined-template .promo-comment { display: none; }
+    
+    .combined-template .combined-menu-part .grid-cell-content .item-name { color: var(--item-font-color); }
+    .combined-template .combined-menu-part .grid-cell-content .item-description { color: var(--desc-font-color); }
+    .combined-template .combined-menu-part .grid-cell-content .item-price { color: var(--item-font-color); }
+    .combined-template .combined-promo-part .grid-cell-content .item-name,
+    .combined-template .combined-promo-part .grid-cell-content .item-description,
+    .combined-template .combined-promo-part .grid-cell-content .item-price { color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
+
+    .combined-template .menu-items-container { padding: 15px; gap: 10px; }
+    .combined-template .section-title { font-size: calc(var(--category-font-size) * 0.8); margin-bottom: 10px; }
+    .combined-template .menu-item { margin-bottom: 10px; padding-bottom: 10px; }
+    .combined-template .item-name { font-size: calc(var(--item-font-size) * 0.9); }
+    .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
+    .combined-template .item-price { font-size: calc(var(--item-font-size) * 0.9); }
+
+    .combined-template .grid-cell { display: block; position: relative; }
+    .combined-template .grid-cell-content { height: 100%; width: 100%; position: relative; z-index: 2; }
+    .combined-template .grid-cell .item-photo-container { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; flex: none; z-index: 1; }
+    .combined-template .grid-cell::after { display: none; }
+
+    .menu-date.auto-contrast { color: var(--date-contrast-color, #FFFFFF); }
+</style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="controls-panel">
+            <h1 class="header-title">Генератор менюборда</h1>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="menu"><img src="menu-w.svg" alt="Меню"> Меню</button>
+                <button class="tab-btn" data-tab="promo"><img src="acii-w.svg" alt="Акция"> Акция</button>
+                <button class="tab-btn" data-tab="combined"><img src="ac+m-w.svg" alt="Меню+Акция"> Меню+Акция</button>
+            </div>
+
+            <div class="controls-content">
+                <div id="menu-controls">
+                    <details class="control-group">
+                        <summary>Шаг 1: Содержимое</summary>
+                        <div class="control-group-content">
+                            <div class="toggle-switch">
+                                <button id="toggle-manual" class="toggle-btn" data-mode="manual">Ввести вручную</button>
+                                <button id="toggle-upload" class="toggle-btn active" data-mode="upload">Загрузить файл</button>
+                            </div>
+                            
+                            <div id="upload-mode-content">
+                                <div class="drop-area" id="menu-drop-area">
+    Перетащите файл Excel или TXT или
+    <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Выберите файл</button>
+    <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .txt" style="display: none;">
+    <div class="file-info" id="menu-file-info">Файл не выбран</div>
+</div>
+                            </div>
+
+                            <div id="manual-mode-content" style="display: none;" class="manual-editor">
+                               <p style="margin-bottom: 15px;">Нажимая на поля текста в превью, вы можете заполнить свое меню, а после сохранить страницу как Excel.</p>
+                               <div id="manual-item-list"></div>
+                               <div id="add-manual-item-btn" class="add-item-area">+ Добавить позицию</div>
+                               <button id="export-excel-btn" class="btn btn-secondary">Сохранить как Excel</button>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="control-group">
+                         <summary>Шаг 2: Структура и вид</summary>
+                         <div class="control-group-content">
+                             <label>Макет</label>
+                             <div class="layout-buttons" id="layout-buttons">
+                                <button class="layout-btn active" data-layout="grid">
+                                    <img src="2x2.svg" alt="">
+                                    2x2
+                                </button>
+                                <button class="layout-btn" data-layout="grid3x3">
+                                    <img src="3x2.svg" alt="">
+                                    3x3
+                                </button>
+                                <button class="layout-btn" data-layout="list">
+                                    <img src="spisok.svg" alt="">
+                                    Список
+                                </button>
+                            </div>
+
+                            <div class="checkbox-group" style="margin-top: 15px;">
+                                <input type="checkbox" id="show-description-checkbox" checked>
+                                <label for="show-description-checkbox">Показывать описание блюд</label>
+                            </div>
+                             <div class="checkbox-group">
+                                <input type="checkbox" id="show-date-checkbox" checked>
+                                <label for="show-date-checkbox">Показывать текущую дату</label>
+                            </div>
+                         </div>
+                    </details>
+
+                    <details class="control-group">
+                        <summary>Шаг 3: Оформление</summary>
+                        <div class="control-group-content">
+                            <div>
+                                <label>Цвета</label>
+                                <div class="color-picker-row">
+                                    <div class="color-picker-item">
+                                        <label>Фон меню</label>
+                                        <input type="color" id="menu-bg-color-picker" value="#ffffff">
+                                    </div>
+                                    <div class="color-picker-item grid-color-item">
+                                        <label>Фон ячейки</label>
+                                        <input type="color" id="cell-bg-color-picker" value="#1A1D1F">
+                                    </div>
+                                    <div class="color-picker-item grid-color-item">
+                                        <label>Затемнение ячейки</label>
+                                        <div class="slider-container" style="margin-bottom:0; padding-top: 5px;">
+                                            <input type="range" id="grid-gradient-slider" min="0" max="100" value="10">
+                                            <div class="slider-value" id="grid-gradient-value">10%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="list-layout-bg-options" style="display: none; margin-top: 15px;">
+                                    <label>Фон для макета "Список"</label>
+                                    <select id="list-bg-type-select" class="select">
+                                        <option value="color">Сплошной цвет</option>
+                                        <option value="image">Загрузить изображение</option>
+                                    </select>
+                                    <div id="list-bg-image-container" style="display: none; margin-top: 10px;">
+                                        <button class="btn btn-secondary" onclick="document.getElementById('list-background-upload').click()">Выберите файл</button>
+                                        <input type="file" id="list-background-upload" accept="image/*" style="display: none;">
+                                        <div class="file-info" id="list-bg-file-info">Изображение не загружено</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <label>Шрифт категорий</label>
+                                <div class="setting-row">
+                                    <select id="category-font-select" class="select">
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'PT Sans', sans-serif">PT Sans</option>
+                                        <option value="'Playfair Display', serif">Playfair Display</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Oswald', sans-serif">Oswald</option>
+                                        <option value="'Raleway', sans-serif">Raleway</option>
+                                        <option value="'Nunito', sans-serif">Nunito</option>
+                                        <option value="'Rubik', sans-serif">Rubik</option>
+                                        <option value="'Cormorant', serif">Cormorant</option>
+                                    </select>
+                                    <input type="number" id="category-font-size" class="input" value="24" min="10" max="100">
+                                    <input type="color" id="category-color-picker" value="#00b398">
+                                </div>
+                            </div>
+                             <div style="margin-top: 15px;">
+                                <label>Шрифт пунктов</label>
+                                <div class="setting-row">
+                                    <select id="item-font-select" class="select">
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'PT Sans', sans-serif">PT Sans</option>
+                                        <option value="'Playfair Display', serif">Playfair Display</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Oswald', sans-serif">Oswald</option>
+                                        <option value="'Raleway', sans-serif">Raleway</option>
+                                        <option value="'Nunito', sans-serif">Nunito</option>
+                                        <option value="'Rubik', sans-serif">Rubik</option>
+                                        <option value="'Cormorant', serif">Cormorant</option>
+                                    </select>
+                                    <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
+                                    <input type="color" id="item-color-picker" value="#000000">
+                                </div>
+                            </div>
+                             <div style="margin-top: 15px;">
+                                <label>Шрифт описания</label>
+                                <div class="setting-row">
+                                    <select id="desc-font-select" class="select">
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'PT Sans', sans-serif">PT Sans</option>
+                                        <option value="'Playfair Display', serif">Playfair Display</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Oswald', sans-serif">Oswald</option>
+                                        <option value="'Raleway', sans-serif">Raleway</option>
+                                        <option value="'Nunito', sans-serif">Nunito</option>
+                                        <option value="'Rubik', sans-serif">Rubik</option>
+                                        <option value="'Cormorant', serif">Cormorant</option>
+                                    </select>
+                                    <input type="number" id="desc-font-size" class="input" value="14" min="8" max="100">
+                                    <input type="color" id="desc-color-picker" value="#A9B0C9">
+                                </div>
+                            </div>
+                            <div class="grid-color-item" style="margin-top: 15px;">
+                                <label>Шрифт стоимости (для сетки)</label>
+                                <div class="setting-row">
+                                    <select id="price-font-select" class="select">
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Oswald', sans-serif">Oswald</option>
+                                    </select>
+                                    <input type="number" id="price-font-size" class="input" value="24" min="10" max="100">
+                                    <input type="color" id="price-color-picker" value="#00b398">
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <div id="promo-controls" style="display: none;">
+                    <details class="control-group" open>
+                        <summary>Настройки текста</summary>
+                        <div class="control-group-content">
+                            <label>Заголовок акции</label>
+                            <div class="setting-row">
+                                <select id="promo-title-font-select" class="select">
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                    <option value="'PT Sans', sans-serif">PT Sans</option>
+                                    <option value="'Playfair Display', serif">Playfair Display</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                    <option value="'Oswald', sans-serif">Oswald</option>
+                                    <option value="'Raleway', sans-serif">Raleway</option>
+                                    <option value="'Nunito', sans-serif">Nunito</option>
+                                    <option value="'Rubik', sans-serif">Rubik</option>
+                                    <option value="'Cormorant', serif">Cormorant</option>
+                                </select>
+                                <input type="number" id="promo-title-size" class="input" value="80" min="10" max="180">
+                                <input type="color" id="promo-title-color-picker" value="#000000">
+                            </div>
+                            <label>Текст акции</label>
+                             <div class="setting-row">
+                                <select id="promo-text-font-select" class="select">
+                                   <option value="'Roboto', sans-serif">Roboto</option>
+                                   <option value="'Open Sans', sans-serif">Open Sans</option>
+                                   <option value="'PT Sans', sans-serif">PT Sans</option>
+                                   <option value="'Playfair Display', serif">Playfair Display</option>
+                                   <option value="'Montserrat', sans-serif">Montserrat</option>
+                                   <option value="'Oswald', sans-serif">Oswald</option>
+                                   <option value="'Raleway', sans-serif">Raleway</option>
+                                   <option value="'Nunito', sans-serif">Nunito</option>
+                                   <option value="'Rubik', sans-serif">Rubik</option>
+                                   <option value="'Cormorant', serif">Cormorant</option>
+                                </select>
+                                <input type="number" id="promo-text-size" class="input" value="40" min="10" max="100">
+                                <input type="color" id="promo-text-color-picker" value="#000000">
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details class="control-group" open>
+                        <summary>Настройки цены</summary>
+                        <div class="control-group-content">
+                           <label>Цена</label>
+                            <div class="setting-row">
+                                <select id="promo-price-font-select" class="select">
+                                    <option value="'Roboto', sans-serif">Roboto</option>
+                                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                                    <option value="'PT Sans', sans-serif">PT Sans</option>
+                                    <option value="'Playfair Display', serif">Playfair Display</option>
+                                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                                    <option value="'Oswald', sans-serif">Oswald</option>
+                                    <option value="'Raleway', sans-serif">Raleway</option>
+                                    <option value="'Nunito', sans-serif">Nunito</option>
+                                    <option value="'Rubik', sans-serif">Rubik</option>
+                                    <option value="'Cormorant', serif">Cormorant</option>
+                                </select>
+                                <input type="number" id="promo-price-size" class="input" value="60" min="10" max="180">
+                                <input type="color" id="promo-price-color-picker" value="#000000">
+                            </div>
+                            
+                            <label>Скидка</label>
+                            <div class="slider-container">
+                                <input type="range" id="promo-discount-slider" min="0" max="100" value="0">
+                                <div class="slider-value" id="promo-discount-value">0%</div>
+                            </div>
+                            <div class="setting-row">
+                                <input type="color" id="discount-color-picker" value="#ff5252">
+                                <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details class="control-group">
+                        <summary>Оформление</summary>
+                        <div class="control-group-content">
+                            <label>Особенности</label>
+                            <div class="features-group">
+                                <div class="checkbox-group"><input type="checkbox" id="vegan-checkbox"><label for="vegan-checkbox">Веган</label></div>
+                                <div class="checkbox-group"><input type="checkbox" id="halal-checkbox"><label for="halal-checkbox">Халяль</label></div>
+                                <div class="checkbox-group"><input type="checkbox" id="glutenfree-checkbox"><label for="glutenfree-checkbox">Без глютена</label></div>
+                                <div class="checkbox-group"><input type="checkbox" id="new-checkbox"><label for="new-checkbox">Новинка</label></div>
+                            </div>
+                            
+                            <label style="margin-top:15px;">Выравнивание текста</label>
+                            <select id="promo-text-align-select" class="select">
+                                <option value="left">По левой стороне</option>
+                                <option value="center">По центру</option>
+                                <option value="right">По правой стороне</option>
+                            </select>
+                            
+                            <label style="margin-top:15px;">Фон</label>
+                             <select id="promo-bg-type-select" class="select">
+                                <option value="color">Сплошной цвет</option>
+                                <option value="image">Загрузить изображение</option>
+                            </select>
+                             <div id="bg-position-container" style="display: none;">
+                                <label>Расположение картинки:</label>
+                                <select id="promo-bg-position-select" class="select">
+                                    <option value="center">По центру</option>
+                                    <option value="left">Слева</option>
+                                    <option value="right">Справа</option>
+                                </select>
+                            </div>
+                            <div id="bg-color-container">
+                                <input type="color" id="bg-color-picker" value="#FFFFFF" style="width: 100%; height: 40px;">
+                            </div>
+                            <div id="bg-image-container" style="display: none;">
+                                <button class="btn btn-secondary" onclick="document.getElementById('promo-background-upload').click()">Выберите файл</button>
+                                <input type="file" id="promo-background-upload" accept="image/*" style="display: none;">
+                                <div class="file-info" id="bg-file-info">Изображение не загружено</div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                
+                <div id="combined-controls" style="display: none;">
+                     <details class="control-group" open>
+                        <summary>Настройки</summary>
+                        <div class="control-group-content">
+                           <p>Внесите нужные изменения в предыдущих разделах "Меню" и "Акция", ведь комбинированная страница, это совмещенный вариант уже созданных страниц.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+            
+            <div class="controls-footer">
+                <div class="btn-group">
+                    <button class="btn" id="download-png-btn">Сохранить</button>
+                    <button class="btn btn-secondary" id="download-mp4-btn">Сохранить видео</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-wrapper">
+            <div class="preview-container" id="export-container">
+                <div class="menu-preview" id="menu-preview">
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px; justify-content: center; height: 100%; display: flex; flex-direction: column;">
+                        <h3>Здесь будет ваше меню</h3>
+                        <p style="font-size: 14px; color: #a3a9c2">Настройте параметры слева и загрузите данные</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="aspect-ratio-modal" style="display: flex;">
+        <div class="modal">
+            <div class="modal-title">Выберите пропорции превью</div>
+            <div class="aspect-ratio-buttons">
+                <button class="aspect-ratio-btn active" data-ratio="16/9" data-width="1920" data-height="1080">16:9 (1920x1080)</button>
+                <button class="aspect-ratio-btn" data-ratio="4/3" data-width="1600" data-height="1200">4:3 (1600x1200)</button>
+                <button class="aspect-ratio-btn" data-ratio="3/2" data-width="1920" data-height="1280">3:2 (1920x1280)</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="confirm-aspect-ratio">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="mp4-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-title">Сохранить как MP4</div>
+            <input type="text" id="mp4-filename" class="input" placeholder="Имя файла (без расширения)" value="менюборд">
+            <div class="setting-row">
+                <label>Длительность (секунды):</label>
+                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="60">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-mp4">Отмена</button>
+                <button class="btn" id="save-mp4">Сохранить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Генерация...</div>
+    </div>
+    
+    <input type="file" id="grid-photo-upload" accept="image/*" style="display: none;">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const getEl = (id) => document.getElementById(id);
+            const controls = {
+                tabButtons: document.querySelectorAll('.tab-btn'),
+                menuControls: getEl('menu-controls'),
+                promoControls: getEl('promo-controls'),
+                combinedControls: getEl('combined-controls'),
+                fileInput: getEl('file-input'),
+                menuDropArea: getEl('menu-drop-area'),
+                menuFileInfo: getEl('menu-file-info'),
+                layoutButtons: getEl('layout-buttons'),
+                showDescCheck: getEl('show-description-checkbox'),
+                showDateCheck: getEl('show-date-checkbox'),
+                menuBgPicker: getEl('menu-bg-color-picker'),
+                cellBgColorPicker: getEl('cell-bg-color-picker'),
+                gridColorItems: document.querySelectorAll('.grid-color-item'),
+                categoryFont: getEl('category-font-select'),
+                categorySize: getEl('category-font-size'),
+                categoryColor: getEl('category-color-picker'),
+                itemFont: getEl('item-font-select'),
+                itemSize: getEl('item-font-size'),
+                itemColor: getEl('item-color-picker'),
+                descFont: getEl('desc-font-select'),
+                descSize: getEl('desc-font-size'),
+                descColor: getEl('desc-color-picker'),
+                priceFont: getEl('price-font-select'),
+                priceSize: getEl('price-font-size'),
+                priceColor: getEl('price-color-picker'),
+                gridGradientSlider: getEl('grid-gradient-slider'),
+                gridGradientValue: getEl('grid-gradient-value'),
+                promoTitleSize: getEl('promo-title-size'),
+                promoTitleColor: getEl('promo-title-color-picker'),
+                promoTextSize: getEl('promo-text-size'),
+                promoTextColor: getEl('promo-text-color-picker'),
+                promoPriceSize: getEl('promo-price-size'),
+                promoPriceColor: getEl('promo-price-color-picker'),
+                promoDiscountSlider: getEl('promo-discount-slider'),
+                promoDiscountValue: getEl('promo-discount-value'),
+                discountColor: getEl('discount-color-picker'),
+                discountBgColor: getEl('discount-bg-color-picker'),
+                veganCheck: getEl('vegan-checkbox'),
+                halalCheck: getEl('halal-checkbox'),
+                glutenfreeCheck: getEl('glutenfree-checkbox'),
+                newCheck: getEl('new-checkbox'),
+                promoTextAlign: getEl('promo-text-align-select'),
+                promoTitleFont: getEl('promo-title-font-select'),
+                promoTextFont: getEl('promo-text-font-select'),
+                promoPriceFont: getEl('promo-price-font-select'),
+                promoBgType: getEl('promo-bg-type-select'),
+                promoBgPos: getEl('promo-bg-position-select'),
+                bgColorContainer: getEl('bg-color-container'),
+                bgImageContainer: getEl('bg-image-container'),
+                bgPositionContainer: getEl('bg-position-container'),
+                promoBgUpload: getEl('promo-background-upload'),
+                promoBgInfo: getEl('bg-file-info'),
+                bgColorPicker: getEl('bg-color-picker'),
+                gridPhotoUpload: getEl('grid-photo-upload'),
+                menuPreview: getEl('menu-preview'),
+                exportContainer: getEl('export-container'),
+                downloadPngBtn: getEl('download-png-btn'),
+                downloadMp4Btn: getEl('download-mp4-btn'),
+                loadingOverlay: getEl('loading-overlay'),
+                loadingText: getEl('loading-text'),
+                aspectRatioModal: getEl('aspect-ratio-modal'),
+                aspectRatioBtns: document.querySelectorAll('.aspect-ratio-btn'),
+                confirmAspectRatio: getEl('confirm-aspect-ratio'),
+                mp4Modal: getEl('mp4-modal'),
+                mp4Filename: getEl('mp4-filename'),
+                mp4Duration: getEl('mp4-duration'),
+                cancelMp4: getEl('cancel-mp4'),
+                saveMp4: getEl('save-mp4'),
+                toggleUpload: getEl('toggle-upload'),
+                toggleManual: getEl('toggle-manual'),
+                uploadModeContent: getEl('upload-mode-content'),
+                manualModeContent: getEl('manual-mode-content'),
+                manualItemList: getEl('manual-item-list'),
+                addManualItemBtn: getEl('add-manual-item-btn'),
+                exportExcelBtn: getEl('export-excel-btn'),
+                listLayoutBgOptions: getEl('list-layout-bg-options'),
+                listBgTypeSelect: getEl('list-bg-type-select'),
+                listBgImageContainer: getEl('list-bg-image-container'),
+                listBgUpload: getEl('list-background-upload'),
+                listBgFileInfo: getEl('list-bg-file-info'),
+            };
+
+            let state = {
+                currentTab: 'menu',
+                layout: 'grid',
+                excelData: [],
+                promoTitle: 'Заголовок акции',
+                promoText: 'Текст акции с описанием',
+                promoPrice: '100',
+                promoComment: 'Комментарий про акцию, сроки проведения и т.д.',
+                promoBgImage: null,
+                menuBgImage: null,
+                gridImages: {},
+                currentGridTarget: null,
+                aspectRatio: '16/9',
+                exportWidth: 1920,
+                exportHeight: 1080,
+                displayDate: '',
+                currency: '₽',
+            };
+            
+            function formatDate(date) {
+                const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            }
+
+            function getContrastColor(bgColor) {
+                if (!bgColor) return '#000000';
+                let r, g, b;
+                if (bgColor.startsWith('#')) {
+                    r = parseInt(bgColor.substr(1, 2), 16);
+                    g = parseInt(bgColor.substr(3, 2), 16);
+                    b = parseInt(bgColor.substr(5, 2), 16);
+                } else if (bgColor.startsWith('rgb')) {
+                    const rgb = bgColor.match(/\d+/g);
+                    r = parseInt(rgb[0]);
+                    g = parseInt(rgb[1]);
+                    b = parseInt(rgb[2]);
+                } else { return '#000000'; }
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                return brightness > 128 ? '#1A1D1F' : '#FFFFFF';
+            }
+
+            function createDefaultMenuData() {
+                 if(state.excelData.length === 0) {
+                     state.excelData = [
+                        { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '', M: '', L: '' },
+                        { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '' },
+                        { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '' },
+                        { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '' }
+                     ];
+                 }
+            }
+
+            function setInitialActiveLayoutIcon() {
+                const activeButton = document.querySelector('#layout-buttons .layout-btn.active');
+                if (activeButton) {
+                    const img = activeButton.querySelector('img');
+                    const parts = img.src.split('/');
+                    let filename = parts.pop();
+                    if (!filename.startsWith('a_')) {
+                        filename = 'a_' + filename;
+                        parts.push(filename);
+                        img.src = parts.join('/');
+                    }
+                }
+            }
+            
+            function updateListBgControlsVisibility() {
+                const show = state.layout === 'list';
+                controls.listLayoutBgOptions.style.display = show ? 'block' : 'none';
+                render();
+            }
+
+            let isFormattingPrices = false;
+            function formatAllVisiblePrices() {
+                if (isFormattingPrices) return;
+                isFormattingPrices = true;
+                controls.menuPreview.querySelectorAll('.item-price, [data-field="price"], [data-field="promoPrice"]').forEach(el => {
+                    if (el.children.length > 0 || (document.activeElement === el)) return;
+                    let text = el.innerText;
+                    if (text.includes(state.currency)) return;
+                    const sanitized = text.replace(/[^\d.,]/g, '').trim();
+                    if (sanitized) {
+                        el.innerText = formatPrice(sanitized);
+                    }
+                });
+                isFormattingPrices = false;
+            }
+
+            function init() {
+                state.displayDate = formatDate(new Date());
+                setupEventListeners();
+                const initialActiveBtn = document.querySelector('.aspect-ratio-btn.active');
+                if (initialActiveBtn) {
+                    state.aspectRatio = initialActiveBtn.dataset.ratio;
+                    state.exportWidth = parseInt(initialActiveBtn.dataset.width);
+                    state.exportHeight = parseInt(initialActiveBtn.dataset.height);
+                    updatePreviewAspectRatio();
+                }
+
+                const observer = new MutationObserver(formatAllVisiblePrices);
+                observer.observe(controls.menuPreview, { childList: true, subtree: true });
+
+                createDefaultMenuData();
+                setInitialActiveLayoutIcon();
+                renderManualEditor();
+                updateGridColorVisibility();
+                updateListBgControlsVisibility();
+                render();
+            }
+
+            function setupEventListeners() {
+                document.body.addEventListener('input', (e) => {
+                    const target = e.target;
+                    const isPriceField = target.dataset.field === 'price' || target.dataset.field === 'promoPrice' || (target.parentElement && target.parentElement.dataset.field === 'price');
+                    if (isPriceField && target.isContentEditable) {
+                        let originalText = target.innerText;
+                        let sanitizedText = originalText.replace(/[^\d.,]/g, '');
+                        if (originalText !== sanitizedText) {
+                            const selection = window.getSelection();
+                            const range = selection.getRangeAt(0);
+                            const cursorPosition = range.startOffset;
+
+                            target.innerText = sanitizedText;
+
+                            try {
+                                const newRange = document.createRange();
+                                const textNode = target.firstChild || '';
+                                const newPosition = Math.min(cursorPosition, sanitizedText.length);
+                                newRange.setStart(textNode, newPosition);
+                                newRange.collapse(true);
+                                selection.removeAllRanges();
+                                selection.addRange(newRange);
+                            } catch(err) { /* Silently fail if node is not found */ }
+                        }
+                    }
+                });
+
+                controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
+                    state.currentTab = btn.dataset.tab;
+                    controls.tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateTabVisibility();
+                    render();
+                }));
+
+                setupDropArea(controls.menuDropArea, controls.fileInput, controls.menuFileInfo);
+
+                controls.layoutButtons.addEventListener('click', (e) => {
+                    const targetButton = e.target.closest('.layout-btn');
+                    if (!targetButton) return;
+                    state.layout = targetButton.dataset.layout;
+
+                    document.querySelectorAll('#layout-buttons .layout-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    targetButton.classList.add('active');
+                    
+                    updateGridColorVisibility();
+                    updateListBgControlsVisibility();
+                    render();
+                });
+
+                document.querySelectorAll('.controls-panel input, .controls-panel select').forEach(el => {
+                    el.addEventListener('input', render);
+                    el.addEventListener('change', render);
+                });
+                
+                controls.promoDiscountSlider.addEventListener('input', () => {
+                    controls.promoDiscountValue.textContent = `${controls.promoDiscountSlider.value}%`;
+                    render();
+                });
+
+                controls.gridGradientSlider.addEventListener('input', () => {
+                    controls.gridGradientValue.textContent = `${controls.gridGradientSlider.value}%`;
+                    render();
+                });
+                
+                controls.promoBgType.addEventListener('change', updatePromoBgControls);
+                controls.promoBgUpload.addEventListener('change', handlePromoBgUpload);
+                controls.downloadPngBtn.addEventListener('click', downloadAsPNG);
+                controls.downloadMp4Btn.addEventListener('click', showMp4Modal);
+                controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
+                controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
+                controls.menuPreview.addEventListener('blur', handleInlineEdit, true);
+                
+                controls.aspectRatioBtns.forEach(btn => btn.addEventListener('click', () => {
+                    controls.aspectRatioBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.aspectRatio = btn.dataset.ratio;
+                    state.exportWidth = parseInt(btn.dataset.width);
+                    state.exportHeight = parseInt(btn.dataset.height);
+                    updatePreviewAspectRatio();
+                }));
+                
+                controls.confirmAspectRatio.addEventListener('click', () => {
+                    controls.aspectRatioModal.style.display = 'none';
+                    render(); 
+                });
+                
+                controls.cancelMp4.addEventListener('click', () => controls.mp4Modal.style.display = 'none');
+                controls.saveMp4.addEventListener('click', downloadAsMP4);
+                controls.toggleUpload.addEventListener('click', switchInputMode);
+                controls.toggleManual.addEventListener('click', switchInputMode);
+                controls.exportExcelBtn.addEventListener('click', exportToExcel);
+                controls.manualItemList.addEventListener('click', handleManualEditorActions);
+                controls.addManualItemBtn.addEventListener('click', addManualItem);
+                
+                controls.listBgTypeSelect.addEventListener('change', () => {
+                    controls.listBgImageContainer.style.display = controls.listBgTypeSelect.value === 'image' ? 'block' : 'none';
+                    render();
+                });
+                controls.listBgUpload.addEventListener('change', handleListBgUpload);
+            }
+            
+            function handleListBgUpload(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    controls.listBgFileInfo.textContent = file.name;
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.menuBgImage = event.target.result;
+                        render();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function updatePreviewAspectRatio() { controls.exportContainer.style.aspectRatio = state.aspectRatio; }
+
+            function updateTabVisibility() {
+                controls.menuControls.style.display = (state.currentTab === 'menu') ? 'block' : 'none';
+                controls.promoControls.style.display = (state.currentTab === 'promo') ? 'block' : 'none';
+                controls.combinedControls.style.display = (state.currentTab === 'combined') ? 'block' : 'none';
+                updateGridColorVisibility();
+            }
+            
+            function updateGridColorVisibility() {
+                const show = state.layout === 'grid' || state.layout === 'grid3x3';
+                 controls.gridColorItems.forEach(item => { item.style.display = show ? 'block' : 'none'; });
+            }
+
+            function updatePromoBgControls() {
+                const type = controls.promoBgType.value;
+                controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
+                controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
+                controls.bgPositionContainer.style.display = (type === 'image') ? 'block' : 'none';
+                render();
+            }
+
+            function switchInputMode(e) {
+                const mode = e.target.dataset.mode;
+                controls.toggleUpload.classList.toggle('active', mode === 'upload');
+                controls.toggleManual.classList.toggle('active', mode === 'manual');
+                controls.uploadModeContent.style.display = mode === 'upload' ? 'block' : 'none';
+                controls.manualModeContent.style.display = mode === 'manual' ? 'block' : 'none';
+                if(mode === 'manual') {
+                    state.layout = 'grid';
+                    document.querySelectorAll('#layout-buttons .layout-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.layout === 'grid'));
+                    createDefaultMenuData();
+                    render();
+                }
+            }
+            
+            function addManualItem() {
+                const lastItem = state.excelData.length > 0 ? state.excelData[state.excelData.length - 1] : null;
+                const newCategory = lastItem ? lastItem.category : 'Новая категория';
+                
+                const newItem = {
+                    name: 'Новое блюдо',
+                    description: 'Описание блюда',
+                    price: '100',
+                    category: newCategory,
+                    S: '', M: '', L: ''
+                };
+                state.excelData.push(newItem);
+                renderManualEditor();
+                render();
+            }
+
+            function setupDropArea(dropArea, fileInput, fileInfo) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+                });
+                ['dragenter', 'dragover'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight')));
+                ['dragleave', 'drop'].forEach(eventName => dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight')));
+                
+                dropArea.addEventListener('drop', e => {
+                    if (e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; handleFile(e.dataTransfer.files[0]); }
+                });
+                fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
+
+                function handleFile(file) {
+                    fileInfo.textContent = file.name;
+                    if (file.name.match(/\.(xlsx|xls|csv)$/i)) { handleExcelFile(file); } 
+                    else if (file.name.endsWith('.txt')) { handleTextFile(file); }
+                    else { alert('Неподдерживаемый формат файла. Используйте Excel или TXT.'); }
+                }
+                
+                function handleExcelFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: 'array' });
+                            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                            
+                            const findValue = (obj, keys) => {
+                                for (const key of keys) {
+                                    const objKey = Object.keys(obj).find(k => k.toLowerCase() === key.toLowerCase());
+                                    if (objKey && obj[objKey] !== undefined) return obj[objKey];
+                                }
+                                return '';
+                            };
+                            state.excelData = jsonData.map(row => ({
+                                name: findValue(row, ['Название', 'Наименование', 'блюдо']), description: findValue(row, ['Описание', 'состав']),
+                                price: findValue(row, ['Цена', 'Стоимость', 'с ндс']), photo: row['Фото'] || '',
+                                category: (findValue(row, ['Категория', 'тип']) || 'Основное меню').trim(), S: findValue(row, ['S', 'Цена S']), 
+                                M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L'])
+                            }));
+                            state.gridImages = {};
+                            render();
+                            renderManualEditor();
+                        } catch (error) { alert('Ошибка при чтении файла Excel: ' + error.message); }
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+                
+                function handleTextFile(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const lines = e.target.result.split('\n');
+                            let currentCategory = 'Основное меню';
+                            state.excelData = lines.map(line => {
+                                line = line.trim();
+                                if (!line) return null;
+                                if (line.startsWith('#') || line.startsWith('*') || line.endsWith(':')) {
+                                    currentCategory = line.replace(/[#*:]/g, '').trim();
+                                    return null;
+                                }
+                                const parts = line.split(' - ');
+                                return { name: parts[0]?.trim() || '', description: parts[1]?.trim() || '', price: (parts[2]?.match(/(\d+)/) || [])[1] || parts[2]?.trim() || '', category: currentCategory };
+                            }).filter(Boolean);
+                            state.gridImages = {};
+                            render();
+                            renderManualEditor();
+                        } catch (error) { alert('Ошибка при чтении TXT файла: ' + error.message); }
+                    };
+                    reader.readAsText(file);
+                }
+            }
+
+            function renderManualEditor() {
+                controls.manualItemList.innerHTML = state.excelData.map((item, index) => `
+                    <div class="manual-item">
+                        <span class="manual-item-name">${item.name}</span>
+                        <div class="manual-item-actions">
+                            <button class="delete-item-btn" data-index="${index}"><img src="delete.svg" alt="Удалить" style="width:24px;height:24px;"></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            function handleManualEditorActions(e) {
+                const button = e.target.closest('.delete-item-btn');
+                if (button) {
+                    const index = parseInt(button.dataset.index, 10);
+                    state.excelData.splice(index, 1);
+                    render();
+                    renderManualEditor();
+                }
+            }
+            
+            function handleInlineEdit(e) {
+                const target = e.target;
+                const field = target.dataset.field;
+                if (!field) return;
+
+                let newValue = target.innerText.trim();
+                
+                if (field.startsWith('promo')) {
+                    if (field === 'promoPrice') {
+                        newValue = newValue.replace(/[^\d.,]/g, '').trim();
+                        target.innerText = formatPrice(newValue);
+                    }
+                    state[field] = newValue.replace(state.currency, '').trim();
+                } else if (field === 'displayDate') {
+                    state.displayDate = newValue;
+                }
+                else {
+                    const index = target.dataset.index;
+                    if (index === undefined) return;
+                    const item = state.excelData[index];
+                    if (!item) return;
+
+                    const isPriceField = field === 'price' || field === 'S' || field === 'M' || field === 'L';
+                    if (isPriceField) {
+                         newValue = newValue.replace(/[^\d.,]/g, '').trim();
+                         target.innerText = formatPrice(newValue);
+                    }
+
+                    if (field === 'category') {
+                         const oldCategory = item.category;
+                         state.excelData.forEach(it => {
+                            if (it.category === oldCategory) it.category = newValue
+                         });
+                    } else if (field === 'price' && target.dataset.volume) {
+                        item[target.dataset.volume.toUpperCase()] = newValue;
+                    } else {
+                         item[field] = newValue.replace(state.currency, '').trim();
+                    }
+                }
+                renderManualEditor();
+            }
+
+            function exportToExcel() {
+                if (state.excelData.length === 0) { alert('Нет данных для экспорта'); return; }
+                const wsData = state.excelData.map(item => ({
+                    'Категория': item.category, 'Название': item.name, 'Описание': item.description,
+                    'Стоимость': item.price, 'S': item.S, 'M': item.M, 'L': item.L
+                }));
+                const ws = XLSX.utils.json_to_sheet(wsData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Меню");
+                XLSX.writeFile(wb, "меню.xlsx");
+            }
+
+            function handlePromoBgUpload(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.promoBgImage = event.target.result;
+                        render();
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            }
+
+            function handleGridPhotoUploadClick(e) {
+                const photoContainer = e.target.closest('.item-photo-container');
+                if (photoContainer) {
+                    state.currentGridTarget = photoContainer.dataset.index;
+                    controls.gridPhotoUpload.click();
+                }
+            }
+
+            function handleGridPhotoFileChange(e) {
+                if (e.target.files && e.target.files[0] && state.currentGridTarget !== null) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        state.gridImages[state.currentGridTarget] = event.target.result;
+                        render(); 
+                        state.currentGridTarget = null;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                    e.target.value = '';
+                }
+            }
+
+            function formatPrice(price) {
+                if (price === null || price === undefined || String(price).trim() === '') return '';
+                const num = parseFloat(String(price).replace(',', '.'));
+                return isNaN(num) ? price : `${num.toFixed(0)} ${state.currency}`;
+            }
+
+            function calculateDiscountedPrice() {
+                const basePrice = parseFloat(state.promoPrice) || 0;
+                const discount = parseFloat(controls.promoDiscountSlider.value) || 0;
+                return basePrice * (1 - discount / 100);
+            }
+
+            function applyStyles() {
+                const styles = {
+                    '--menu-bg-color': controls.menuBgPicker.value, '--cell-bg-color': controls.cellBgColorPicker.value,
+                    '--category-font-family': controls.categoryFont.value, '--category-font-size': controls.categorySize.value + 'px',
+                    '--category-font-color': controls.categoryColor.value, '--item-font-family': controls.itemFont.value,
+                    '--item-font-size': controls.itemSize.value + 'px', '--item-font-color': controls.itemColor.value,
+                    '--desc-font-family': controls.descFont.value, '--desc-font-size': controls.descSize.value + 'px',
+                    '--desc-font-color': controls.descColor.value, '--price-font-family': controls.priceFont.value,
+                    '--price-font-size': controls.priceSize.value + 'px', '--price-font-color': controls.priceColor.value,
+                    '--promo-title-font-family': controls.promoTitleFont.value, '--promo-title-font-size': controls.promoTitleSize.value + 'px',
+                    '--promo-title-font-color': controls.promoTitleColor.value, '--promo-text-font-family': controls.promoTextFont.value,
+                    '--promo-text-font-size': controls.promoTextSize.value + 'px', '--promo-text-font-color': controls.promoTextColor.value,
+                    '--promo-price-font-family': controls.promoPriceFont.value, '--promo-price-font-size': controls.promoPriceSize.value + 'px',
+                    '--promo-price-font-color': controls.promoPriceColor.value, '--discount-font-color': controls.discountColor.value,
+                    '--discount-bg-color': controls.discountBgColor.value, '--promo-text-align': controls.promoTextAlign.value,
+                    '--date-contrast-color': getContrastColor(controls.menuBgPicker.value),
+                    '--grid-gradient-opacity': parseFloat(controls.gridGradientSlider.value) / 100,
+                };
+                for (const [key, value] of Object.entries(styles)) { document.documentElement.style.setProperty(key, value); }
+            }
+            
+            function renderMenuHTML(currentLayout) {
+                if (!state.excelData || state.excelData.length === 0) return '';
+                
+                document.documentElement.style.setProperty('--date-contrast-color', getContrastColor(controls.menuBgPicker.value));
+                
+                let headerHTML = '';
+                const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
+
+                if (currentLayout !== 'default' || controls.showDateCheck.checked) {
+                    headerHTML = `
+                    <div class="menu-header">
+                        ${currentLayout !== 'list' && currentLayout !== 'default' ? `<div class="menu-grid-category-title" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>` : '<div></div>'}
+                        ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
+                    </div>`;
+                }
+                
+                switch (currentLayout) {
+                    case 'grid': return headerHTML + renderGridMenu(4, 'menu-grid-template');
+                    case 'grid3x3': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x3');
+                    default: return renderListMenu();
+                }
+            }
+
+            function renderListMenu() {
+                const categories = {};
+                state.excelData.forEach(item => {
+                    if (!categories[item.category]) categories[item.category] = [];
+                    categories[item.category].push(item);
+                });
+                
+                let headerHTML = controls.showDateCheck.checked ? `<div class="menu-header" style="justify-content:flex-end;"><div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div></div>` : '';
+
+                let itemsHTML = Object.keys(categories).map(categoryName => {
+                    const itemsInCategory = categories[categoryName];
+                    const firstItemIndex = state.excelData.indexOf(itemsInCategory[0]);
+                    return `
+                    <div class="menu-section">
+                        <div class="section-title" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
+                        ${itemsInCategory.map(item => {
+                            const originalIndex = state.excelData.indexOf(item);
+                            let priceHTML;
+                            const hasVolumePrices = item.S || item.M || item.L;
+                            if (hasVolumePrices) {
+                                priceHTML = [
+                                    item.S ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="S" data-volume="s">S: ${formatPrice(item.S)}</span>` : '',
+                                    item.M ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="M" data-volume="m">M: ${formatPrice(item.M)}</span>` : '',
+                                    item.L ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="L" data-volume="l">L: ${formatPrice(item.L)}</span>` : ''
+                                ].filter(Boolean).join('');
+                            } else {
+                                priceHTML = `<span contenteditable="true" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
+                            }
+                            return `
+                            <div class="menu-item">
+                                <div class="item-content">
+                                    <div class="item-name" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
+                                    ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : ''}
+                                </div>
+                                <div class="item-price">${priceHTML}</div>
+                            </div>`;
+                        }).join('')}
+                    </div>`;
+                }).join('');
+
+                const columnsClass = state.excelData.length > 10 ? 'two-columns' : '';
+                return `${headerHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
+            }
+            
+             function renderGridMenu(limit, className) {
+                const renderCell = (item, index) => {
+                    const originalIndex = state.excelData.indexOf(item);
+                    const imgSrc = state.gridImages[originalIndex] || item.photo;
+                    
+                    let priceHTML;
+                    const hasVolumePrices = item.S || item.M || item.L;
+                    if (hasVolumePrices) {
+                        priceHTML = [
+                            item.S ? `S:${formatPrice(item.S)}` : '',
+                            item.M ? `M:${formatPrice(item.M)}` : '',
+                            item.L ? `L:${formatPrice(item.L)}` : ''
+                        ].filter(Boolean).join(' / ');
+                    } else {
+                        priceHTML = formatPrice(item.price) || formatPrice('0');
+                    }
+                    
+                    return `
+                    <div class="grid-cell">
+                        <div class="grid-cell-content">
+                            <div class="item-name" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
+                            ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
+                            <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
+                        </div>
+                        <div class="item-photo-container" data-index="${originalIndex}">
+                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn">+</button>`}
+                        </div>
+                    </div>`;
+                };
+                return `<div class="${className}">${state.excelData.slice(0, limit).map(renderCell).join('')}</div>`;
+            }
+
+            function renderPromoHTML() {
+                const discountedPrice = calculateDiscountedPrice();
+                const priceHTML = discountedPrice > 0 ? `
+                <div class="promo-price-container">
+                    <div class="promo-price" contenteditable="true" data-field="promoPrice">${formatPrice(state.promoPrice)}</div>
+                    ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
+                </div>` : '';
+
+                const createIcon = (src, alt) => `<span class="promo-icon-wrapper"><img src="${src}" alt="${alt}" class="promo-icon"></span>`;
+
+                const iconsHTML = [
+                    controls.veganCheck.checked && createIcon("vegan.svg", "Веган"),
+                    controls.halalCheck.checked && createIcon("halal.svg", "Халяль"),
+                    controls.glutenfreeCheck.checked && createIcon("glutenfree.svg", "Без глютена"),
+                    controls.newCheck.checked && createIcon("new.svg", "Новинка")
+                ].filter(Boolean).join('');
+
+                return `
+                    <div class="promo-content" style="text-align: ${controls.promoTextAlign.value};">
+                        <div>
+                           <div class="promo-title" contenteditable="true" data-field="promoTitle">${state.promoTitle}${iconsHTML}</div>
+                           <div class="promo-text" contenteditable="true" data-field="promoText">${state.promoText}</div>
+                           ${priceHTML}
+                        </div>
+                        <div class="promo-comment" contenteditable="true" data-field="promoComment">${state.promoComment}</div>
+                    </div>`;
+            }
+
+            function render() {
+                applyStyles();
+                let html = '';
+                const isMenuEmpty = !state.excelData || state.excelData.length === 0;
+                
+                if (state.currentTab === 'menu' && isMenuEmpty) {
+                    controls.menuPreview.innerHTML = `
+                    <div style="text-align: center; color: #a3a9c2; padding: 40px; justify-content: center; height: 100%; display: flex; flex-direction: column;">
+                        <h3>Здесь будет ваше меню</h3><p style="font-size: 14px; color: #a3a9c2">Настройте параметры слева и загрузите данные</p>
+                    </div>`;
+                    return;
+                }
+
+                if (state.currentTab === 'menu') {
+                    html = renderMenuHTML(state.layout);
+                } else if (state.currentTab === 'promo') {
+                    const promoContainer = document.createElement('div');
+                    promoContainer.className = 'promo-template';
+                    promoContainer.innerHTML = renderPromoHTML();
+                    setPromoBackground(promoContainer);
+                    html = promoContainer.outerHTML;
+                } else if (state.currentTab === 'combined') {
+                    const menuHTML = `<div class="combined-menu-part">${renderMenuHTML(state.layout)}</div>`;
+                    const promoHTML = `<div class="combined-promo-part">${renderPromoHTML()}</div>`;
+                    html = `<div class="combined-template">${menuHTML}${promoHTML}</div>`;
+                }
+                
+                controls.menuPreview.innerHTML = html;
+                
+                if (state.layout === 'list' && controls.listBgTypeSelect.value === 'image' && state.menuBgImage) {
+                    controls.menuPreview.style.backgroundImage = `url(${state.menuBgImage})`;
+                    controls.menuPreview.style.backgroundColor = '';
+                } else {
+                    controls.menuPreview.style.backgroundImage = 'none';
+                }
+
+                if(state.currentTab === 'combined'){
+                    setPromoBackground(document.querySelector('.combined-promo-part'));
+                }
+            }
+
+            function setPromoBackground(element) {
+                if(!element) return;
+                const type = controls.promoBgType.value;
+                element.style.backgroundPosition = controls.promoBgPos.value;
+                if (type === 'image' && state.promoBgImage) {
+                    element.style.backgroundImage = `url(${state.promoBgImage})`;
+                    element.style.backgroundColor = '';
+                } else {
+                    element.style.backgroundColor = controls.bgColorPicker.value;
+                    element.style.backgroundImage = 'none';
+                }
+            }
+            
+            function download(generator) {
+                controls.loadingText.textContent = 'Подготовка к сохранению...';
+                controls.loadingOverlay.style.display = 'flex';
+
+                const originalPreview = getEl('menu-preview');
+                const captureClone = originalPreview.cloneNode(true);
+                
+                const captureContainer = document.createElement('div');
+                captureContainer.style.position = 'absolute';
+                captureContainer.style.left = '-9999px';
+                captureContainer.style.top = '0px';
+                captureContainer.style.width = state.exportWidth + 'px';
+                captureContainer.style.height = state.exportHeight + 'px';
+                captureContainer.style.overflow = 'hidden';
+                
+                captureClone.style.width = '100%';
+                captureClone.style.height = '100%';
+
+                captureContainer.appendChild(captureClone);
+                document.body.appendChild(captureContainer);
+                
+                if (originalPreview.offsetWidth > 0) {
+                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
+                    const scaleAndSetFont = (variableName, controlElement) => {
+                        const originalSize = parseFloat(controlElement.value);
+                        if (!isNaN(originalSize)) {
+                            const newSize = originalSize * scaleFactor;
+                            captureClone.style.setProperty(variableName, `${newSize}px`);
+                        }
+                    };
+                    scaleAndSetFont('--category-font-size', controls.categorySize);
+                    scaleAndSetFont('--item-font-size', controls.itemSize);
+                    scaleAndSetFont('--desc-font-size', controls.descSize);
+                    scaleAndSetFont('--price-font-size', controls.priceSize);
+                    scaleAndSetFont('--promo-title-font-size', controls.promoTitleSize);
+                    scaleAndSetFont('--promo-text-font-size', controls.promoTextSize);
+                    scaleAndSetFont('--promo-price-font-size', controls.promoPriceSize);
+                    const dateElement = captureClone.querySelector('.menu-date');
+                    if (dateElement) dateElement.style.fontSize = `${14 * scaleFactor}px`;
+                    const promoComment = captureClone.querySelector('.promo-comment');
+                    if (promoComment) promoComment.style.fontSize = `${10 * scaleFactor}px`;
+                } else {
+                    console.error("On-screen preview has zero width. Cannot calculate scale factor for fonts.");
+                }
+
+                const images = captureClone.querySelectorAll('.item-photo');
+                const promises = [];
+
+                images.forEach(img => {
+                    if (img.tagName === 'IMG' && img.src) {
+                        const promise = new Promise((resolve) => {
+                            const tempImg = new Image();
+                            tempImg.crossOrigin = "Anonymous";
+                            tempImg.onload = () => {
+                                const div = document.createElement('div');
+                                div.style.width = '100%'; div.style.height = '100%';
+                                div.style.backgroundImage = `url(${img.src})`;
+                                div.style.backgroundSize = 'cover';
+                                div.style.backgroundPosition = 'center';
+                                div.style.backgroundRepeat = 'no-repeat';
+                                if (img.parentNode) img.parentNode.replaceChild(div, img);
+                                resolve();
+                            };
+                            tempImg.onerror = () => { console.warn(`Could not load image ${img.src}`); resolve(); };
+                            tempImg.src = img.src;
+                        });
+                        promises.push(promise);
+                    }
+                });
+
+                Promise.all(promises).then(() => {
+                    controls.loadingText.textContent = 'Генерация изображения...';
+                    setTimeout(() => {
+                        html2canvas(captureContainer, {
+                            scale: 2,
+                            width: state.exportWidth,
+                            height: state.exportHeight,
+                            useCORS: true,
+                            backgroundColor: null,
+                            logging: false
+                        }).then(canvas => {
+                            const targetCanvas = document.createElement('canvas');
+                            targetCanvas.width = state.exportWidth;
+                            targetCanvas.height = state.exportHeight;
+                            const ctx = targetCanvas.getContext('2d');
+                            ctx.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
+                            generator(targetCanvas);
+                        }).catch(err => {
+                            console.error('Ошибка при сохранении файла:', err);
+                            alert('Произошла ошибка при сохранении файла: ' + err.message);
+                        }).finally(() => {
+                            document.body.removeChild(captureContainer);
+                            controls.loadingOverlay.style.display = 'none';
+                        });
+                    }, 500);
+                }).catch(error => {
+                    console.error("Ошибка при обработке изображений:", error);
+                    alert("Не удалось загрузить одно из изображений для сохранения.");
+                    document.body.removeChild(captureContainer);
+                    controls.loadingOverlay.style.display = 'none';
+                });
+            }
+
+            function downloadAsPNG() {
+                download(canvas => canvas.toBlob(blob => saveAs(blob, 'menuboard.png'), 'image/png'));
+            }
+            
+            function showMp4Modal() { controls.mp4Modal.style.display = 'flex'; }
+            
+            function downloadAsMP4() {
+                const filenameBase = (controls.mp4Filename.value || 'menuboard').trim().replace(/\s+/g, '_');
+                const duration = Math.max(1, parseInt(controls.mp4Duration.value, 10) || 5);
+                if (duration < 1 || duration > 60) { alert('Длительность должна быть от 1 до 60 секунд'); return; }
+                controls.mp4Modal.style.display = 'none';
+                
+                download(canvas => {
+                    controls.loadingText.textContent = 'Сохраняем видео, это может занять время...';
+                    const stream = canvas.captureStream(30);
+                    const mimeType = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(MediaRecorder.isTypeSupported);
+                    if (!mimeType) { throw new Error('No supported video format found for recording.'); }
+                    
+                    const recordedChunks = [];
+                    const recorder = new MediaRecorder(stream, { mimeType });
+                    recorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                    recorder.onstop = () => {
+                        const blob = new Blob(recordedChunks, { type: mimeType });
+                        saveAs(blob, `${filenameBase}.${mimeType.includes('mp4') ? 'mp4' : 'webm'}`);
+                    };
+                    recorder.start();
+                    setTimeout(() => recorder.stop(), duration * 1000);
+                });
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
