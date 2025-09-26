@@ -905,14 +905,6 @@
                                 <option value="color">Сплошной цвет</option>
                                 <option value="image">Загрузить изображение</option>
                             </select>
-                             <div id="bg-position-container" style="display: none;">
-                                <label>Расположение картинки:</label>
-                                <select id="promo-bg-position-select" class="select">
-                                    <option value="center">По центру</option>
-                                    <option value="left">Слева</option>
-                                    <option value="right">Справа</option>
-                                </select>
-                            </div>
                             <div id="bg-color-container">
                                 <input type="color" id="bg-color-picker" value="#FFFFFF" style="width: 100%; height: 40px;">
                             </div>
@@ -1041,10 +1033,8 @@
                 promoTextFont: getEl('promo-text-font-select'),
                 promoPriceFont: getEl('promo-price-font-select'),
                 promoBgType: getEl('promo-bg-type-select'),
-                promoBgPos: getEl('promo-bg-position-select'),
                 bgColorContainer: getEl('bg-color-container'),
                 bgImageContainer: getEl('bg-image-container'),
-                bgPositionContainer: getEl('bg-position-container'),
                 promoBgUpload: getEl('promo-background-upload'),
                 promoBgInfo: getEl('bg-file-info'),
                 bgColorPicker: getEl('bg-color-picker'),
@@ -1345,7 +1335,6 @@
                 const type = controls.promoBgType.value;
                 controls.bgColorContainer.style.display = type === 'color' ? 'block' : 'none';
                 controls.bgImageContainer.style.display = type === 'image' ? 'block' : 'none';
-                controls.bgPositionContainer.style.display = (type === 'image') ? 'block' : 'none';
                 render();
             }
 
@@ -1782,7 +1771,6 @@
                 const type = controls.promoBgType.value;
                 const transform = state.imageTransforms['promo'] || { size: 100, x: 50, y: 50 };
 
-                element.style.backgroundPosition = controls.promoBgPos.value;
                 if (type === 'image' && state.promoBgImage) {
                     element.style.backgroundImage = `url(${state.promoBgImage})`;
                     element.style.backgroundSize = `${transform.size}%`;
