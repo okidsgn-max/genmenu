@@ -1800,7 +1800,6 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
                 
-                // Remove handles from clone
                 captureClone.querySelectorAll('.resize-handle').forEach(h => h.remove());
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
                 
@@ -1820,6 +1819,8 @@
                 
                 if (originalPreview.offsetWidth > 0) {
                     const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
+                    
+                    // --- FONT SCALING ---
                     const scaleAndSetFont = (variableName, controlElement) => {
                         const originalSize = parseFloat(controlElement.value);
                         if (!isNaN(originalSize)) {
@@ -1834,10 +1835,53 @@
                     scaleAndSetFont('--promo-title-font-size', controls.promoTitleSize);
                     scaleAndSetFont('--promo-text-font-size', controls.promoTextSize);
                     scaleAndSetFont('--promo-price-font-size', controls.promoPriceSize);
+                    
                     const dateElement = captureClone.querySelector('.menu-date');
                     if (dateElement) dateElement.style.fontSize = `${14 * scaleFactor}px`;
                     const promoComment = captureClone.querySelector('.promo-comment');
                     if (promoComment) promoComment.style.fontSize = `${10 * scaleFactor}px`;
+
+                    // --- PADDING, MARGIN, GAP & RADIUS SCALING ---
+                    // Grid Layout
+                    captureClone.querySelectorAll('.menu-grid-template, .menu-grid-template-3x3').forEach(grid => {
+                        grid.style.padding = `${15 * scaleFactor}px`;
+                        grid.style.gap = `${15 * scaleFactor}px`;
+                        grid.querySelectorAll('.grid-cell').forEach(cell => {
+                            cell.style.borderRadius = `${8 * scaleFactor}px`; // From --border-radius
+                            const content = cell.querySelector('.grid-cell-content');
+                            if (content) {
+                                content.style.padding = `${15 * scaleFactor}px`;
+                                content.style.gap = `${5 * scaleFactor}px`;
+                            }
+                        });
+                    });
+
+                    // Promo Layout
+                    captureClone.querySelectorAll('.promo-content').forEach(promo => {
+                        promo.style.padding = `${40 * scaleFactor}px`;
+                        const title = promo.querySelector('.promo-title');
+                        if (title) title.style.marginBottom = `${20 * scaleFactor}px`;
+                        const text = promo.querySelector('.promo-text');
+                        if (text) text.style.marginBottom = `${30 * scaleFactor}px`;
+                         const priceContainer = promo.querySelector('.promo-price-container');
+                        if(priceContainer) priceContainer.style.gap = `${20 * scaleFactor}px`;
+                    });
+
+                    // List Layout
+                    captureClone.querySelectorAll('.menu-items-container').forEach(container => {
+                        container.style.padding = `${30 * scaleFactor}px`;
+                        container.style.columnGap = `${40 * scaleFactor}px`;
+                    });
+                     captureClone.querySelectorAll('.menu-section').forEach(section => {
+                        section.style.marginBottom = `${30 * scaleFactor}px`;
+                        const title = section.querySelector('.section-title');
+                        if(title) title.style.marginBottom = `${15 * scaleFactor}px`;
+                    });
+                    captureClone.querySelectorAll('.menu-item').forEach(item => {
+                        item.style.marginBottom = `${15 * scaleFactor}px`;
+                        item.style.paddingBottom = `${15 * scaleFactor}px`;
+                    });
+
                 } else {
                     console.error("On-screen preview has zero width. Cannot calculate scale factor for fonts.");
                 }
