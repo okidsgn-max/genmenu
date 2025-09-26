@@ -292,14 +292,23 @@
     
     .preview-wrapper {
         flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 0;
-        overflow: auto; background: transparent; border-radius: var(--border-radius);
+        overflow: hidden; background: transparent; border-radius: var(--border-radius);
         border: 1px solid var(--border); padding: 20px;
     }
     
     .preview-container {
-        width: 100%; height: auto; aspect-ratio: 16/9; background: transparent; border-radius: var(--border-radius);
-        display: flex; justify-content: center; align-items: center; overflow: hidden;
-        border: 0px solid var(--border); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-height: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
+        background: transparent;
+        border-radius: var(--border-radius);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 0px solid var(--border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     
     .menu-preview {
@@ -356,9 +365,14 @@
     .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
     .grid-cell .item-photo-container {
         flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center;
-        overflow: hidden; z-index: 1; cursor: pointer; position: relative;
+        overflow: hidden; z-index: 1; position: relative;
     }
-    .grid-cell .item-photo { width: 100%; height: 100%; object-fit: cover; }
+    .grid-cell .item-photo {
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        cursor: move;
+    }
     .grid-cell .upload-photo-btn {
         font-size: 30px; cursor: pointer; border: none; background: rgba(0, 0, 0, 0.3); width: 40px; height: 40px;
         border-radius: 50%; color: #090909; transition: all var(--transition-medium); position: absolute;
@@ -587,6 +601,33 @@
     .combined-template .grid-cell::after { display: none; }
 
     .menu-date.auto-contrast { color: var(--date-contrast-color, #FFFFFF); }
+    
+    /* Styles for Resizing Images */
+    .resizable-container.selected {
+        outline: 2px solid var(--primary);
+        box-shadow: 0 0 10px rgba(4, 201, 176, 0.5);
+    }
+    .resize-handle {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        background: var(--primary);
+        border: 2px solid white;
+        border-radius: 50%;
+        z-index: 12;
+        display: none;
+    }
+    .resize-handle.br { /* bottom-right */
+        bottom: -7px;
+        right: -7px;
+        cursor: se-resize;
+    }
+    .resizable-container.selected .resize-handle {
+        display: block;
+    }
+    .promo-template.resizable-container, .combined-promo-part.resizable-container {
+        cursor: move;
+    }
 </style>
 </head>
 <body>
@@ -1047,6 +1088,7 @@
                 promoBgImage: null,
                 menuBgImage: null,
                 gridImages: {},
+                imageTransforms: {},
                 currentGridTarget: null,
                 aspectRatio: '16/9',
                 exportWidth: 1920,
@@ -1055,6 +1097,18 @@
                 currency: '₽',
             };
             
+            // --- Image Resizing and Panning State ---
+            let activeResizable = {
+                element: null,
+                mode: null, // 'resize' or 'pan'
+                key: null,
+                startX: 0,
+                startY: 0,
+                startSize: 100,
+                startPosX: 50,
+                startPosY: 50
+            };
+
             function formatDate(date) {
                 const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
                 return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
@@ -1248,6 +1302,16 @@
                     render();
                 });
                 controls.listBgUpload.addEventListener('change', handleListBgUpload);
+                
+                // --- Image Resizing and Panning Listeners ---
+                controls.menuPreview.addEventListener('mousedown', handlePreviewMouseDown);
+                document.addEventListener('mousemove', handleDocumentMouseMove);
+                document.addEventListener('mouseup', handleDocumentMouseUp);
+                document.body.addEventListener('click', (e) => {
+                    if (!controls.menuPreview.contains(e.target)) {
+                       deselectActiveResizable();
+                    }
+                }, true);
             }
             
             function handleListBgUpload(e) {
@@ -1357,6 +1421,7 @@
                                 M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L'])
                             }));
                             state.gridImages = {};
+                            state.imageTransforms = {};
                             render();
                             renderManualEditor();
                         } catch (error) { alert('Ошибка при чтении файла Excel: ' + error.message); }
@@ -1381,6 +1446,7 @@
                                 return { name: parts[0]?.trim() || '', description: parts[1]?.trim() || '', price: (parts[2]?.match(/(\d+)/) || [])[1] || parts[2]?.trim() || '', category: currentCategory };
                             }).filter(Boolean);
                             state.gridImages = {};
+                            state.imageTransforms = {};
                             render();
                             renderManualEditor();
                         } catch (error) { alert('Ошибка при чтении TXT файла: ' + error.message); }
@@ -1412,6 +1478,7 @@
             
             function handleInlineEdit(e) {
                 const target = e.target;
+                if (activeResizable.element) return;
                 const field = target.dataset.field;
                 if (!field) return;
 
@@ -1469,6 +1536,7 @@
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.promoBgImage = event.target.result;
+                        state.imageTransforms['promo'] = { size: 100, x: 50, y: 50 };
                         render();
                     };
                     reader.readAsDataURL(e.target.files[0]);
@@ -1477,7 +1545,7 @@
 
             function handleGridPhotoUploadClick(e) {
                 const photoContainer = e.target.closest('.item-photo-container');
-                if (photoContainer) {
+                 if (photoContainer && !photoContainer.querySelector('.item-photo')) {
                     state.currentGridTarget = photoContainer.dataset.index;
                     controls.gridPhotoUpload.click();
                 }
@@ -1488,6 +1556,8 @@
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.gridImages[state.currentGridTarget] = event.target.result;
+                        const key = `grid-${state.currentGridTarget}`;
+                        state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
                         render(); 
                         state.currentGridTarget = null;
                     };
@@ -1601,6 +1671,14 @@
                     const originalIndex = state.excelData.indexOf(item);
                     const imgSrc = state.gridImages[originalIndex] || item.photo;
                     
+                    const key = `grid-${originalIndex}`;
+                    const transform = state.imageTransforms[key] || { size: 100, x: 50, y: 50 };
+                    
+                    const photoHTML = imgSrc ? `
+                        <div class="item-photo" style="background-image: url('${imgSrc}'); background-size: ${transform.size}%; background-position: ${transform.x}% ${transform.y}%;"></div>
+                        <div class="resize-handle br"></div>
+                    ` : `<button class="upload-photo-btn">+</button>`;
+
                     let priceHTML;
                     const hasVolumePrices = item.S || item.M || item.L;
                     if (hasVolumePrices) {
@@ -1620,8 +1698,8 @@
                             ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
                             <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
                         </div>
-                        <div class="item-photo-container" data-index="${originalIndex}">
-                            ${imgSrc ? `<img src="${imgSrc}" alt="${item.name}" class="item-photo">` : `<button class="upload-photo-btn">+</button>`}
+                        <div class="item-photo-container resizable-container" data-index="${originalIndex}" data-key="${key}">
+                            ${photoHTML}
                         </div>
                     </div>`;
                 };
@@ -1657,6 +1735,7 @@
             }
 
             function render() {
+                deselectActiveResizable();
                 applyStyles();
                 let html = '';
                 const isMenuEmpty = !state.excelData || state.excelData.length === 0;
@@ -1674,12 +1753,13 @@
                 } else if (state.currentTab === 'promo') {
                     const promoContainer = document.createElement('div');
                     promoContainer.className = 'promo-template';
+                    promoContainer.dataset.key = 'promo';
                     promoContainer.innerHTML = renderPromoHTML();
                     setPromoBackground(promoContainer);
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
                     const menuHTML = `<div class="combined-menu-part">${renderMenuHTML(state.layout)}</div>`;
-                    const promoHTML = `<div class="combined-promo-part">${renderPromoHTML()}</div>`;
+                    const promoHTML = `<div class="combined-promo-part" data-key="promo">${renderPromoHTML()}</div>`;
                     html = `<div class="combined-template">${menuHTML}${promoHTML}</div>`;
                 }
                 
@@ -1700,22 +1780,41 @@
             function setPromoBackground(element) {
                 if(!element) return;
                 const type = controls.promoBgType.value;
+                const transform = state.imageTransforms['promo'] || { size: 100, x: 50, y: 50 };
+
                 element.style.backgroundPosition = controls.promoBgPos.value;
                 if (type === 'image' && state.promoBgImage) {
                     element.style.backgroundImage = `url(${state.promoBgImage})`;
+                    element.style.backgroundSize = `${transform.size}%`;
+                    element.style.backgroundPosition = `${transform.x}% ${transform.y}%`;
                     element.style.backgroundColor = '';
+
+                    element.classList.add('resizable-container');
+                    if(!element.querySelector('.resize-handle')) {
+                        const handle = document.createElement('div');
+                        handle.className = 'resize-handle br';
+                        element.appendChild(handle);
+                    }
                 } else {
                     element.style.backgroundColor = controls.bgColorPicker.value;
                     element.style.backgroundImage = 'none';
+                    element.classList.remove('resizable-container');
+                    const handle = element.querySelector('.resize-handle');
+                    if(handle) handle.remove();
                 }
             }
             
             function download(generator) {
+                deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
                 controls.loadingOverlay.style.display = 'flex';
 
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
+                
+                // Remove handles from clone
+                captureClone.querySelectorAll('.resize-handle').forEach(h => h.remove());
+                captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
                 
                 const captureContainer = document.createElement('div');
                 captureContainer.style.position = 'absolute';
@@ -1754,63 +1853,30 @@
                 } else {
                     console.error("On-screen preview has zero width. Cannot calculate scale factor for fonts.");
                 }
-
-                const images = captureClone.querySelectorAll('.item-photo');
-                const promises = [];
-
-                images.forEach(img => {
-                    if (img.tagName === 'IMG' && img.src) {
-                        const promise = new Promise((resolve) => {
-                            const tempImg = new Image();
-                            tempImg.crossOrigin = "Anonymous";
-                            tempImg.onload = () => {
-                                const div = document.createElement('div');
-                                div.style.width = '100%'; div.style.height = '100%';
-                                div.style.backgroundImage = `url(${img.src})`;
-                                div.style.backgroundSize = 'cover';
-                                div.style.backgroundPosition = 'center';
-                                div.style.backgroundRepeat = 'no-repeat';
-                                if (img.parentNode) img.parentNode.replaceChild(div, img);
-                                resolve();
-                            };
-                            tempImg.onerror = () => { console.warn(`Could not load image ${img.src}`); resolve(); };
-                            tempImg.src = img.src;
-                        });
-                        promises.push(promise);
-                    }
-                });
-
-                Promise.all(promises).then(() => {
-                    controls.loadingText.textContent = 'Генерация изображения...';
-                    setTimeout(() => {
-                        html2canvas(captureContainer, {
-                            scale: 2,
-                            width: state.exportWidth,
-                            height: state.exportHeight,
-                            useCORS: true,
-                            backgroundColor: null,
-                            logging: false
-                        }).then(canvas => {
-                            const targetCanvas = document.createElement('canvas');
-                            targetCanvas.width = state.exportWidth;
-                            targetCanvas.height = state.exportHeight;
-                            const ctx = targetCanvas.getContext('2d');
-                            ctx.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
-                            generator(targetCanvas);
-                        }).catch(err => {
-                            console.error('Ошибка при сохранении файла:', err);
-                            alert('Произошла ошибка при сохранении файла: ' + err.message);
-                        }).finally(() => {
-                            document.body.removeChild(captureContainer);
-                            controls.loadingOverlay.style.display = 'none';
-                        });
-                    }, 500);
-                }).catch(error => {
-                    console.error("Ошибка при обработке изображений:", error);
-                    alert("Не удалось загрузить одно из изображений для сохранения.");
-                    document.body.removeChild(captureContainer);
-                    controls.loadingOverlay.style.display = 'none';
-                });
+                
+                setTimeout(() => {
+                    html2canvas(captureContainer, {
+                        scale: 2,
+                        width: state.exportWidth,
+                        height: state.exportHeight,
+                        useCORS: true,
+                        backgroundColor: null,
+                        logging: false
+                    }).then(canvas => {
+                        const targetCanvas = document.createElement('canvas');
+                        targetCanvas.width = state.exportWidth;
+                        targetCanvas.height = state.exportHeight;
+                        const ctx = targetCanvas.getContext('2d');
+                        ctx.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
+                        generator(targetCanvas);
+                    }).catch(err => {
+                        console.error('Ошибка при сохранении файла:', err);
+                        alert('Произошла ошибка при сохранении файла: ' + err.message);
+                    }).finally(() => {
+                        document.body.removeChild(captureContainer);
+                        controls.loadingOverlay.style.display = 'none';
+                    });
+                }, 500);
             }
 
             function downloadAsPNG() {
@@ -1841,6 +1907,94 @@
                     recorder.start();
                     setTimeout(() => recorder.stop(), duration * 1000);
                 });
+            }
+            
+            // --- Image Resizing and Panning Functions ---
+            function deselectActiveResizable() {
+                const selected = controls.menuPreview.querySelector('.selected');
+                if (selected) {
+                    selected.classList.remove('selected');
+                }
+                activeResizable.element = null;
+            }
+
+            function handlePreviewMouseDown(e) {
+                const handle = e.target.closest('.resize-handle');
+                const container = e.target.closest('.resizable-container');
+
+                if (!container) {
+                    deselectActiveResizable();
+                    return;
+                }
+
+                if (activeResizable.element !== container) {
+                    deselectActiveResizable();
+                    container.classList.add('selected');
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const key = container.dataset.key;
+                if (!state.imageTransforms[key]) {
+                    state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
+                }
+                
+                activeResizable = {
+                    element: container,
+                    key: key,
+                    startX: e.clientX,
+                    startY: e.clientY,
+                    ...state.imageTransforms[key]
+                };
+
+                if (handle) {
+                    activeResizable.mode = 'resize';
+                } else {
+                    activeResizable.mode = 'pan';
+                }
+            }
+
+            function handleDocumentMouseMove(e) {
+                if (!activeResizable.element) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+
+                const dx = e.clientX - activeResizable.startX;
+                const dy = e.clientY - activeResizable.startY;
+                
+                const transform = state.imageTransforms[activeResizable.key];
+
+                if (activeResizable.mode === 'resize') {
+                    const newSize = Math.max(50, activeResizable.size + dx * 0.5); // Sensitivity
+                    transform.size = newSize;
+                    const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
+                    if(target) target.style.backgroundSize = `${newSize}%`;
+
+                } else if (activeResizable.mode === 'pan') {
+                    const sensitivity = 50 / activeResizable.element.offsetWidth;
+                    let newX = activeResizable.x - dx * sensitivity;
+                    let newY = activeResizable.y - dy * sensitivity;
+
+                    // Clamp values to keep image in view
+                    const halfSize = transform.size / 2;
+                    newX = Math.max(50 - halfSize, Math.min(50 + halfSize, newX));
+                    newY = Math.max(50 - halfSize, Math.min(50 + halfSize, newY));
+
+                    transform.x = newX;
+                    transform.y = newY;
+
+                    const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
+                    if(target) target.style.backgroundPosition = `${newX}% ${newY}%`;
+                }
+            }
+
+            function handleDocumentMouseUp(e) {
+                if (!activeResizable.element) return;
+                e.preventDefault();
+                e.stopPropagation();
+                activeResizable.mode = null;
             }
 
             init();
