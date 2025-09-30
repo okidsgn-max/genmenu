@@ -108,10 +108,10 @@
         transform: translateY(-1px);
     }
     
-    #confirm-aspect-ratio {
+    #confirm-aspect-ratio, #limit-modal-close {
         background: linear-gradient(to right, #05B7A0, #083832);
     }
-    #confirm-aspect-ratio:hover {
+    #confirm-aspect-ratio:hover, #limit-modal-close:hover {
        filter: brightness(1.1);
     }
 
@@ -134,7 +134,7 @@
     border-color: #ffffff;
     }
 
-    #confirm-aspect-ratio, #export-excel-btn, #promo-background-upload, .drop-area .btn {
+    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4 {
         border-radius: 30px;
     }
     
@@ -218,11 +218,11 @@
     }
     
     .controls-content {
-        flex: 1; overflow-y: auto; padding-right: 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+        flex: 1; overflow-y: auto; padding-right: 10px; scrollbar-width: thin; scrollbar-color: #1f1f1f transparent;
     }
     
     .controls-content::-webkit-scrollbar { width: 6px; }
-    .controls-content::-webkit-scrollbar-thumb { background-color: #787878; border-radius: 3px; }
+    .controls-content::-webkit-scrollbar-thumb { background-color: #1f1f1f; border-radius: 3px; }
     .controls-footer { padding-top: 16px; border-top: 1px solid var(--border); margin-top: auto; }
     
     .tab-buttons {
@@ -312,7 +312,7 @@
     }
     
     .menu-preview {
-        width: 100%; height: 100%; position: relative; background-color: #ffffff;
+        width: 100%; height: 100%; position: relative; background-color: var(--menu-bg-color);
         display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; overflow: hidden;
         background-size: cover;
         background-position: center;
@@ -339,7 +339,7 @@
         margin-bottom: 5px;
     }
 
-    .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: #1a1d1f; margin-bottom: 5px; font-weight: 300; }
+    .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: var(--desc-font-color); margin-bottom: 5px; font-weight: 300; }
     .item-price {
         font-family: var(--item-font-family); font-weight: 700; font-size: var(--item-font-size); color: var(--item-font-color);
         white-space: nowrap; margin-left: 20px; text-align: right; min-width: 80px;
@@ -347,12 +347,12 @@
 
     .volume-price { display: block; font-size: 0.9em; font-weight: 500; }
     
-    .menu-grid-template, .menu-grid-template-3x3 { width: 100%; height: 100%; display: grid; gap: 15px; padding: 15px; background-color: var(--grid-bg-color); }
+    .menu-grid-template, .menu-grid-template-3x2 { width: 100%; height: 100%; display: grid; gap: 15px; padding: 15px; background-color: var(--grid-bg-color); }
     .menu-grid-template { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-    .menu-grid-template-3x3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .menu-grid-template-3x2 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
     
     .grid-cell {
-        background-color: #ffffff; border-radius: var(--border-radius); display: flex;
+        background-color: var(--cell-bg-color); border-radius: var(--border-radius); display: flex;
         position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .grid-cell::after {
@@ -361,7 +361,7 @@
     }
     .grid-cell-content { flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; }
     .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price { color: var(--item-font-color); }
-    .grid-cell .item-description { flex-grow: 1; color: var(--text-secondary); }
+    .grid-cell .item-description { flex-grow: 1; color: var(--desc-font-color); }
     .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
     .grid-cell .item-photo-container {
         flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center;
@@ -424,7 +424,7 @@
         display: flex;
         flex-direction: column;
     }
-    .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x3 {
+    .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x2 {
         flex-grow: 1;
     }
     .combined-menu-part .grid-cell {
@@ -451,7 +451,7 @@
         background: var(--background-dark); padding: 24px; border-radius: 8px; width: 400px; 
         max-width: 90%; box-shadow: var(--card-hover-shadow); border: 1px solid #4D4D4D; 
     }
-    .modal-title { font-size: 16px; font-weight: 400; margin-bottom: 20px; color: var(--text-main); }
+    .modal-title { font-size: 16px; font-weight: 400; margin-bottom: 20px; color: var(--text-main); text-align: center; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-radius:30px }
     
     .aspect-ratio-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
@@ -675,12 +675,12 @@
                              <label>Макет</label>
                              <div class="layout-buttons" id="layout-buttons">
                                 <button class="layout-btn active" data-layout="grid">
-                                    <img src="2x2.svg" alt="">
+                                    <img src="2.svg" alt="">
                                     2x2
                                 </button>
-                                <button class="layout-btn" data-layout="grid3x3">
+                                <button class="layout-btn" data-layout="grid3x2">
                                     <img src="3x2.svg" alt="">
-                                    3x3
+                                    3x2
                                 </button>
                                 <button class="layout-btn" data-layout="list">
                                     <img src="spisok.svg" alt="">
@@ -706,12 +706,12 @@
                                 <label>Цвета</label>
                                 <div class="color-picker-row">
                                     <div class="color-picker-item">
-                                        <label>Фон меню</label>
+                                        <label style="text-align: left;">Фон меню</label>
                                         <input type="color" id="menu-bg-color-picker" value="#ffffff">
                                     </div>
                                     <div class="color-picker-item grid-color-item">
-                                        <label>Фон ячейки</label>
-                                        <input type="color" id="cell-bg-color-picker" value="#1A1D1F">
+                                        <label style="text-align: left;">Фон ячейки</label>
+                                        <input type="color" id="cell-bg-color-picker" value="#ffffff">
                                     </div>
                                     <div class="color-picker-item grid-color-item">
                                         <label>Затемнение ячейки</label>
@@ -721,16 +721,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="list-layout-bg-options" style="display: none; margin-top: 15px;">
-                                    <label>Фон для макета "Список"</label>
-                                    <select id="list-bg-type-select" class="select">
+                                <div id="menu-bg-options" style="margin-top: 15px;">
+                                    <label>Фон для меню</label>
+                                    <select id="menu-bg-type-select" class="select">
                                         <option value="color">Сплошной цвет</option>
                                         <option value="image">Загрузить изображение</option>
                                     </select>
-                                    <div id="list-bg-image-container" style="display: none; margin-top: 10px;">
-                                        <button class="btn btn-secondary" onclick="document.getElementById('list-background-upload').click()">Выберите файл</button>
-                                        <input type="file" id="list-background-upload" accept="image/*" style="display: none;">
-                                        <div class="file-info" id="list-bg-file-info">Изображение не загружено</div>
+                                    <div id="menu-bg-image-container" style="display: none; margin-top: 10px;">
+                                        <button class="btn btn-secondary" onclick="document.getElementById('menu-background-upload').click()">Выберите файл</button>
+                                        <input type="file" id="menu-background-upload" accept="image/*" style="display: none;">
+                                        <div class="file-info" id="menu-bg-file-info">Изображение не загружено</div>
                                     </div>
                                 </div>
                             </div>
@@ -967,11 +967,20 @@
             <input type="text" id="mp4-filename" class="input" placeholder="Имя файла (без расширения)" value="менюборд">
             <div class="setting-row">
                 <label>Длительность (секунды):</label>
-                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="60">
+                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="5">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="cancel-mp4">Отмена</button>
                 <button class="btn" id="save-mp4">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="limit-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-title">Количество позиций в этой вёрстке ограничено настройками читаемости.</div>
+            <div class="modal-actions" style="justify-content: center;">
+                <button class="btn" id="limit-modal-close" style="width: 50%;">OK</button>
             </div>
         </div>
     </div>
@@ -1060,11 +1069,13 @@
                 manualItemList: getEl('manual-item-list'),
                 addManualItemBtn: getEl('add-manual-item-btn'),
                 exportExcelBtn: getEl('export-excel-btn'),
-                listLayoutBgOptions: getEl('list-layout-bg-options'),
-                listBgTypeSelect: getEl('list-bg-type-select'),
-                listBgImageContainer: getEl('list-bg-image-container'),
-                listBgUpload: getEl('list-background-upload'),
-                listBgFileInfo: getEl('list-bg-file-info'),
+                menuBgOptions: getEl('menu-bg-options'),
+                menuBgTypeSelect: getEl('menu-bg-type-select'),
+                menuBgImageContainer: getEl('menu-bg-image-container'),
+                menuBgUpload: getEl('menu-background-upload'),
+                menuBgFileInfo: getEl('menu-bg-file-info'),
+                limitModal: getEl('limit-modal'),
+                limitModalClose: getEl('limit-modal-close'),
             };
 
             let state = {
@@ -1146,9 +1157,8 @@
                 }
             }
             
-            function updateListBgControlsVisibility() {
-                const show = state.layout === 'list';
-                controls.listLayoutBgOptions.style.display = show ? 'block' : 'none';
+            function updateMenuBgControlsVisibility() {
+                controls.menuBgImageContainer.style.display = controls.menuBgTypeSelect.value === 'image' ? 'block' : 'none';
                 render();
             }
 
@@ -1186,7 +1196,7 @@
                 setInitialActiveLayoutIcon();
                 renderManualEditor();
                 updateGridColorVisibility();
-                updateListBgControlsVisibility();
+                updateMenuBgControlsVisibility();
                 render();
             }
 
@@ -1238,7 +1248,6 @@
                     targetButton.classList.add('active');
                     
                     updateGridColorVisibility();
-                    updateListBgControlsVisibility();
                     render();
                 });
 
@@ -1287,12 +1296,13 @@
                 controls.manualItemList.addEventListener('click', handleManualEditorActions);
                 controls.addManualItemBtn.addEventListener('click', addManualItem);
                 
-                controls.listBgTypeSelect.addEventListener('change', () => {
-                    controls.listBgImageContainer.style.display = controls.listBgTypeSelect.value === 'image' ? 'block' : 'none';
-                    render();
-                });
-                controls.listBgUpload.addEventListener('change', handleListBgUpload);
+                controls.menuBgTypeSelect.addEventListener('change', updateMenuBgControlsVisibility);
+                controls.menuBgUpload.addEventListener('change', handleMenuBgUpload);
                 
+                controls.limitModalClose.addEventListener('click', () => {
+                    controls.limitModal.style.display = 'none';
+                });
+
                 // --- Image Resizing and Panning Listeners ---
                 controls.menuPreview.addEventListener('mousedown', handlePreviewMouseDown);
                 document.addEventListener('mousemove', handleDocumentMouseMove);
@@ -1304,10 +1314,10 @@
                 }, true);
             }
             
-            function handleListBgUpload(e) {
+            function handleMenuBgUpload(e) {
                 if (e.target.files && e.target.files[0]) {
                     const file = e.target.files[0];
-                    controls.listBgFileInfo.textContent = file.name;
+                    controls.menuBgFileInfo.textContent = file.name;
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.menuBgImage = event.target.result;
@@ -1327,7 +1337,7 @@
             }
             
             function updateGridColorVisibility() {
-                const show = state.layout === 'grid' || state.layout === 'grid3x3';
+                const show = state.layout === 'grid' || state.layout === 'grid3x2';
                  controls.gridColorItems.forEach(item => { item.style.display = show ? 'block' : 'none'; });
             }
 
@@ -1353,6 +1363,14 @@
             }
             
             function addManualItem() {
+                const limits = { grid: 4, grid3x2: 6, list: 6 };
+                const limit = limits[state.layout];
+                
+                if (limit && state.excelData.length >= limit) {
+                    controls.limitModal.style.display = 'flex';
+                    return;
+                }
+
                 const lastItem = state.excelData.length > 0 ? state.excelData[state.excelData.length - 1] : null;
                 const newCategory = lastItem ? lastItem.category : 'Новая категория';
                 
@@ -1449,7 +1467,7 @@
                     <div class="manual-item">
                         <span class="manual-item-name">${item.name}</span>
                         <div class="manual-item-actions">
-                            <button class="delete-item-btn" data-index="${index}"><img src="delete.svg" alt="Удалить" style="width:24px;height:24px;"></button>
+                            <button class="delete-item-btn" data-index="${index}"><img src="delete.svg" alt="Удалить" style="width:32px;height:32px;"></button>
                         </div>
                     </div>
                 `).join('');
@@ -1606,14 +1624,15 @@
                 
                 switch (currentLayout) {
                     case 'grid': return headerHTML + renderGridMenu(4, 'menu-grid-template');
-                    case 'grid3x3': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x3');
+                    case 'grid3x2': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x2');
                     default: return renderListMenu();
                 }
             }
 
             function renderListMenu() {
+                const dataToRender = state.excelData.slice(0, 6);
                 const categories = {};
-                state.excelData.forEach(item => {
+                dataToRender.forEach(item => {
                     if (!categories[item.category]) categories[item.category] = [];
                     categories[item.category].push(item);
                 });
@@ -1754,7 +1773,7 @@
                 
                 controls.menuPreview.innerHTML = html;
                 
-                if (state.layout === 'list' && controls.listBgTypeSelect.value === 'image' && state.menuBgImage) {
+                if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
                     controls.menuPreview.style.backgroundImage = `url(${state.menuBgImage})`;
                     controls.menuPreview.style.backgroundColor = '';
                 } else {
@@ -1843,7 +1862,7 @@
 
                     // --- PADDING, MARGIN, GAP & RADIUS SCALING ---
                     // Grid Layout
-                    captureClone.querySelectorAll('.menu-grid-template, .menu-grid-template-3x3').forEach(grid => {
+                    captureClone.querySelectorAll('.menu-grid-template, .menu-grid-template-3x2').forEach(grid => {
                         grid.style.padding = `${15 * scaleFactor}px`;
                         grid.style.gap = `${15 * scaleFactor}px`;
                         grid.querySelectorAll('.grid-cell').forEach(cell => {
@@ -1920,24 +1939,43 @@
             function downloadAsMP4() {
                 const filenameBase = (controls.mp4Filename.value || 'menuboard').trim().replace(/\s+/g, '_');
                 const duration = Math.max(1, parseInt(controls.mp4Duration.value, 10) || 5);
-                if (duration < 1 || duration > 60) { alert('Длительность должна быть от 1 до 60 секунд'); return; }
+                if (duration < 1 || duration > 5) { alert('Длительность должна быть от 1 до 5 секунд'); return; }
                 controls.mp4Modal.style.display = 'none';
                 
                 download(canvas => {
                     controls.loadingText.textContent = 'Сохраняем видео, это может занять время...';
-                    const stream = canvas.captureStream(30);
+                    
+                    const stream = canvas.captureStream(); 
+                    const videoTrack = stream.getVideoTracks()[0];
+
                     const mimeType = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(MediaRecorder.isTypeSupported);
-                    if (!mimeType) { throw new Error('No supported video format found for recording.'); }
+                    if (!mimeType) { 
+                        alert('Ваш браузер не поддерживает запись видео в формате MP4 или WebM.');
+                        return;
+                    }
                     
                     const recordedChunks = [];
                     const recorder = new MediaRecorder(stream, { mimeType });
+
                     recorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                    
                     recorder.onstop = () => {
                         const blob = new Blob(recordedChunks, { type: mimeType });
                         saveAs(blob, `${filenameBase}.${mimeType.includes('mp4') ? 'mp4' : 'webm'}`);
                     };
+
+                    const frameInterval = setInterval(() => {
+                         if (videoTrack.readyState === "live") {
+                             videoTrack.requestFrame();
+                         }
+                    }, 100); 
+
                     recorder.start();
-                    setTimeout(() => recorder.stop(), duration * 1000);
+
+                    setTimeout(() => {
+                        clearInterval(frameInterval);
+                        recorder.stop();
+                    }, duration * 1000);
                 });
             }
             
