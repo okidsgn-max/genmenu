@@ -355,16 +355,9 @@
         position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .grid-gradient-overlay {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
+        position: absolute; left: 0; top: 0; width: 100%; height: 100%;
         background: linear-gradient(to right, rgba(0,0,0, var(--grid-gradient-opacity, 0.4)) 0%, rgba(0,0,0,0) 60%);
-        z-index: 2;
-        pointer-events: none;
-        border-radius: var(--border-radius);
-        border: none;
+        z-index: 2; pointer-events: none; border-radius: var(--border-radius);
     }
     .grid-cell-content { 
         flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; min-width: 0; 
@@ -441,6 +434,8 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
+        background-size: cover;
+        background-position: center;
     }
     .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x2 {
         flex-grow: 1;
@@ -1773,6 +1768,7 @@
                     </div>`;
             }
 
+            // CHANGE: Updated render function to correctly apply background images to the right targets
             function render() {
                 deselectActiveResizable();
                 applyStyles();
@@ -1794,7 +1790,6 @@
                     promoContainer.className = 'promo-template';
                     promoContainer.dataset.key = 'promo';
                     promoContainer.innerHTML = renderPromoHTML();
-                    setPromoBackground(promoContainer);
                     html = promoContainer.outerHTML;
                 } else if (state.currentTab === 'combined') {
                     const menuHTML = `<div class="combined-menu-part">${renderMenuHTML(state.layout)}</div>`;
@@ -1804,19 +1799,33 @@
                 
                 controls.menuPreview.innerHTML = html;
                 
-                if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
-                    controls.menuPreview.style.backgroundImage = `url(${state.menuBgImage})`;
-                    controls.menuPreview.style.backgroundColor = '';
-                    const header = controls.menuPreview.querySelector('.menu-header');
-                    if(header) header.style.backgroundColor = 'transparent';
-                } else {
-                    controls.menuPreview.style.backgroundImage = 'none';
+                // --- Background Application Logic ---
+                controls.menuPreview.style.backgroundImage = 'none';
+
+                let menuBgTarget = null;
+                if (state.currentTab === 'menu') {
+                    menuBgTarget = controls.menuPreview;
+                } else if (state.currentTab === 'combined') {
+                    menuBgTarget = controls.menuPreview.querySelector('.combined-menu-part');
                 }
 
-                if(state.currentTab === 'combined'){
-                    setPromoBackground(document.querySelector('.combined-promo-part'));
+                if (menuBgTarget) {
+                    if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
+                        menuBgTarget.style.backgroundImage = `url(${state.menuBgImage})`;
+                        menuBgTarget.style.backgroundColor = '';
+                        const header = menuBgTarget.querySelector('.menu-header');
+                        if (header) header.style.backgroundColor = 'transparent';
+                    } else {
+                        menuBgTarget.style.backgroundImage = 'none';
+                        menuBgTarget.style.backgroundColor = controls.menuBgPicker.value;
+                    }
+                }
+
+                if (state.currentTab === 'promo' || state.currentTab === 'combined') {
+                    setPromoBackground(document.querySelector('.promo-template, .combined-promo-part'));
                 }
             }
+
 
             function setPromoBackground(element) {
                 if(!element) return;
@@ -1844,6 +1853,7 @@
                 }
             }
             
+            // CHANGE: Rewrote the export function for accurate, proportional scaling.
             function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
@@ -1851,25 +1861,6 @@
 
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
-
-                // CHANGE: Explicitly copy CSS variables from the root to the clone
-                const rootStyles = getComputedStyle(document.documentElement);
-                const cssVariables = [
-                    '--menu-bg-color', '--cell-bg-color', '--category-font-family', 
-                    '--category-font-size', '--category-font-color', '--item-font-family',
-                    '--item-font-size', '--item-font-color', '--desc-font-family',
-                    '--desc-font-size', '--desc-font-color', '--price-font-family',
-                    '--price-font-size', '--price-font-color', '--promo-title-font-family',
-                    '--promo-title-font-size', '--promo-title-font-color', '--promo-text-font-family',
-                    '--promo-text-font-size', '--promo-text-font-color', '--promo-price-font-family',
-                    '--promo-price-font-size', '--promo-price-font-color', '--discount-font-color',
-                    '--discount-bg-color', '--promo-text-align', '--date-contrast-color',
-                    '--grid-gradient-opacity'
-                ];
-                cssVariables.forEach(variable => {
-                    captureClone.style.setProperty(variable, rootStyles.getPropertyValue(variable));
-                });
-
 
                 captureClone.querySelectorAll('.resize-handle, .upload-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
@@ -1882,78 +1873,29 @@
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
 
-                captureClone.style.width = '100%';
-                captureClone.style.height = '100%';
-
-                captureContainer.appendChild(captureClone);
-                document.body.appendChild(captureContainer);
-
                 if (originalPreview.offsetWidth > 0) {
-                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
-
-                    const scaleAndSetFont = (variableName, controlElement) => {
-                        const originalSize = parseFloat(controlElement.value);
-                        if (!isNaN(originalSize)) {
-                            captureClone.style.setProperty(variableName, `${originalSize * scaleFactor}px`);
-                        }
-                    };
-                    scaleAndSetFont('--category-font-size', controls.categorySize);
-                    scaleAndSetFont('--item-font-size', controls.itemSize);
-                    scaleAndSetFont('--desc-font-size', controls.descSize);
-                    scaleAndSetFont('--price-font-size', controls.priceSize);
-                    scaleAndSetFont('--promo-title-font-size', controls.promoTitleSize);
-                    scaleAndSetFont('--promo-text-font-size', controls.promoTextSize);
-                    scaleAndSetFont('--promo-price-font-size', controls.promoPriceSize);
+                    const wrapper = document.createElement('div');
+                    wrapper.style.width = originalPreview.offsetWidth + 'px';
+                    wrapper.style.height = originalPreview.offsetHeight + 'px';
+                    wrapper.style.position = 'absolute';
+                    wrapper.style.top = '0';
+                    wrapper.style.left = '0';
                     
-                    const dateElement = captureClone.querySelector('.menu-date');
-                    if (dateElement) dateElement.style.fontSize = `${14 * scaleFactor}px`;
-                    const promoComment = captureClone.querySelector('.promo-comment');
-                    if (promoComment) promoComment.style.fontSize = `${10 * scaleFactor}px`;
-
-                    const scaleStyle = (element, property, baseValue) => {
-                        if (element) element.style[property] = `${baseValue * scaleFactor}px`;
-                    };
-
-                    captureClone.querySelectorAll('*').forEach(el => {
-                        const computedStyle = getComputedStyle(el);
-                        if (el.matches('.menu-grid-template, .menu-grid-template-3x2')) { scaleStyle(el, 'padding', 15); scaleStyle(el, 'gap', 15); }
-                        if (el.matches('.grid-cell')) { scaleStyle(el, 'borderRadius', 8); }
-                        if (el.matches('.grid-cell-content')) { scaleStyle(el, 'padding', 15); scaleStyle(el, 'gap', 5); }
-                        if (el.matches('.menu-items-container')) { scaleStyle(el, 'padding', 30); scaleStyle(el, 'columnGap', 40); }
-                        if (el.matches('.menu-section')) { scaleStyle(el, 'marginBottom', 30); }
-                        if (el.matches('.section-title')) {
-                            scaleStyle(el, 'marginBottom', 15);
-                            scaleStyle(el, 'paddingBottom', 8);
-                            const borderW = parseFloat(computedStyle.borderBottomWidth);
-                            if (borderW > 0) el.style.borderBottomWidth = `${borderW * scaleFactor}px`;
-                        }
-                        if (el.matches('.menu-item')) {
-                             const borderW = parseFloat(computedStyle.borderBottomWidth);
-                            if (borderW > 0) el.style.borderBottomWidth = `${borderW * scaleFactor}px`;
-                            scaleStyle(el, 'marginBottom', 15); 
-                            scaleStyle(el, 'paddingBottom', 15); 
-                        }
-                        if (el.matches('.item-name')) { scaleStyle(el, 'marginBottom', 5); }
-                        if (el.matches('.promo-content')) { scaleStyle(el, 'padding', el.closest('.combined-template') ? 25 : 40); }
-                        if (el.matches('.promo-title')) { scaleStyle(el, 'marginBottom', el.closest('.combined-template') ? 10 : 20); scaleStyle(el, 'gap', el.closest('.combined-template') ? 10 : 15); }
-                        if (el.matches('.promo-text')) { scaleStyle(el, 'marginBottom', el.closest('.combined-template') ? 15 : 30); }
-                        if (el.matches('.promo-price-container')) { scaleStyle(el, 'gap', el.closest('.combined-template') ? 10 : 20); }
-                        if (el.matches('.promo-discount')) {
-                            const vPad = el.closest('.combined-template') ? 3 : 5;
-                            const hPad = el.closest('.combined-template') ? 8 : 10;
-                            el.style.padding = `${vPad * scaleFactor}px ${hPad * scaleFactor}px`;
-                            scaleStyle(el, 'borderRadius', 20);
-                        }
-                        if (el.matches('.promo-icon-wrapper')) { const pad = el.closest('.combined-template') ? 4 : 8; scaleStyle(el, 'padding', pad); scaleStyle(el, 'borderRadius', pad); }
-                        if (el.matches('.menu-header')) { el.style.padding = `${15 * scaleFactor}px ${20 * scaleFactor}px`; }
-                    });
+                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
+                    wrapper.style.transform = `scale(${scaleFactor})`;
+                    wrapper.style.transformOrigin = 'top left';
+                    
+                    wrapper.appendChild(captureClone);
+                    captureContainer.appendChild(wrapper);
                 } else {
-                    console.error("Preview has zero width. Cannot calculate scale factor.");
+                     captureContainer.appendChild(captureClone);
                 }
+
+                document.body.appendChild(captureContainer);
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1,
+                        scale: 1, // We are scaling manually, so html2canvas scale is 1
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
