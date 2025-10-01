@@ -134,7 +134,7 @@
     border-color: #ffffff;
     }
 
-    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4 {
+    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close {
         border-radius: 30px;
     }
     
@@ -254,7 +254,6 @@
     
     .control-group { border: 1px solid var(--border); border-radius: var(--border-radius); margin-bottom: 16px; }
     
-    /* MODIFIED: Accordion color transitions */
     .control-group summary {
         font-size: 16px; font-weight: 400; color: var(--text-main); padding: 12px 16px; cursor: pointer; list-style: none;
         display: flex; justify-content: space-between; align-items: center; transition: background-color 0.2s ease, color 0.2s ease;
@@ -329,7 +328,7 @@
     }
     
     .menu-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
-    .item-content { flex-grow: 1; }
+    .item-content { flex-grow: 1; min-width: 0; }
     
     .item-name {
         font-family: var(--item-font-family);
@@ -355,13 +354,32 @@
         background-color: var(--cell-bg-color); border-radius: var(--border-radius); display: flex;
         position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
-    .grid-cell::after {
-        content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 100%;
-        background: linear-gradient(to right, rgba(0,0,0, var(--grid-gradient-opacity, 0.4)) 0%, rgba(0,0,0,0) 60%); z-index: 2; pointer-events: none;
+    .grid-gradient-overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(0,0,0, var(--grid-gradient-opacity, 0.4)) 0%, rgba(0,0,0,0) 60%);
+        z-index: 2;
+        pointer-events: none;
+        border-radius: var(--border-radius);
+        border: none;
     }
-    .grid-cell-content { flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; }
+    .grid-cell-content { 
+        flex: 2; padding: 15px; display: flex; flex-direction: column; gap: 5px; z-index: 3; min-width: 0; 
+        height: 100%;
+    }
+    .grid-cell .item-name { 
+        word-break: break-word; 
+    }
     .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price { color: var(--item-font-color); }
-    .grid-cell .item-description { flex-grow: 1; color: var(--desc-font-color); }
+    .grid-cell .item-description { 
+        flex-grow: 1; 
+        color: var(--desc-font-color);
+        word-break: break-word;
+        overflow: hidden;
+    }
     .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
     .grid-cell .item-photo-container {
         flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center;
@@ -482,7 +500,7 @@
     }
     .drop-area .btn {
         width: auto;
-        padding: 4px 6px;
+        padding: 4px 16px;
         margin-top: 10px;
     }
 
@@ -675,15 +693,15 @@
                              <label>Макет</label>
                              <div class="layout-buttons" id="layout-buttons">
                                 <button class="layout-btn active" data-layout="grid">
-                                    <img src="2.svg" alt="">
+                                    <img src="4.svg" alt="Layout 2x2">
                                     2x2
                                 </button>
                                 <button class="layout-btn" data-layout="grid3x2">
-                                    <img src="3x2.svg" alt="">
+                                    <img src="6.svg" alt="Layout 3x2">
                                     3x2
                                 </button>
                                 <button class="layout-btn" data-layout="list">
-                                    <img src="spisok.svg" alt="">
+                                    <img src="spisok.svg" alt="Layout List">
                                     Список
                                 </button>
                             </div>
@@ -967,7 +985,7 @@
             <input type="text" id="mp4-filename" class="input" placeholder="Имя файла (без расширения)" value="менюборд">
             <div class="setting-row">
                 <label>Длительность (секунды):</label>
-                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="5">
+                <input type="number" id="mp4-duration" class="input" value="5" min="1" max="10">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="cancel-mp4">Отмена</button>
@@ -1111,52 +1129,38 @@
             };
 
             function formatDate(date) {
-                const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
             }
 
-            function getContrastColor(bgColor) {
-                if (!bgColor) return '#000000';
-                let r, g, b;
-                if (bgColor.startsWith('#')) {
-                    r = parseInt(bgColor.substr(1, 2), 16);
-                    g = parseInt(bgColor.substr(3, 2), 16);
-                    b = parseInt(bgColor.substr(5, 2), 16);
-                } else if (bgColor.startsWith('rgb')) {
-                    const rgb = bgColor.match(/\d+/g);
-                    r = parseInt(rgb[0]);
-                    g = parseInt(rgb[1]);
-                    b = parseInt(rgb[2]);
-                } else { return '#000000'; }
-                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-                return brightness > 128 ? '#1A1D1F' : '#FFFFFF';
+            function getContrastColor(hexcolor) {
+                if (!hexcolor) return '#000000';
+                if (hexcolor.startsWith('#')) {
+                    hexcolor = hexcolor.slice(1);
+                }
+                if (hexcolor.length === 3) {
+                    hexcolor = hexcolor.split('').map(hex => hex + hex).join('');
+                }
+                const r = parseInt(hexcolor.substring(0, 2), 16);
+                const g = parseInt(hexcolor.substring(2, 4), 16);
+                const b = parseInt(hexcolor.substring(4, 6), 16);
+                const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                return (yiq >= 128) ? '#1A1D1F' : '#FFFFFF';
             }
 
             function createDefaultMenuData() {
                  if(state.excelData.length === 0) {
                      state.excelData = [
-                        { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '', M: '', L: '' },
-                        { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '' },
-                        { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '' },
-                        { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '' }
+                        { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
+                        { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
+                        { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
+                        { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true }
                      ];
                  }
             }
 
-            function setInitialActiveLayoutIcon() {
-                const activeButton = document.querySelector('#layout-buttons .layout-btn.active');
-                if (activeButton) {
-                    const img = activeButton.querySelector('img');
-                    const parts = img.src.split('/');
-                    let filename = parts.pop();
-                    if (!filename.startsWith('a_')) {
-                        filename = 'a_' + filename;
-                        parts.push(filename);
-                        img.src = parts.join('/');
-                    }
-                }
-            }
-            
             function updateMenuBgControlsVisibility() {
                 controls.menuBgImageContainer.style.display = controls.menuBgTypeSelect.value === 'image' ? 'block' : 'none';
                 render();
@@ -1193,7 +1197,6 @@
                 observer.observe(controls.menuPreview, { childList: true, subtree: true });
 
                 createDefaultMenuData();
-                setInitialActiveLayoutIcon();
                 renderManualEditor();
                 updateGridColorVisibility();
                 updateMenuBgControlsVisibility();
@@ -1272,6 +1275,20 @@
                 controls.downloadMp4Btn.addEventListener('click', showMp4Modal);
                 controls.menuPreview.addEventListener('click', handleGridPhotoUploadClick);
                 controls.gridPhotoUpload.addEventListener('change', handleGridPhotoFileChange);
+                
+                controls.menuPreview.addEventListener('focusin', e => {
+                    const target = e.target;
+                    if(target.classList.contains('is-placeholder')) {
+                        target.innerText = '';
+                        target.classList.remove('is-placeholder');
+                        
+                        const index = target.dataset.index;
+                        if (index && state.excelData[index]) {
+                            state.excelData[index].isPlaceholder = false;
+                        }
+                    }
+                });
+
                 controls.menuPreview.addEventListener('blur', handleInlineEdit, true);
                 
                 controls.aspectRatioBtns.forEach(btn => btn.addEventListener('click', () => {
@@ -1363,7 +1380,7 @@
             }
             
             function addManualItem() {
-                const limits = { grid: 4, grid3x2: 6, list: 6 };
+                const limits = { grid: 4, grid3x2: 6, list: Infinity };
                 const limit = limits[state.layout];
                 
                 if (limit && state.excelData.length >= limit) {
@@ -1379,7 +1396,8 @@
                     description: 'Описание блюда',
                     price: '100',
                     category: newCategory,
-                    S: '', M: '', L: ''
+                    S: '', M: '', L: '',
+                    isPlaceholder: true // New items are also placeholders
                 };
                 state.excelData.push(newItem);
                 renderManualEditor();
@@ -1425,7 +1443,8 @@
                                 name: findValue(row, ['Название', 'Наименование', 'блюдо']), description: findValue(row, ['Описание', 'состав']),
                                 price: findValue(row, ['Цена', 'Стоимость', 'с ндс']), photo: row['Фото'] || '',
                                 category: (findValue(row, ['Категория', 'тип']) || 'Основное меню').trim(), S: findValue(row, ['S', 'Цена S']), 
-                                M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L'])
+                                M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L']),
+                                isPlaceholder: false // Data from file is not a placeholder
                             }));
                             state.gridImages = {};
                             state.imageTransforms = {};
@@ -1450,7 +1469,7 @@
                                     return null;
                                 }
                                 const parts = line.split(' - ');
-                                return { name: parts[0]?.trim() || '', description: parts[1]?.trim() || '', price: (parts[2]?.match(/(\d+)/) || [])[1] || parts[2]?.trim() || '', category: currentCategory };
+                                return { name: parts[0]?.trim() || '', description: parts[1]?.trim() || '', price: (parts[2]?.match(/(\d+)/) || [])[1] || parts[2]?.trim() || '', category: currentCategory, isPlaceholder: false };
                             }).filter(Boolean);
                             state.gridImages = {};
                             state.imageTransforms = {};
@@ -1485,7 +1504,7 @@
             
             function handleInlineEdit(e) {
                 const target = e.target;
-                if (activeResizable.element) return;
+                if (activeResizable.element || target.classList.contains('is-placeholder')) return;
                 const field = target.dataset.field;
                 if (!field) return;
 
@@ -1505,6 +1524,8 @@
                     if (index === undefined) return;
                     const item = state.excelData[index];
                     if (!item) return;
+
+                    item.isPlaceholder = false; // Item has been edited
 
                     const isPriceField = field === 'price' || field === 'S' || field === 'M' || field === 'L';
                     if (isPriceField) {
@@ -1526,6 +1547,12 @@
                 renderManualEditor();
             }
 
+            function generateFilename() {
+                const dateStr = formatDate(new Date()).replace(/\./g, '-');
+                let categoryStr = (state.excelData.length > 0 ? state.excelData[0].category : 'меню').trim().replace(/\s+/g, '_');
+                return `${categoryStr}_${dateStr}`;
+            }
+
             function exportToExcel() {
                 if (state.excelData.length === 0) { alert('Нет данных для экспорта'); return; }
                 const wsData = state.excelData.map(item => ({
@@ -1535,7 +1562,7 @@
                 const ws = XLSX.utils.json_to_sheet(wsData);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Меню");
-                XLSX.writeFile(wb, "меню.xlsx");
+                XLSX.writeFile(wb, `${generateFilename()}.xlsx`);
             }
 
             function handlePromoBgUpload(e) {
@@ -1608,16 +1635,15 @@
             
             function renderMenuHTML(currentLayout) {
                 if (!state.excelData || state.excelData.length === 0) return '';
-                
-                document.documentElement.style.setProperty('--date-contrast-color', getContrastColor(controls.menuBgPicker.value));
-                
+                                
                 let headerHTML = '';
                 const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
+                const isFirstItemPlaceholder = state.excelData.length > 0 && state.excelData[0].isPlaceholder;
 
                 if (currentLayout !== 'default' || controls.showDateCheck.checked) {
                     headerHTML = `
                     <div class="menu-header">
-                        ${currentLayout !== 'list' && currentLayout !== 'default' ? `<div class="menu-grid-category-title" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>` : '<div></div>'}
+                        ${currentLayout !== 'list' && currentLayout !== 'default' ? `<div class="menu-grid-category-title ${isFirstItemPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>` : '<div></div>'}
                         ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
                     </div>`;
                 }
@@ -1630,7 +1656,7 @@
             }
 
             function renderListMenu() {
-                const dataToRender = state.excelData.slice(0, 6);
+                const dataToRender = state.excelData;
                 const categories = {};
                 dataToRender.forEach(item => {
                     if (!categories[item.category]) categories[item.category] = [];
@@ -1642,11 +1668,14 @@
                 let itemsHTML = Object.keys(categories).map(categoryName => {
                     const itemsInCategory = categories[categoryName];
                     const firstItemIndex = state.excelData.indexOf(itemsInCategory[0]);
+                    const isCategoryPlaceholder = itemsInCategory[0] && itemsInCategory[0].isPlaceholder;
+
                     return `
                     <div class="menu-section">
-                        <div class="section-title" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
+                        <div class="section-title ${isCategoryPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
                         ${itemsInCategory.map(item => {
                             const originalIndex = state.excelData.indexOf(item);
+                            const placeholderClass = item.isPlaceholder ? 'is-placeholder' : '';
                             let priceHTML;
                             const hasVolumePrices = item.S || item.M || item.L;
                             if (hasVolumePrices) {
@@ -1656,13 +1685,13 @@
                                     item.L ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="L" data-volume="l">L: ${formatPrice(item.L)}</span>` : ''
                                 ].filter(Boolean).join('');
                             } else {
-                                priceHTML = `<span contenteditable="true" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
+                                priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
                             }
                             return `
                             <div class="menu-item">
                                 <div class="item-content">
-                                    <div class="item-name" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
-                                    ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : ''}
+                                    <div class="item-name ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
+                                    ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : ''}
                                 </div>
                                 <div class="item-price">${priceHTML}</div>
                             </div>`;
@@ -1678,6 +1707,7 @@
                 const renderCell = (item, index) => {
                     const originalIndex = state.excelData.indexOf(item);
                     const imgSrc = state.gridImages[originalIndex] || item.photo;
+                    const placeholderClass = item.isPlaceholder ? 'is-placeholder' : '';
                     
                     const key = `grid-${originalIndex}`;
                     const transform = state.imageTransforms[key] || { size: 100, x: 50, y: 50 };
@@ -1701,10 +1731,11 @@
                     
                     return `
                     <div class="grid-cell">
+                        <div class="grid-gradient-overlay"></div>
                         <div class="grid-cell-content">
-                            <div class="item-name" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
-                            ${controls.showDescCheck.checked ? `<div class="item-description" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
-                            <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
+                            <div class="item-name ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
+                            ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
+                            <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
                         </div>
                         <div class="item-photo-container resizable-container" data-index="${originalIndex}" data-key="${key}">
                             ${photoHTML}
@@ -1776,6 +1807,8 @@
                 if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
                     controls.menuPreview.style.backgroundImage = `url(${state.menuBgImage})`;
                     controls.menuPreview.style.backgroundColor = '';
+                    const header = controls.menuPreview.querySelector('.menu-header');
+                    if(header) header.style.backgroundColor = 'transparent';
                 } else {
                     controls.menuPreview.style.backgroundImage = 'none';
                 }
@@ -1811,17 +1844,36 @@
                 }
             }
             
-            function download(generator) {
+            function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
                 controls.loadingOverlay.style.display = 'flex';
 
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
-                
-                captureClone.querySelectorAll('.resize-handle').forEach(h => h.remove());
+
+                // CHANGE: Explicitly copy CSS variables from the root to the clone
+                const rootStyles = getComputedStyle(document.documentElement);
+                const cssVariables = [
+                    '--menu-bg-color', '--cell-bg-color', '--category-font-family', 
+                    '--category-font-size', '--category-font-color', '--item-font-family',
+                    '--item-font-size', '--item-font-color', '--desc-font-family',
+                    '--desc-font-size', '--desc-font-color', '--price-font-family',
+                    '--price-font-size', '--price-font-color', '--promo-title-font-family',
+                    '--promo-title-font-size', '--promo-title-font-color', '--promo-text-font-family',
+                    '--promo-text-font-size', '--promo-text-font-color', '--promo-price-font-family',
+                    '--promo-price-font-size', '--promo-price-font-color', '--discount-font-color',
+                    '--discount-bg-color', '--promo-text-align', '--date-contrast-color',
+                    '--grid-gradient-opacity'
+                ];
+                cssVariables.forEach(variable => {
+                    captureClone.style.setProperty(variable, rootStyles.getPropertyValue(variable));
+                });
+
+
+                captureClone.querySelectorAll('.resize-handle, .upload-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
-                
+
                 const captureContainer = document.createElement('div');
                 captureContainer.style.position = 'absolute';
                 captureContainer.style.left = '-9999px';
@@ -1829,22 +1881,20 @@
                 captureContainer.style.width = state.exportWidth + 'px';
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
-                
+
                 captureClone.style.width = '100%';
                 captureClone.style.height = '100%';
 
                 captureContainer.appendChild(captureClone);
                 document.body.appendChild(captureContainer);
-                
+
                 if (originalPreview.offsetWidth > 0) {
                     const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
-                    
-                    // --- FONT SCALING ---
+
                     const scaleAndSetFont = (variableName, controlElement) => {
                         const originalSize = parseFloat(controlElement.value);
                         if (!isNaN(originalSize)) {
-                            const newSize = originalSize * scaleFactor;
-                            captureClone.style.setProperty(variableName, `${newSize}px`);
+                            captureClone.style.setProperty(variableName, `${originalSize * scaleFactor}px`);
                         }
                     };
                     scaleAndSetFont('--category-font-size', controls.categorySize);
@@ -1860,122 +1910,126 @@
                     const promoComment = captureClone.querySelector('.promo-comment');
                     if (promoComment) promoComment.style.fontSize = `${10 * scaleFactor}px`;
 
-                    // --- PADDING, MARGIN, GAP & RADIUS SCALING ---
-                    // Grid Layout
-                    captureClone.querySelectorAll('.menu-grid-template, .menu-grid-template-3x2').forEach(grid => {
-                        grid.style.padding = `${15 * scaleFactor}px`;
-                        grid.style.gap = `${15 * scaleFactor}px`;
-                        grid.querySelectorAll('.grid-cell').forEach(cell => {
-                            cell.style.borderRadius = `${8 * scaleFactor}px`; // From --border-radius
-                            const content = cell.querySelector('.grid-cell-content');
-                            if (content) {
-                                content.style.padding = `${15 * scaleFactor}px`;
-                                content.style.gap = `${5 * scaleFactor}px`;
-                            }
-                        });
-                    });
+                    const scaleStyle = (element, property, baseValue) => {
+                        if (element) element.style[property] = `${baseValue * scaleFactor}px`;
+                    };
 
-                    // Promo Layout
-                    captureClone.querySelectorAll('.promo-content').forEach(promo => {
-                        promo.style.padding = `${40 * scaleFactor}px`;
-                        const title = promo.querySelector('.promo-title');
-                        if (title) title.style.marginBottom = `${20 * scaleFactor}px`;
-                        const text = promo.querySelector('.promo-text');
-                        if (text) text.style.marginBottom = `${30 * scaleFactor}px`;
-                         const priceContainer = promo.querySelector('.promo-price-container');
-                        if(priceContainer) priceContainer.style.gap = `${20 * scaleFactor}px`;
+                    captureClone.querySelectorAll('*').forEach(el => {
+                        const computedStyle = getComputedStyle(el);
+                        if (el.matches('.menu-grid-template, .menu-grid-template-3x2')) { scaleStyle(el, 'padding', 15); scaleStyle(el, 'gap', 15); }
+                        if (el.matches('.grid-cell')) { scaleStyle(el, 'borderRadius', 8); }
+                        if (el.matches('.grid-cell-content')) { scaleStyle(el, 'padding', 15); scaleStyle(el, 'gap', 5); }
+                        if (el.matches('.menu-items-container')) { scaleStyle(el, 'padding', 30); scaleStyle(el, 'columnGap', 40); }
+                        if (el.matches('.menu-section')) { scaleStyle(el, 'marginBottom', 30); }
+                        if (el.matches('.section-title')) {
+                            scaleStyle(el, 'marginBottom', 15);
+                            scaleStyle(el, 'paddingBottom', 8);
+                            const borderW = parseFloat(computedStyle.borderBottomWidth);
+                            if (borderW > 0) el.style.borderBottomWidth = `${borderW * scaleFactor}px`;
+                        }
+                        if (el.matches('.menu-item')) {
+                             const borderW = parseFloat(computedStyle.borderBottomWidth);
+                            if (borderW > 0) el.style.borderBottomWidth = `${borderW * scaleFactor}px`;
+                            scaleStyle(el, 'marginBottom', 15); 
+                            scaleStyle(el, 'paddingBottom', 15); 
+                        }
+                        if (el.matches('.item-name')) { scaleStyle(el, 'marginBottom', 5); }
+                        if (el.matches('.promo-content')) { scaleStyle(el, 'padding', el.closest('.combined-template') ? 25 : 40); }
+                        if (el.matches('.promo-title')) { scaleStyle(el, 'marginBottom', el.closest('.combined-template') ? 10 : 20); scaleStyle(el, 'gap', el.closest('.combined-template') ? 10 : 15); }
+                        if (el.matches('.promo-text')) { scaleStyle(el, 'marginBottom', el.closest('.combined-template') ? 15 : 30); }
+                        if (el.matches('.promo-price-container')) { scaleStyle(el, 'gap', el.closest('.combined-template') ? 10 : 20); }
+                        if (el.matches('.promo-discount')) {
+                            const vPad = el.closest('.combined-template') ? 3 : 5;
+                            const hPad = el.closest('.combined-template') ? 8 : 10;
+                            el.style.padding = `${vPad * scaleFactor}px ${hPad * scaleFactor}px`;
+                            scaleStyle(el, 'borderRadius', 20);
+                        }
+                        if (el.matches('.promo-icon-wrapper')) { const pad = el.closest('.combined-template') ? 4 : 8; scaleStyle(el, 'padding', pad); scaleStyle(el, 'borderRadius', pad); }
+                        if (el.matches('.menu-header')) { el.style.padding = `${15 * scaleFactor}px ${20 * scaleFactor}px`; }
                     });
-
-                    // List Layout
-                    captureClone.querySelectorAll('.menu-items-container').forEach(container => {
-                        container.style.padding = `${30 * scaleFactor}px`;
-                        container.style.columnGap = `${40 * scaleFactor}px`;
-                    });
-                     captureClone.querySelectorAll('.menu-section').forEach(section => {
-                        section.style.marginBottom = `${30 * scaleFactor}px`;
-                        const title = section.querySelector('.section-title');
-                        if(title) title.style.marginBottom = `${15 * scaleFactor}px`;
-                    });
-                    captureClone.querySelectorAll('.menu-item').forEach(item => {
-                        item.style.marginBottom = `${15 * scaleFactor}px`;
-                        item.style.paddingBottom = `${15 * scaleFactor}px`;
-                    });
-
                 } else {
-                    console.error("On-screen preview has zero width. Cannot calculate scale factor for fonts.");
+                    console.error("Preview has zero width. Cannot calculate scale factor.");
                 }
-                
+
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 2,
+                        scale: 1,
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
                         backgroundColor: null,
                         logging: false
                     }).then(canvas => {
-                        const targetCanvas = document.createElement('canvas');
-                        targetCanvas.width = state.exportWidth;
-                        targetCanvas.height = state.exportHeight;
-                        const ctx = targetCanvas.getContext('2d');
-                        ctx.drawImage(canvas, 0, 0, targetCanvas.width, targetCanvas.height);
-                        generator(targetCanvas);
+                        callback(canvas);
                     }).catch(err => {
-                        console.error('Ошибка при сохранении файла:', err);
-                        alert('Произошла ошибка при сохранении файла: ' + err.message);
+                        console.error('Error during export:', err);
+                        alert('An error occurred during export: ' + err.message);
                     }).finally(() => {
                         document.body.removeChild(captureContainer);
-                        controls.loadingOverlay.style.display = 'none';
                     });
                 }, 500);
             }
 
             function downloadAsPNG() {
-                download(canvas => canvas.toBlob(blob => saveAs(blob, 'menuboard.png'), 'image/png'));
+                download(canvas => {
+                    canvas.toBlob(blob => {
+                        saveAs(blob, `${generateFilename()}.png`);
+                        controls.loadingOverlay.style.display = 'none';
+                    }, 'image/png');
+                });
             }
             
             function showMp4Modal() { controls.mp4Modal.style.display = 'flex'; }
             
             function downloadAsMP4() {
-                const filenameBase = (controls.mp4Filename.value || 'menuboard').trim().replace(/\s+/g, '_');
-                const duration = Math.max(1, parseInt(controls.mp4Duration.value, 10) || 5);
-                if (duration < 1 || duration > 5) { alert('Длительность должна быть от 1 до 5 секунд'); return; }
+                const filenameBase = (controls.mp4Filename.value || generateFilename()).trim().replace(/\s+/g, '_');
+                const duration = Math.max(1, Math.min(10, parseInt(controls.mp4Duration.value, 10) || 5));
                 controls.mp4Modal.style.display = 'none';
                 
-                download(canvas => {
+                download(sourceCanvas => {
                     controls.loadingText.textContent = 'Сохраняем видео, это может занять время...';
                     
-                    const stream = canvas.captureStream(); 
-                    const videoTrack = stream.getVideoTracks()[0];
+                    const videoCanvas = document.createElement('canvas');
+                    videoCanvas.width = sourceCanvas.width;
+                    videoCanvas.height = sourceCanvas.height;
+                    const ctx = videoCanvas.getContext('2d');
 
+                    const stream = videoCanvas.captureStream(30);
                     const mimeType = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(MediaRecorder.isTypeSupported);
+                    
                     if (!mimeType) { 
                         alert('Ваш браузер не поддерживает запись видео в формате MP4 или WebM.');
+                        controls.loadingOverlay.style.display = 'none';
                         return;
                     }
                     
-                    const recordedChunks = [];
                     const recorder = new MediaRecorder(stream, { mimeType });
-
+                    const recordedChunks = [];
                     recorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
                     
                     recorder.onstop = () => {
                         const blob = new Blob(recordedChunks, { type: mimeType });
-                        saveAs(blob, `${filenameBase}.${mimeType.includes('mp4') ? 'mp4' : 'webm'}`);
+                        saveAs(blob, `${generateFilename()}.mp4`);
+                        controls.loadingOverlay.style.display = 'none';
                     };
-
-                    const frameInterval = setInterval(() => {
-                         if (videoTrack.readyState === "live") {
-                             videoTrack.requestFrame();
-                         }
-                    }, 100); 
 
                     recorder.start();
 
-                    setTimeout(() => {
-                        clearInterval(frameInterval);
-                        recorder.stop();
-                    }, duration * 1000);
+                    let startTime = null;
+                    const animate = (timestamp) => {
+                        if (!startTime) startTime = timestamp;
+                        const elapsed = timestamp - startTime;
+                        
+                        ctx.drawImage(sourceCanvas, 0, 0);
+
+                        if (elapsed < duration * 1000) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            recorder.stop();
+                        }
+                    };
+                    
+                    requestAnimationFrame(animate);
                 });
             }
             
@@ -2047,7 +2101,6 @@
                     let newX = activeResizable.x - dx * sensitivity;
                     let newY = activeResizable.y - dy * sensitivity;
 
-                    // Clamp values to keep image in view
                     const halfSize = transform.size / 2;
                     newX = Math.max(50 - halfSize, Math.min(50 + halfSize, newX));
                     newY = Math.max(50 - halfSize, Math.min(50 + halfSize, newY));
