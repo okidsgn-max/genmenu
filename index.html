@@ -327,7 +327,7 @@
         margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid var(--border); color: var(--category-font-color);
     }
     
-    .menu-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
     .item-content { flex-grow: 1; min-width: 0; }
     
     .item-name {
@@ -341,10 +341,21 @@
     .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: var(--desc-font-color); margin-bottom: 5px; font-weight: 300; }
     .item-price {
         font-family: var(--item-font-family); font-weight: 700; font-size: var(--item-font-size); color: var(--item-font-color);
-        white-space: nowrap; margin-left: 20px; text-align: right; min-width: 80px;
+        white-space: nowrap; margin-left: 20px; text-align: right; flex-shrink: 0;
     }
 
-    .volume-price { display: block; font-size: 0.9em; font-weight: 500; }
+    .volume-price-container {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .volume-price {
+        display: inline-flex;
+        gap: 4px;
+        align-items: baseline;
+    }
     
     .menu-grid-template, .menu-grid-template-3x2 { width: 100%; height: 100%; display: grid; gap: 15px; padding: 15px; background-color: var(--grid-bg-color); }
     .menu-grid-template { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
@@ -366,7 +377,7 @@
     .grid-cell .item-name { 
         word-break: break-word; 
     }
-    .grid-cell .item-name, .grid-cell .item-description, .grid-cell .item-price { color: var(--item-font-color); }
+    .grid-cell .item-name, .grid-cell .item-description { color: var(--item-font-color); }
     .grid-cell .item-description { 
         flex-grow: 1; 
         color: var(--desc-font-color);
@@ -374,13 +385,42 @@
         overflow: hidden;
     }
     .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
+    
+    .grid-cell .volume-price-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 2px;
+        height: 100%;
+    }
+
+    .grid-cell .volume-price {
+        font-family: var(--price-font-family);
+        font-size: var(--price-font-size);
+        color: var(--price-font-color);
+        font-weight: 700;
+    }
+
+    .grid-cell .volume-price span[data-field^="volume"] {
+        font-weight: 500;
+    }
+    
     .grid-cell .item-photo-container {
-        flex: 1.2; background: #ffffff; display: flex; justify-content: center; align-items: center;
-        overflow: hidden; z-index: 1; position: relative;
+        flex: 1.2;
+        background: var(--cell-bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        z-index: 1;
+        position: relative;
     }
     .grid-cell .item-photo {
         width: 100%;
         height: 100%;
+        background-size: auto 100%;
+        background-position: center;
         background-repeat: no-repeat;
         cursor: move;
     }
@@ -640,6 +680,31 @@
     }
     .promo-template.resizable-container, .combined-promo-part.resizable-container {
         cursor: move;
+    }
+     .delete-photo-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        background: rgba(25, 28, 31, 0.7);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 15;
+        opacity: 0;
+        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .item-photo-container:hover .delete-photo-btn {
+        opacity: 1;
+    }
+    .delete-photo-btn img {
+        width: 20px;
+        height: 20px;
+        filter: brightness(0) invert(0.8);
     }
 </style>
 </head>
@@ -1148,7 +1213,7 @@
             function createDefaultMenuData() {
                  if(state.excelData.length === 0) {
                      state.excelData = [
-                        { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
+                        { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '150', M: '200', L: '250', volumeS: 'S', volumeM: 'M', volumeL: 'L', isPlaceholder: true },
                         { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
                         { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
                         { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true }
@@ -1159,22 +1224,6 @@
             function updateMenuBgControlsVisibility() {
                 controls.menuBgImageContainer.style.display = controls.menuBgTypeSelect.value === 'image' ? 'block' : 'none';
                 render();
-            }
-
-            let isFormattingPrices = false;
-            function formatAllVisiblePrices() {
-                if (isFormattingPrices) return;
-                isFormattingPrices = true;
-                controls.menuPreview.querySelectorAll('.item-price, [data-field="price"], [data-field="promoPrice"]').forEach(el => {
-                    if (el.children.length > 0 || (document.activeElement === el)) return;
-                    let text = el.innerText;
-                    if (text.includes(state.currency)) return;
-                    const sanitized = text.replace(/[^\d.,]/g, '').trim();
-                    if (sanitized) {
-                        el.innerText = formatPrice(sanitized);
-                    }
-                });
-                isFormattingPrices = false;
             }
 
             function init() {
@@ -1188,9 +1237,6 @@
                     updatePreviewAspectRatio();
                 }
 
-                const observer = new MutationObserver(formatAllVisiblePrices);
-                observer.observe(controls.menuPreview, { childList: true, subtree: true });
-
                 createDefaultMenuData();
                 renderManualEditor();
                 updateGridColorVisibility();
@@ -1201,8 +1247,10 @@
             function setupEventListeners() {
                 document.body.addEventListener('input', (e) => {
                     const target = e.target;
-                    const isPriceField = target.dataset.field === 'price' || target.dataset.field === 'promoPrice' || (target.parentElement && target.parentElement.dataset.field === 'price');
-                    if (isPriceField && target.isContentEditable) {
+                    const priceFields = ['price', 'promoPrice', 'S', 'M', 'L'];
+                    const isPriceField = priceFields.includes(target.dataset.field) && target.isContentEditable;
+                    
+                    if (isPriceField) {
                         let originalText = target.innerText;
                         let sanitizedText = originalText.replace(/[^\d.,]/g, '');
                         if (originalText !== sanitizedText) {
@@ -1224,6 +1272,7 @@
                         }
                     }
                 });
+
 
                 controls.tabButtons.forEach(btn => btn.addEventListener('click', () => {
                     state.currentTab = btn.dataset.tab;
@@ -1324,6 +1373,24 @@
                        deselectActiveResizable();
                     }
                 }, true);
+
+                controls.menuPreview.addEventListener('click', handleDeletePhotoClick);
+            }
+            
+             function handleDeletePhotoClick(e) {
+                const deleteBtn = e.target.closest('.delete-photo-btn');
+                if (!deleteBtn) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+
+                const index = deleteBtn.dataset.index;
+                if (index !== undefined) {
+                    delete state.gridImages[index];
+                    const key = `grid-${index}`;
+                    delete state.imageTransforms[key];
+                    render();
+                }
             }
             
             function handleMenuBgUpload(e) {
@@ -1392,6 +1459,7 @@
                     price: '100',
                     category: newCategory,
                     S: '', M: '', L: '',
+                    volumeS: 'S', volumeM: 'M', volumeL: 'L',
                     isPlaceholder: true // New items are also placeholders
                 };
                 state.excelData.push(newItem);
@@ -1437,8 +1505,13 @@
                             state.excelData = jsonData.map(row => ({
                                 name: findValue(row, ['Название', 'Наименование', 'блюдо']), description: findValue(row, ['Описание', 'состав']),
                                 price: findValue(row, ['Цена', 'Стоимость', 'с ндс']), photo: row['Фото'] || '',
-                                category: (findValue(row, ['Категория', 'тип']) || 'Основное меню').trim(), S: findValue(row, ['S', 'Цена S']), 
-                                M: findValue(row, ['M', 'Цена M']), L: findValue(row, ['L', 'Цена L']),
+                                category: (findValue(row, ['Категория', 'тип']) || 'Основное меню').trim(), 
+                                S: findValue(row, ['S', 'Цена S']), 
+                                M: findValue(row, ['M', 'Цена M']), 
+                                L: findValue(row, ['L', 'Цена L']),
+                                volumeS: findValue(row, ['Объем S', 'volumeS']) || 'S',
+                                volumeM: findValue(row, ['Объем M', 'volumeM']) || 'M',
+                                volumeL: findValue(row, ['Объем L', 'volumeL']) || 'L',
                                 isPlaceholder: false // Data from file is not a placeholder
                             }));
                             state.gridImages = {};
@@ -1500,17 +1573,31 @@
             function handleInlineEdit(e) {
                 const target = e.target;
                 if (activeResizable.element || target.classList.contains('is-placeholder')) return;
+                
                 const field = target.dataset.field;
                 if (!field) return;
-
+                
                 let newValue = target.innerText.trim();
+
+                const formatPriceIfNeeded = (field, value) => {
+                    const priceFields = ['price', 'S', 'M', 'L', 'promoPrice'];
+                    if(priceFields.includes(field)) {
+                         const sanitizedValue = value.replace(/[^\d.,]/g, '').trim();
+                         if(target.innerText.includes(state.currency)){
+                            // do nothing if currency is already there
+                         } else {
+                            target.innerText = formatPrice(sanitizedValue);
+                         }
+                         return sanitizedValue;
+                    }
+                    return value;
+                };
                 
                 if (field.startsWith('promo')) {
                     if (field === 'promoPrice') {
-                        newValue = newValue.replace(/[^\d.,]/g, '').trim();
-                        target.innerText = formatPrice(newValue);
+                         newValue = formatPriceIfNeeded('promoPrice', newValue);
                     }
-                    state[field] = newValue.replace(state.currency, '').trim();
+                    state[field] = newValue;
                 } else if (field === 'displayDate') {
                     state.displayDate = newValue;
                 }
@@ -1520,23 +1607,23 @@
                     const item = state.excelData[index];
                     if (!item) return;
 
-                    item.isPlaceholder = false; // Item has been edited
+                    item.isPlaceholder = false;
 
-                    const isPriceField = field === 'price' || field === 'S' || field === 'M' || field === 'L';
-                    if (isPriceField) {
-                         newValue = newValue.replace(/[^\d.,]/g, '').trim();
-                         target.innerText = formatPrice(newValue);
-                    }
-
-                    if (field === 'category') {
+                    const priceFields = ['price', 'S', 'M', 'L'];
+                     if (priceFields.includes(field)) {
+                         item[field] = newValue.replace(/[^\d.,]/g, '').trim();
+                         if (!newValue.includes(state.currency)) {
+                            target.innerText = formatPrice(newValue);
+                         }
+                    } else if(field.startsWith('volume')) {
+                        item[field] = newValue.replace(':', '').trim();
+                    } else if (field === 'category') {
                          const oldCategory = item.category;
                          state.excelData.forEach(it => {
                             if (it.category === oldCategory) it.category = newValue
                          });
-                    } else if (field === 'price' && target.dataset.volume) {
-                        item[target.dataset.volume.toUpperCase()] = newValue;
                     } else {
-                         item[field] = newValue.replace(state.currency, '').trim();
+                         item[field] = newValue;
                     }
                 }
                 renderManualEditor();
@@ -1552,7 +1639,10 @@
                 if (state.excelData.length === 0) { alert('Нет данных для экспорта'); return; }
                 const wsData = state.excelData.map(item => ({
                     'Категория': item.category, 'Название': item.name, 'Описание': item.description,
-                    'Стоимость': item.price, 'S': item.S, 'M': item.M, 'L': item.L
+                    'Стоимость': item.price, 
+                    'Объем S': item.volumeS, 'Цена S': item.S, 
+                    'Объем M': item.volumeM, 'Цена M': item.M, 
+                    'Объем L': item.volumeL, 'Цена L': item.L
                 }));
                 const ws = XLSX.utils.json_to_sheet(wsData);
                 const wb = XLSX.utils.book_new();
@@ -1674,11 +1764,11 @@
                             let priceHTML;
                             const hasVolumePrices = item.S || item.M || item.L;
                             if (hasVolumePrices) {
-                                priceHTML = [
-                                    item.S ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="S" data-volume="s">S: ${formatPrice(item.S)}</span>` : '',
-                                    item.M ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="M" data-volume="m">M: ${formatPrice(item.M)}</span>` : '',
-                                    item.L ? `<span class="volume-price" contenteditable="true" data-index="${originalIndex}" data-field="L" data-volume="l">L: ${formatPrice(item.L)}</span>` : ''
-                                ].filter(Boolean).join('');
+                                priceHTML = `<div class="volume-price-container">` + [
+                                    item.S ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` : '',
+                                    item.M ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` : '',
+                                    item.L ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` : ''
+                                ].filter(Boolean).join('') + `</div>`;
                             } else {
                                 priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
                             }
@@ -1698,7 +1788,7 @@
                 return `${headerHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
             }
             
-             function renderGridMenu(limit, className) {
+            function renderGridMenu(limit, className) {
                 const renderCell = (item, index) => {
                     const originalIndex = state.excelData.indexOf(item);
                     const imgSrc = state.gridImages[originalIndex] || item.photo;
@@ -1708,20 +1798,21 @@
                     const transform = state.imageTransforms[key] || { size: 100, x: 50, y: 50 };
                     
                     const photoHTML = imgSrc ? `
-                        <div class="item-photo" style="background-image: url('${imgSrc}'); background-size: ${transform.size}%; background-position: ${transform.x}% ${transform.y}%;"></div>
+                        <div class="item-photo" style="background-image: url('${imgSrc}');"></div>
                         <div class="resize-handle br"></div>
+                        <button class="delete-photo-btn" data-index="${originalIndex}"><img src="delete.svg" alt="Удалить"></button>
                     ` : `<button class="upload-photo-btn">+</button>`;
 
                     let priceHTML;
                     const hasVolumePrices = item.S || item.M || item.L;
-                    if (hasVolumePrices) {
-                        priceHTML = [
-                            item.S ? `S:${formatPrice(item.S)}` : '',
-                            item.M ? `M:${formatPrice(item.M)}` : '',
-                            item.L ? `L:${formatPrice(item.L)}` : ''
-                        ].filter(Boolean).join(' / ');
+                     if (hasVolumePrices) {
+                        priceHTML = `<div class="volume-price-container">` + [
+                            item.S ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` : '',
+                            item.M ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` : '',
+                            item.L ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` : ''
+                        ].filter(Boolean).join('') + `</div>`;
                     } else {
-                        priceHTML = formatPrice(item.price) || formatPrice('0');
+                        priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
                     }
                     
                     return `
@@ -1730,7 +1821,7 @@
                         <div class="grid-cell-content">
                             <div class="item-name ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
                             ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
-                            <div class="item-price" ${!hasVolumePrices ? `contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price"` : ''}>${priceHTML}</div>
+                            <div class="item-price">${priceHTML}</div>
                         </div>
                         <div class="item-photo-container resizable-container" data-index="${originalIndex}" data-key="${key}">
                             ${photoHTML}
@@ -1768,7 +1859,6 @@
                     </div>`;
             }
 
-            // CHANGE: Updated render function to correctly apply background images to the right targets
             function render() {
                 deselectActiveResizable();
                 applyStyles();
@@ -1799,7 +1889,6 @@
                 
                 controls.menuPreview.innerHTML = html;
                 
-                // --- Background Application Logic ---
                 controls.menuPreview.style.backgroundImage = 'none';
 
                 let menuBgTarget = null;
@@ -1853,7 +1942,6 @@
                 }
             }
             
-            // CHANGE: Rewrote the export function for accurate, proportional scaling.
             function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
@@ -1862,7 +1950,7 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
 
-                captureClone.querySelectorAll('.resize-handle, .upload-photo-btn').forEach(el => el.style.display = 'none');
+                captureClone.querySelectorAll('.resize-handle, .upload-photo-btn, .delete-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
 
                 const captureContainer = document.createElement('div');
@@ -1895,7 +1983,7 @@
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1, // We are scaling manually, so html2canvas scale is 1
+                        scale: 1, 
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
@@ -1985,6 +2073,9 @@
             }
 
             function handlePreviewMouseDown(e) {
+                if (e.target.closest('[contenteditable="true"]')) {
+                    return;
+                }
                 const handle = e.target.closest('.resize-handle');
                 const container = e.target.closest('.resizable-container');
 
@@ -2031,26 +2122,37 @@
                 const dy = e.clientY - activeResizable.startY;
                 
                 const transform = state.imageTransforms[activeResizable.key];
+                const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
 
                 if (activeResizable.mode === 'resize') {
-                    const newSize = Math.max(50, activeResizable.size + dx * 0.5); // Sensitivity
+                    const newSize = Math.max(50, activeResizable.size + dx * 0.5); 
                     transform.size = newSize;
-                    const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
-                    if(target) target.style.backgroundSize = `${newSize}%`;
+                    if(target) target.style.backgroundSize = `auto ${newSize}%`; // Prioritize height
 
                 } else if (activeResizable.mode === 'pan') {
-                    const sensitivity = 50 / activeResizable.element.offsetWidth;
-                    let newX = activeResizable.x - dx * sensitivity;
+                    const sensitivity = 50 / activeResizable.element.offsetHeight; // Use height for sensitivity
+                    let newX = activeResizable.x; // Keep X stable unless image is wider than container
                     let newY = activeResizable.y - dy * sensitivity;
 
-                    const halfSize = transform.size / 2;
-                    newX = Math.max(50 - halfSize, Math.min(50 + halfSize, newX));
-                    newY = Math.max(50 - halfSize, Math.min(50 + halfSize, newY));
+                    // Allow panning only along the axis where the image is larger than the container
+                    const img = new Image();
+                    img.src = target.style.backgroundImage.slice(5, -2);
+                    const containerAspect = activeResizable.element.offsetWidth / activeResizable.element.offsetHeight;
+                    const imgAspect = img.width / img.height;
+
+                    if (imgAspect > containerAspect) { // Image is wider
+                        newX = activeResizable.x - (dx * sensitivity);
+                    }
+                    
+                    const halfSizeY = (transform.size * (img.height / activeResizable.element.offsetHeight)) / 2;
+                    newY = Math.max(50 - halfSizeY, Math.min(50 + halfSizeY, newY));
+                    
+                    const halfSizeX = (transform.size * (img.width / activeResizable.element.offsetWidth)) / 2;
+                    newX = Math.max(50 - halfSizeX, Math.min(50 + halfSizeX, newX));
 
                     transform.x = newX;
                     transform.y = newY;
-
-                    const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
+                    
                     if(target) target.style.backgroundPosition = `${newX}% ${newY}%`;
                 }
             }
