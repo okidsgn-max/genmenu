@@ -648,7 +648,7 @@
     .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
     .combined-template .item-price { font-size: calc(var(--item-font-size) * 0.9); }
 
-    .combined-template .grid-cell { display: block; position: relative; }
+    .combined-template .grid-cell { display: block; position: relative; overflow: visible; }
     .combined-template .grid-cell-content { height: 100%; width: 100%; position: relative; z-index: 2; }
     .combined-template .grid-cell .item-photo-container { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; flex: none; z-index: 1; }
     .combined-template .grid-cell::after { display: none; }
@@ -670,11 +670,11 @@
         z-index: 12;
         display: none;
     }
-    .resize-handle.br { /* bottom-right */
-        bottom: -7px;
-        right: -7px;
-        cursor: se-resize;
-    }
+    .resize-handle.br { bottom: -7px; right: -7px; cursor: se-resize; }
+    .resize-handle.bl { bottom: -7px; left: -7px; cursor: ne-sw-resize; }
+    .resize-handle.tr { top: -7px; right: -7px; cursor: ne-sw-resize; }
+    .resize-handle.tl { top: -7px; left: -7px; cursor: se-resize; }
+
     .resizable-container.selected .resize-handle {
         display: block;
     }
@@ -1180,6 +1180,7 @@
             let activeResizable = {
                 element: null,
                 mode: null, // 'resize' or 'pan'
+                handle: null, // 'tl', 'tr', 'bl', 'br'
                 key: null,
                 startX: 0,
                 startY: 0,
@@ -1799,6 +1800,9 @@
                     
                     const photoHTML = imgSrc ? `
                         <div class="item-photo" style="background-image: url('${imgSrc}');"></div>
+                        <div class="resize-handle tl"></div>
+                        <div class="resize-handle tr"></div>
+                        <div class="resize-handle bl"></div>
                         <div class="resize-handle br"></div>
                         <button class="delete-photo-btn" data-index="${originalIndex}"><img src="delete.svg" alt="Удалить"></button>
                     ` : `<button class="upload-photo-btn">+</button>`;
@@ -1928,17 +1932,19 @@
                     element.style.backgroundColor = '';
 
                     element.classList.add('resizable-container');
-                    if(!element.querySelector('.resize-handle')) {
-                        const handle = document.createElement('div');
-                        handle.className = 'resize-handle br';
-                        element.appendChild(handle);
+                    if (!element.querySelector('.resize-handle')) {
+                        const handles = ['tl', 'tr', 'bl', 'br'];
+                        handles.forEach(h => {
+                            const handle = document.createElement('div');
+                            handle.className = `resize-handle ${h}`;
+                            element.appendChild(handle);
+                        });
                     }
                 } else {
                     element.style.backgroundColor = controls.bgColorPicker.value;
                     element.style.backgroundImage = 'none';
                     element.classList.remove('resizable-container');
-                    const handle = element.querySelector('.resize-handle');
-                    if(handle) handle.remove();
+                    element.querySelectorAll('.resize-handle').forEach(h => h.remove());
                 }
             }
             
@@ -2102,11 +2108,17 @@
                     key: key,
                     startX: e.clientX,
                     startY: e.clientY,
-                    ...state.imageTransforms[key]
+                    startSize: state.imageTransforms[key].size,
+                    startPosX: state.imageTransforms[key].x,
+                    startPosY: state.imageTransforms[key].y,
                 };
 
                 if (handle) {
                     activeResizable.mode = 'resize';
+                    if (handle.classList.contains('br')) activeResizable.handle = 'br';
+                    else if (handle.classList.contains('bl')) activeResizable.handle = 'bl';
+                    else if (handle.classList.contains('tr')) activeResizable.handle = 'tr';
+                    else if (handle.classList.contains('tl')) activeResizable.handle = 'tl';
                 } else {
                     activeResizable.mode = 'pan';
                 }
@@ -2122,38 +2134,42 @@
                 const dy = e.clientY - activeResizable.startY;
                 
                 const transform = state.imageTransforms[activeResizable.key];
-                const target = activeResizable.element.matches('.item-photo-container') ? activeResizable.element.querySelector('.item-photo') : activeResizable.element;
+                
+                const elementToStyle = activeResizable.element.matches('.item-photo-container') 
+                    ? activeResizable.element.querySelector('.item-photo') 
+                    : activeResizable.element;
 
                 if (activeResizable.mode === 'resize') {
-                    const newSize = Math.max(50, activeResizable.size + dx * 0.5); 
-                    transform.size = newSize;
-                    if(target) target.style.backgroundSize = `auto ${newSize}%`; // Prioritize height
+                    let sizeChange = 0;
+                    const sensitivity = 0.4;
 
-                } else if (activeResizable.mode === 'pan') {
-                    const sensitivity = 50 / activeResizable.element.offsetHeight; // Use height for sensitivity
-                    let newX = activeResizable.x; // Keep X stable unless image is wider than container
-                    let newY = activeResizable.y - dy * sensitivity;
-
-                    // Allow panning only along the axis where the image is larger than the container
-                    const img = new Image();
-                    img.src = target.style.backgroundImage.slice(5, -2);
-                    const containerAspect = activeResizable.element.offsetWidth / activeResizable.element.offsetHeight;
-                    const imgAspect = img.width / img.height;
-
-                    if (imgAspect > containerAspect) { // Image is wider
-                        newX = activeResizable.x - (dx * sensitivity);
+                    switch (activeResizable.handle) {
+                        case 'br': sizeChange = (dx + dy) * sensitivity; break;
+                        case 'bl': sizeChange = (dy - dx) * sensitivity; break;
+                        case 'tr': sizeChange = (dx - dy) * sensitivity; break;
+                        case 'tl': sizeChange = (-dx - dy) * sensitivity; break;
                     }
                     
-                    const halfSizeY = (transform.size * (img.height / activeResizable.element.offsetHeight)) / 2;
-                    newY = Math.max(50 - halfSizeY, Math.min(50 + halfSizeY, newY));
-                    
-                    const halfSizeX = (transform.size * (img.width / activeResizable.element.offsetWidth)) / 2;
-                    newX = Math.max(50 - halfSizeX, Math.min(50 + halfSizeX, newX));
+                    const newSize = Math.max(50, Math.min(500, activeResizable.startSize + sizeChange));
+                    transform.size = newSize;
+
+                    if (elementToStyle) {
+                        if (activeResizable.element.matches('.item-photo-container')) {
+                             elementToStyle.style.backgroundSize = `auto ${newSize}%`;
+                        } else {
+                             elementToStyle.style.backgroundSize = `${newSize}%`;
+                        }
+                    }
+
+                } else if (activeResizable.mode === 'pan') {
+                    const sensitivity = 50 / activeResizable.element.offsetHeight;
+                    let newX = activeResizable.startPosX - (dx * sensitivity);
+                    let newY = activeResizable.startPosY - (dy * sensitivity);
 
                     transform.x = newX;
                     transform.y = newY;
                     
-                    if(target) target.style.backgroundPosition = `${newX}% ${newY}%`;
+                    if (elementToStyle) elementToStyle.style.backgroundPosition = `${newX}% ${newY}%`;
                 }
             }
 
@@ -2162,6 +2178,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 activeResizable.mode = null;
+                activeResizable.handle = null;
             }
 
             init();
