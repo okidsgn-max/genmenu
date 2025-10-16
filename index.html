@@ -322,12 +322,28 @@
     .menu-items-container.two-columns { column-count: 2; column-gap: 40px; }
     .menu-section { break-inside: avoid; margin-bottom: 30px; }
     
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border);
+    }
+
     .section-title {
-        font-family: var(--category-font-family); font-size: var(--category-font-size); font-weight: 700;
-        margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid var(--border); color: var(--category-font-color);
+        font-family: var(--category-font-family);
+        font-size: var(--category-font-size);
+        font-weight: 700;
+        color: var(--category-font-color);
+        flex-grow: 1;
+        min-width: 0;
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
     }
     
-    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+    .menu-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed var(--border); }
     .item-content { flex-grow: 1; min-width: 0; }
     
     .item-name {
@@ -335,7 +351,7 @@
         font-weight: 500;
         font-size: var(--item-font-size);
         color: #000000;
-        margin-bottom: 5px;
+        margin-bottom: 2px;
     }
 
     .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: var(--desc-font-color); margin-bottom: 5px; font-weight: 300; }
@@ -348,7 +364,7 @@
         display: flex;
         gap: 12px;
         justify-content: flex-end;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .volume-price {
@@ -391,8 +407,9 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
-        gap: 2px;
+        gap: 0px;
         height: 100%;
+        flex-wrap: wrap;
     }
 
     .grid-cell .volume-price {
@@ -642,7 +659,6 @@
     .combined-template .combined-promo-part .grid-cell-content .item-price { color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
 
     .combined-template .menu-items-container { padding: 15px; gap: 10px; }
-    .combined-template .section-title { font-size: calc(var(--category-font-size) * 0.8); margin-bottom: 10px; }
     .combined-template .menu-item { margin-bottom: 10px; padding-bottom: 10px; }
     .combined-template .item-name { font-size: calc(var(--item-font-size) * 0.9); }
     .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
@@ -705,6 +721,41 @@
         width: 20px;
         height: 20px;
         filter: brightness(0) invert(0.8);
+    }
+
+    /* Styles for List SML Prices */
+    .list-price-headers {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px; /* Match volume-price-container gap */
+        margin-bottom: 0;
+        padding-right: 0; /* Align with prices */
+        flex-shrink: 0;
+    }
+    .list-price-headers > span {
+        font-family: var(--category-font-family);
+        font-weight: 700;
+        font-size: var(--item-font-size);
+        color: var(--category-font-color);
+        width: 70px; /* Fixed width for alignment */
+        text-align: right;
+    }
+    .menu-list-template .menu-item .volume-price {
+        width: 70px; /* Match header width */
+        justify-content: flex-end;
+    }
+    .menu-list-template .menu-item .volume-price span[data-field^="volume"] {
+        display: none;
+    }
+    .menu-header.list-view-header {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        width: auto;
+        padding: 0;
+        background-color: transparent !important;
+        z-index: 10;
+        flex-shrink: 1;
     }
 </style>
 </head>
@@ -773,6 +824,10 @@
                              <div class="checkbox-group">
                                 <input type="checkbox" id="show-date-checkbox" checked>
                                 <label for="show-date-checkbox">Показывать текущую дату</label>
+                            </div>
+                             <div class="checkbox-group">
+                                <input type="checkbox" id="show-sml-prices-checkbox">
+                                <label for="show-sml-prices-checkbox">Показывать цены S,M,L</label>
                             </div>
                          </div>
                     </details>
@@ -878,7 +933,7 @@
                                         <option value="'Montserrat', sans-serif">Montserrat</option>
                                         <option value="'Oswald', sans-serif">Oswald</option>
                                     </select>
-                                    <input type="number" id="price-font-size" class="input" value="24" min="10" max="100">
+                                    <input type="number" id="price-font-size" class="input" value="10" min="10" max="100">
                                     <input type="color" id="price-color-picker" value="#00b398">
                                 </div>
                             </div>
@@ -930,6 +985,10 @@
                     <details class="control-group" open>
                         <summary>Настройки цены</summary>
                         <div class="control-group-content">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="promo-show-sml-prices-checkbox">
+                                <label for="promo-show-sml-prices-checkbox">Показывать цены S,M,L</label>
+                            </div>
                            <label>Цена</label>
                             <div class="setting-row">
                                 <select id="promo-price-font-select" class="select">
@@ -1084,6 +1143,7 @@
                 layoutButtons: getEl('layout-buttons'),
                 showDescCheck: getEl('show-description-checkbox'),
                 showDateCheck: getEl('show-date-checkbox'),
+                showSmlPricesCheck: getEl('show-sml-prices-checkbox'),
                 menuBgPicker: getEl('menu-bg-color-picker'),
                 cellBgColorPicker: getEl('cell-bg-color-picker'),
                 gridColorItems: document.querySelectorAll('.grid-color-item'),
@@ -1154,6 +1214,7 @@
                 menuBgFileInfo: getEl('menu-bg-file-info'),
                 limitModal: getEl('limit-modal'),
                 limitModalClose: getEl('limit-modal-close'),
+                promoShowSmlPricesCheck: getEl('promo-show-sml-prices-checkbox'),
             };
 
             let state = {
@@ -1163,6 +1224,12 @@
                 promoTitle: 'Заголовок акции',
                 promoText: 'Текст акции с описанием',
                 promoPrice: '100',
+                promoPriceS: '80',
+                promoPriceM: '100',
+                promoPriceL: '120',
+                promoVolumeS: 'S',
+                promoVolumeM: 'M',
+                promoVolumeL: 'L',
                 promoComment: 'Комментарий про акцию, сроки проведения и т.д.',
                 promoBgImage: null,
                 menuBgImage: null,
@@ -1248,7 +1315,7 @@
             function setupEventListeners() {
                 document.body.addEventListener('input', (e) => {
                     const target = e.target;
-                    const priceFields = ['price', 'promoPrice', 'S', 'M', 'L'];
+                    const priceFields = ['price', 'promoPrice', 'S', 'M', 'L', 'promoPriceS', 'promoPriceM', 'promoPriceL'];
                     const isPriceField = priceFields.includes(target.dataset.field) && target.isContentEditable;
                     
                     if (isPriceField) {
@@ -1579,25 +1646,8 @@
                 if (!field) return;
                 
                 let newValue = target.innerText.trim();
-
-                const formatPriceIfNeeded = (field, value) => {
-                    const priceFields = ['price', 'S', 'M', 'L', 'promoPrice'];
-                    if(priceFields.includes(field)) {
-                         const sanitizedValue = value.replace(/[^\d.,]/g, '').trim();
-                         if(target.innerText.includes(state.currency)){
-                            // do nothing if currency is already there
-                         } else {
-                            target.innerText = formatPrice(sanitizedValue);
-                         }
-                         return sanitizedValue;
-                    }
-                    return value;
-                };
                 
                 if (field.startsWith('promo')) {
-                    if (field === 'promoPrice') {
-                         newValue = formatPriceIfNeeded('promoPrice', newValue);
-                    }
                     state[field] = newValue;
                 } else if (field === 'displayDate') {
                     state.displayDate = newValue;
@@ -1721,19 +1771,20 @@
             
             function renderMenuHTML(currentLayout) {
                 if (!state.excelData || state.excelData.length === 0) return '';
-                                
-                let headerHTML = '';
-                const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
-                const isFirstItemPlaceholder = state.excelData.length > 0 && state.excelData[0].isPlaceholder;
-
-                if (currentLayout !== 'default' || controls.showDateCheck.checked) {
-                    headerHTML = `
-                    <div class="menu-header">
-                        ${currentLayout !== 'list' && currentLayout !== 'default' ? `<div class="menu-grid-category-title ${isFirstItemPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>` : '<div></div>'}
-                        ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
-                    </div>`;
-                }
                 
+                const isList = currentLayout === 'list';
+                let headerHTML = '';
+
+                if (!isList) {
+                    const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
+                    const isFirstItemPlaceholder = state.excelData.length > 0 && state.excelData[0].isPlaceholder;
+                    headerHTML = `
+                        <div class="menu-header">
+                            <div class="menu-grid-category-title ${isFirstItemPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>
+                            ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
+                        </div>`;
+                }
+
                 switch (currentLayout) {
                     case 'grid': return headerHTML + renderGridMenu(4, 'menu-grid-template');
                     case 'grid3x2': return headerHTML + renderGridMenu(6, 'menu-grid-template-3x2');
@@ -1749,27 +1800,38 @@
                     categories[item.category].push(item);
                 });
                 
-                let headerHTML = controls.showDateCheck.checked ? `<div class="menu-header" style="justify-content:flex-end;"><div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div></div>` : '';
+                const dateHTML = controls.showDateCheck.checked ? `<div class="menu-header list-view-header"><div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div></div>` : '';
 
                 let itemsHTML = Object.keys(categories).map(categoryName => {
                     const itemsInCategory = categories[categoryName];
                     const firstItemIndex = state.excelData.indexOf(itemsInCategory[0]);
                     const isCategoryPlaceholder = itemsInCategory[0] && itemsInCategory[0].isPlaceholder;
 
+                    const smlHeader = controls.showSmlPricesCheck.checked ? `
+                        <div class="list-price-headers">
+                            <span>S</span>
+                            <span>M</span>
+                            <span>L</span>
+                        </div>
+                    ` : '';
+
+
                     return `
                     <div class="menu-section">
-                        <div class="section-title ${isCategoryPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
+                        <div class="section-header">
+                            <div class="section-title ${isCategoryPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
+                            ${smlHeader}
+                        </div>
                         ${itemsInCategory.map(item => {
                             const originalIndex = state.excelData.indexOf(item);
                             const placeholderClass = item.isPlaceholder ? 'is-placeholder' : '';
                             let priceHTML;
-                            const hasVolumePrices = item.S || item.M || item.L;
-                            if (hasVolumePrices) {
-                                priceHTML = `<div class="volume-price-container">` + [
-                                    item.S ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` : '',
-                                    item.M ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` : '',
-                                    item.L ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` : ''
-                                ].filter(Boolean).join('') + `</div>`;
+                            if (controls.showSmlPricesCheck.checked) {
+                                priceHTML = `<div class="volume-price-container">` +
+                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S || '') || '-'}</span></div>` +
+                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M || '') || '-'}</span></div>` +
+                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L || '') || '-'}</span></div>` +
+                                `</div>`;
                             } else {
                                 priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
                             }
@@ -1786,7 +1848,7 @@
                 }).join('');
 
                 const columnsClass = state.excelData.length > 10 ? 'two-columns' : '';
-                return `${headerHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
+                return `${dateHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
             }
             
             function renderGridMenu(limit, className) {
@@ -1808,13 +1870,12 @@
                     ` : `<button class="upload-photo-btn">+</button>`;
 
                     let priceHTML;
-                    const hasVolumePrices = item.S || item.M || item.L;
-                     if (hasVolumePrices) {
-                        priceHTML = `<div class="volume-price-container">` + [
-                            item.S ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` : '',
-                            item.M ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` : '',
-                            item.L ? `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` : ''
-                        ].filter(Boolean).join('') + `</div>`;
+                     if (controls.showSmlPricesCheck.checked) {
+                        priceHTML = `<div class="volume-price-container">` +
+                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S || '')}</span></div>` +
+                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M || '')}</span></div>` +
+                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L || '')}</span></div>` +
+                        `</div>`;
                     } else {
                         priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
                     }
@@ -1836,12 +1897,47 @@
             }
 
             function renderPromoHTML() {
-                const discountedPrice = calculateDiscountedPrice();
-                const priceHTML = discountedPrice > 0 ? `
-                <div class="promo-price-container">
-                    <div class="promo-price" contenteditable="true" data-field="promoPrice">${formatPrice(state.promoPrice)}</div>
-                    ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
-                </div>` : '';
+                let priceHTML = '';
+
+                if (controls.promoShowSmlPricesCheck.checked) {
+                    const textAlign = controls.promoTextAlign.value;
+                    const justification = textAlign === 'center' ? 'center' : (textAlign === 'right' ? 'flex-end' : 'flex-start');
+                    priceHTML = `
+                        <style>
+                            .promo-sml-prices { flex-direction: column; align-items: ${justification}; gap: 8px; }
+                            .promo-sml-prices .volume-price {
+                                font-size: calc(var(--promo-price-font-size) * 0.7);
+                                color: var(--promo-price-font-color);
+                                font-family: var(--promo-price-font-family);
+                                font-weight: bold;
+                                gap: 10px;
+                                width: 100%;
+                                justify-content: ${justification};
+                            }
+                            .promo-sml-prices .volume-price span:first-child { font-weight: 500; }
+                        </style>
+                        <div class="promo-price-container promo-sml-prices">
+                            <div class="volume-price">
+                                <span contenteditable="true" data-field="promoVolumeS">${state.promoVolumeS || 'S'}:</span>
+                                <span contenteditable="true" data-field="promoPriceS">${formatPrice(state.promoPriceS)}</span>
+                            </div>
+                            <div class="volume-price">
+                                <span contenteditable="true" data-field="promoVolumeM">${state.promoVolumeM || 'M'}:</span>
+                                <span contenteditable="true" data-field="promoPriceM">${formatPrice(state.promoPriceM)}</span>
+                            </div>
+                            <div class="volume-price">
+                                <span contenteditable="true" data-field="promoVolumeL">${state.promoVolumeL || 'L'}:</span>
+                                <span contenteditable="true" data-field="promoPriceL">${formatPrice(state.promoPriceL)}</span>
+                            </div>
+                        </div>`;
+                } else {
+                    const discountedPrice = calculateDiscountedPrice();
+                    priceHTML = discountedPrice > 0 ? `
+                    <div class="promo-price-container">
+                        <div class="promo-price" contenteditable="true" data-field="promoPrice">${formatPrice(state.promoPrice)}</div>
+                        ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
+                    </div>` : '';
+                }
 
                 const createIcon = (src, alt) => `<span class="promo-icon-wrapper"><img src="${src}" alt="${alt}" class="promo-icon"></span>`;
 
@@ -1862,6 +1958,7 @@
                         <div class="promo-comment" contenteditable="true" data-field="promoComment">${state.promoComment}</div>
                     </div>`;
             }
+
 
             function render() {
                 deselectActiveResizable();
@@ -1906,8 +2003,6 @@
                     if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
                         menuBgTarget.style.backgroundImage = `url(${state.menuBgImage})`;
                         menuBgTarget.style.backgroundColor = '';
-                        const header = menuBgTarget.querySelector('.menu-header');
-                        if (header) header.style.backgroundColor = 'transparent';
                     } else {
                         menuBgTarget.style.backgroundImage = 'none';
                         menuBgTarget.style.backgroundColor = controls.menuBgPicker.value;
