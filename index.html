@@ -757,6 +757,14 @@
         z-index: 10;
         flex-shrink: 1;
     }
+
+    /* --- ДОБАВЛЕННЫЙ СТИЛЬ ДЛЯ КОМБИНИРОВАННОГО СПИСКА --- */
+    .combined-template .menu-list-template .section-header {
+        flex-direction: column;  /* Ставит заголовок и SML-цены друг под другом */
+        align-items: stretch;    /* Растягивает оба элемента на всю ширину */
+        gap: 8px;                /* Добавляет отступ между заголовком и SML-ценами */
+    }
+    /* --- КОНЕЦ ДОБАВЛЕННОГО СТИЛЯ --- */
 </style>
 </head>
 <body>
