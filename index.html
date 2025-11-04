@@ -98,6 +98,7 @@
         background-color: var(--primary);
         color: #FFFFFF;
         width: 100%;
+        text-decoration: none;
     }
 
     #download-png-btn {
@@ -134,7 +135,7 @@
     border-color: #ffffff;
     }
 
-    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close {
+    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close, #download-template-btn {
         border-radius: 30px;
     }
     
@@ -295,6 +296,7 @@
         border: 1px solid var(--border); padding: 20px;
     }
     
+    /* --- ИСПРАВЛЕННЫЙ БЛОК --- */
     .preview-container {
         width: 100%;
         max-height: 100%;
@@ -309,6 +311,7 @@
         border: 0px solid var(--border);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+    /* --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА --- */
     
     .menu-preview {
         width: 100%; height: 100%; position: relative; background-color: var(--menu-bg-color);
@@ -341,6 +344,10 @@
         margin-bottom: 0;
         padding-bottom: 0;
         border-bottom: none;
+        /* --- НОВОЕ --- */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .menu-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed var(--border); }
@@ -352,9 +359,26 @@
         font-size: var(--item-font-size);
         color: #000000;
         margin-bottom: 2px;
+        /* --- НОВОЕ --- */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .item-description { font-family: var(--desc-font-family); font-size: var(--desc-font-size); color: var(--desc-font-color); margin-bottom: 5px; font-weight: 300; }
+    .item-description { 
+        font-family: var(--desc-font-family); 
+        font-size: var(--desc-font-size); 
+        color: var(--desc-font-color); 
+        margin-bottom: 5px; 
+        font-weight: 300; 
+        /* --- НОВОЕ --- */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-word;
+    }
     .item-price {
         font-family: var(--item-font-family); font-weight: 700; font-size: var(--item-font-size); color: var(--item-font-color);
         white-space: nowrap; margin-left: 20px; text-align: right; flex-shrink: 0;
@@ -373,7 +397,17 @@
         align-items: baseline;
     }
     
-    .menu-grid-template, .menu-grid-template-3x2 { width: 100%; height: 100%; display: grid; gap: 15px; padding: 15px; background-color: var(--grid-bg-color); }
+    .menu-grid-template, .menu-grid-template-3x2 { 
+        width: 100%; 
+        /* height: 100%; <-- УДАЛЕНО */
+        display: grid; 
+        gap: 15px; 
+        padding: 15px; 
+        background-color: var(--grid-bg-color); 
+        /* --- НОВОЕ --- */
+        flex-grow: 1;
+        min-height: 0;
+    }
     .menu-grid-template { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
     .menu-grid-template-3x2 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
     
@@ -398,7 +432,12 @@
         flex-grow: 1; 
         color: var(--desc-font-color);
         word-break: break-word;
+        /* --- НОВОЕ --- */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
     .grid-cell .item-price { text-align: left; margin-left: 0; font-family: var(--price-font-family); font-size: var(--price-font-size); color: var(--price-font-color); margin-top: auto; }
     
@@ -459,10 +498,30 @@
     .promo-title {
         font-size: var(--promo-title-font-size); font-family: var(--promo-title-font-family); color: var(--promo-title-font-color);
         font-weight: 600; margin-bottom: 20px; line-height: 1.1; display: inline-flex; align-items: flex-start; gap: 15px;
+        /* --- НОВОЕ --- */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-    .promo-text { font-size: var(--promo-text-font-size); font-family: var(--promo-text-font-family); color: var(--promo-text-font-color); margin-bottom: 30px; line-height: 1.3; }
+    .promo-text { 
+        font-size: var(--promo-text-font-size); 
+        font-family: var(--promo-text-font-family); 
+        color: var(--promo-text-font-color); 
+        margin-bottom: 30px; 
+        line-height: 1.3; 
+        /* --- НОВОЕ --- */
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-word;
+    }
     .promo-comment {
-        font-family: var(--desc-font-family); font-size: 10px; color: var(--promo-text-font-color); margin-top: auto;
+        font-family: var(--promo-comment-font-family, var(--desc-font-family));
+        font-size: var(--promo-comment-font-size, 10px);
+        color: var(--promo-comment-font-color, var(--promo-text-font-color));
+        margin-top: auto;
         padding-top: 15px; width: 100%; box-sizing: border-box; align-self: flex-end; opacity: 0.8;
     }
     .promo-price-container { display: inline-flex; align-items: center; gap: 20px; }
@@ -479,7 +538,10 @@
         padding: 8px; border-radius: 8px; 
         background-color: transparent;
     }
-    .promo-icon { height: 1.2em; width: auto; }
+    .promo-icon {
+        height: 1.2em;
+        width: auto;
+    }
     
     .combined-template { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; overflow: hidden; position: relative; }
     .combined-promo-part { position: relative; z-index: 1; background-size: cover; background-position: center; overflow: hidden; color: white; }
@@ -493,6 +555,8 @@
         flex-direction: column;
         background-size: cover;
         background-position: center;
+        /* --- ИЗМЕНЕНИЕ 2: Добавлено скругление --- */
+        border-radius: var(--border-radius);
     }
     .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x2 {
         flex-grow: 1;
@@ -508,8 +572,17 @@
         text-overflow: ellipsis;
     }
 
-    .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--menu-bg-color); flex-shrink: 0; }
-    .menu-grid-category-title { font-family: var(--category-font-family); font-size: var(--category-font-size); font-weight: 700; color: var(--category-font-color); }
+    .menu-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: transparent; flex-shrink: 0; }
+    .menu-grid-category-title { 
+        font-family: var(--category-font-family); 
+        font-size: var(--category-font-size); 
+        font-weight: 700; 
+        color: var(--category-font-color); 
+        /* --- НОВОЕ --- */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     .menu-date { font-family: var(--item-font-family); font-size: 14px; color: var(--text-secondary); background-color: transparent; padding: 5px 10px; border-radius: 4px; }
     
     .modal-overlay {
@@ -616,8 +689,12 @@
     .manual-item {
         display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 8px;
         margin-bottom: 5px; background: var(--background-light); font-size: 13px; color: var(--text-secondary);
+        cursor: grab;
     }
-    .manual-item-name { flex-grow: 1; font-weight: 500; color: var(--text-main); }
+    .manual-item.dragging { opacity: 0.5; }
+    .manual-item.drag-over { border-top: 2px solid var(--primary); }
+
+    .manual-item-name { flex-grow: 1; font-weight: 500; color: var(--text-main); pointer-events: none; }
     .manual-item-actions button { background: none; border: none; cursor: pointer; padding: 4px; }
     .add-item-area {
         border: 2px dashed var(--border);
@@ -664,7 +741,12 @@
     .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
     .combined-template .item-price { font-size: calc(var(--item-font-size) * 0.9); }
 
-    .combined-template .grid-cell { display: block; position: relative; overflow: visible; }
+    .combined-template .grid-cell {
+        display: block;
+        position: relative;
+        /* --- ИЗМЕНЕНИЕ 2: Исправлено скругление --- */
+        overflow: hidden;
+    }
     .combined-template .grid-cell-content { height: 100%; width: 100%; position: relative; z-index: 2; }
     .combined-template .grid-cell .item-photo-container { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; flex: none; z-index: 1; }
     .combined-template .grid-cell::after { display: none; }
@@ -697,6 +779,11 @@
     .promo-template.resizable-container, .combined-promo-part.resizable-container {
         cursor: move;
     }
+    /* --- ИЗМЕНЕНИЕ 1: Добавлено для фона меню --- */
+    .combined-menu-part.resizable-container {
+        cursor: move;
+    }
+
      .delete-photo-btn {
         position: absolute;
         top: 8px;
@@ -784,21 +871,22 @@
                         <summary>Шаг 1: Содержимое</summary>
                         <div class="control-group-content">
                             <div class="toggle-switch">
-                                <button id="toggle-manual" class="toggle-btn" data-mode="manual">Ввести вручную</button>
-                                <button id="toggle-upload" class="toggle-btn active" data-mode="upload">Загрузить файл</button>
+                                <button id="toggle-manual" class="toggle-btn active" data-mode="manual">Ввести вручную</button>
+                                <button id="toggle-upload" class="toggle-btn" data-mode="upload">Загрузить файл</button>
                             </div>
                             
-                            <div id="upload-mode-content">
+                            <div id="upload-mode-content" style="display: none;">
                                 <div class="drop-area" id="menu-drop-area">
     Перетащите файл Excel или TXT или
     <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Выберите файл</button>
     <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .txt" style="display: none;">
     <div class="file-info" id="menu-file-info">Файл не выбран</div>
 </div>
+                                <a href="menutv.xlsx" download="menutv.xlsx" id="download-template-btn" class="btn btn-secondary" style="margin-top: 15px;">Скачать шаблон меню</a>
                             </div>
 
-                            <div id="manual-mode-content" style="display: none;" class="manual-editor">
-                               <p style="margin-bottom: 15px;">Нажимая на поля текста в превью, вы можете заполнить свое меню, а после сохранить страницу как Excel.</p>
+                            <div id="manual-mode-content" class="manual-editor">
+                               <p style="margin-bottom: 15px;">Нажимая на поля текста в превью, вы можете заполнить свое меню. Позиции ниже можно менять местами, перетаскивая их мышкой.</p>
                                <div id="manual-item-list"></div>
                                <div id="add-manual-item-btn" class="add-item-area">+ Добавить позицию</div>
                                <button id="export-excel-btn" class="btn btn-secondary">Сохранить как Excel</button>
@@ -895,7 +983,7 @@
                                 </div>
                             </div>
                              <div style="margin-top: 15px;">
-                                <label>Шрифт пунктов</label>
+                                <label id="item-font-label">Шрифт позиции</label>
                                 <div class="setting-row">
                                     <select id="item-font-select" class="select">
                                         <option value="'Roboto', sans-serif">Roboto</option>
@@ -909,7 +997,7 @@
                                         <option value="'Rubik', sans-serif">Rubik</option>
                                         <option value="'Cormorant', serif">Cormorant</option>
                                     </select>
-                                    <input type="number" id="item-font-size" class="input" value="16" min="10" max="100">
+                                    <input type="number" id="item-font-size" class="input" value="24" min="10" max="100">
                                     <input type="color" id="item-color-picker" value="#000000">
                                 </div>
                             </div>
@@ -941,7 +1029,7 @@
                                         <option value="'Montserrat', sans-serif">Montserrat</option>
                                         <option value="'Oswald', sans-serif">Oswald</option>
                                     </select>
-                                    <input type="number" id="price-font-size" class="input" value="10" min="10" max="100">
+                                    <input type="number" id="price-font-size" class="input" value="20" min="10" max="100">
                                     <input type="color" id="price-color-picker" value="#00b398">
                                 </div>
                             </div>
@@ -950,7 +1038,7 @@
                 </div>
                 
                 <div id="promo-controls" style="display: none;">
-                    <details class="control-group" open>
+                    <details class="control-group">
                         <summary>Настройки текста</summary>
                         <div class="control-group-content">
                             <label>Заголовок акции</label>
@@ -987,42 +1075,68 @@
                                 <input type="number" id="promo-text-size" class="input" value="40" min="10" max="100">
                                 <input type="color" id="promo-text-color-picker" value="#000000">
                             </div>
+                            <label>Комментарий</label>
+                             <div class="setting-row">
+                                <select id="promo-comment-font-select" class="select">
+                                   <option value="'Roboto', sans-serif">Roboto</option>
+                                   <option value="'Open Sans', sans-serif">Open Sans</option>
+                                   <option value="'PT Sans', sans-serif">PT Sans</option>
+                                   <option value="'Playfair Display', serif">Playfair Display</option>
+                                   <option value="'Montserrat', sans-serif">Montserrat</option>
+                                   <option value="'Oswald', sans-serif">Oswald</option>
+                                   <option value="'Raleway', sans-serif">Raleway</option>
+                                   <option value="'Nunito', sans-serif">Nunito</option>
+                                   <option value="'Rubik', sans-serif">Rubik</option>
+                                   <option value="'Cormorant', serif">Cormorant</option>
+                                </select>
+                                <input type="number" id="promo-comment-size" class="input" value="18" min="8" max="100">
+                                <input type="color" id="promo-comment-color-picker" value="#000000">
+                            </div>
                         </div>
                     </details>
                     
-                    <details class="control-group" open>
+                    <details class="control-group">
                         <summary>Настройки цены</summary>
                         <div class="control-group-content">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="promo-show-price-checkbox" checked>
+                                <label for="promo-show-price-checkbox">Показывать блок цены</label>
+                            </div>
                             <div class="checkbox-group">
                                 <input type="checkbox" id="promo-show-sml-prices-checkbox">
                                 <label for="promo-show-sml-prices-checkbox">Показывать цены S,M,L</label>
                             </div>
-                           <label>Цена</label>
-                            <div class="setting-row">
-                                <select id="promo-price-font-select" class="select">
-                                    <option value="'Roboto', sans-serif">Roboto</option>
-                                    <option value="'Open Sans', sans-serif">Open Sans</option>
-                                    <option value="'PT Sans', sans-serif">PT Sans</option>
-                                    <option value="'Playfair Display', serif">Playfair Display</option>
-                                    <option value="'Montserrat', sans-serif">Montserrat</option>
-                                    <option value="'Oswald', sans-serif">Oswald</option>
-                                    <option value="'Raleway', sans-serif">Raleway</option>
-                                    <option value="'Nunito', sans-serif">Nunito</option>
-                                    <option value="'Rubik', sans-serif">Rubik</option>
-                                    <option value="'Cormorant', serif">Cormorant</option>
-                                </select>
-                                <input type="number" id="promo-price-size" class="input" value="60" min="10" max="180">
-                                <input type="color" id="promo-price-color-picker" value="#000000">
+                            
+                            <div id="promo-single-price-group">
+                               <label>Цена</label>
+                                <div class="setting-row">
+                                    <select id="promo-price-font-select" class="select">
+                                        <option value="'Roboto', sans-serif">Roboto</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'PT Sans', sans-serif">PT Sans</option>
+                                        <option value="'Playfair Display', serif">Playfair Display</option>
+                                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                                        <option value="'Oswald', sans-serif">Oswald</option>
+                                        <option value="'Raleway', sans-serif">Raleway</option>
+                                        <option value="'Nunito', sans-serif">Nunito</option>
+                                        <option value="'Rubik', sans-serif">Rubik</option>
+                                        <option value="'Cormorant', serif">Cormorant</option>
+                                    </select>
+                                    <input type="number" id="promo-price-size" class="input" value="60" min="10" max="180">
+                                    <input type="color" id="promo-price-color-picker" value="#000000">
+                                </div>
                             </div>
                             
-                            <label>Скидка</label>
-                            <div class="slider-container">
-                                <input type="range" id="promo-discount-slider" min="0" max="100" value="0">
-                                <div class="slider-value" id="promo-discount-value">0%</div>
-                            </div>
-                            <div class="setting-row">
-                                <input type="color" id="discount-color-picker" value="#ff5252">
-                                <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
+                            <div id="promo-discount-group">
+                                <label>Скидка</label>
+                                <div class="slider-container">
+                                    <input type="range" id="promo-discount-slider" min="0" max="100" value="0">
+                                    <div class="slider-value" id="promo-discount-value">0%</div>
+                                </div>
+                                <div class="setting-row">
+                                    <input type="color" id="discount-color-picker" value="#ff5252">
+                                    <input type="color" id="discount-bg-color-picker" value="rgba(255, 255, 255, 0.2)">
+                                </div>
                             </div>
                         </div>
                     </details>
@@ -1035,6 +1149,7 @@
                                 <div class="checkbox-group"><input type="checkbox" id="vegan-checkbox"><label for="vegan-checkbox">Веган</label></div>
                                 <div class="checkbox-group"><input type="checkbox" id="halal-checkbox"><label for="halal-checkbox">Халяль</label></div>
                                 <div class="checkbox-group"><input type="checkbox" id="glutenfree-checkbox"><label for="glutenfree-checkbox">Без глютена</label></div>
+                                <div class="checkbox-group"><input type="checkbox" id="hot-checkbox"><label for="hot-checkbox">Острое</label></div>
                                 <div class="checkbox-group"><input type="checkbox" id="new-checkbox"><label for="new-checkbox">Новинка</label></div>
                             </div>
                             
@@ -1063,7 +1178,7 @@
                 </div>
                 
                 <div id="combined-controls" style="display: none;">
-                     <details class="control-group" open>
+                     <details class="control-group">
                         <summary>Настройки</summary>
                         <div class="control-group-content">
                            <p>Внесите нужные изменения в предыдущих разделах "Меню" и "Акция", ведь комбинированная страница, это совмещенный вариант уже созданных страниц.</p>
@@ -1123,7 +1238,7 @@
 
     <div class="modal-overlay" id="limit-modal" style="display: none;">
         <div class="modal">
-            <div class="modal-title">Количество позиций в этой вёрстке ограничено настройками читаемости.</div>
+            <div class="modal-title">Количество позиций в этой вёрстке ограничено (5 для списка, 4/6 для сетки).</div>
             <div class="modal-actions" style="justify-content: center;">
                 <button class="btn" id="limit-modal-close" style="width: 50%;">OK</button>
             </div>
@@ -1158,6 +1273,7 @@
                 categoryFont: getEl('category-font-select'),
                 categorySize: getEl('category-font-size'),
                 categoryColor: getEl('category-color-picker'),
+                itemFontLabel: getEl('item-font-label'),
                 itemFont: getEl('item-font-select'),
                 itemSize: getEl('item-font-size'),
                 itemColor: getEl('item-color-picker'),
@@ -1173,6 +1289,9 @@
                 promoTitleColor: getEl('promo-title-color-picker'),
                 promoTextSize: getEl('promo-text-size'),
                 promoTextColor: getEl('promo-text-color-picker'),
+                promoCommentFont: getEl('promo-comment-font-select'),
+                promoCommentSize: getEl('promo-comment-size'),
+                promoCommentColor: getEl('promo-comment-color-picker'),
                 promoPriceSize: getEl('promo-price-size'),
                 promoPriceColor: getEl('promo-price-color-picker'),
                 promoDiscountSlider: getEl('promo-discount-slider'),
@@ -1182,6 +1301,7 @@
                 veganCheck: getEl('vegan-checkbox'),
                 halalCheck: getEl('halal-checkbox'),
                 glutenfreeCheck: getEl('glutenfree-checkbox'),
+                hotCheck: getEl('hot-checkbox'),
                 newCheck: getEl('new-checkbox'),
                 promoTextAlign: getEl('promo-text-align-select'),
                 promoTitleFont: getEl('promo-title-font-select'),
@@ -1222,6 +1342,7 @@
                 menuBgFileInfo: getEl('menu-bg-file-info'),
                 limitModal: getEl('limit-modal'),
                 limitModalClose: getEl('limit-modal-close'),
+                promoShowPriceCheck: getEl('promo-show-price-checkbox'),
                 promoShowSmlPricesCheck: getEl('promo-show-sml-prices-checkbox'),
             };
 
@@ -1264,6 +1385,9 @@
                 startPosY: 50
             };
 
+            // --- Drag and Drop State ---
+            let dragStartIndex = -1;
+
             function formatDate(date) {
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -1290,9 +1414,9 @@
                  if(state.excelData.length === 0) {
                      state.excelData = [
                         { name: 'Блюдо 1', description: 'Краткое описание блюда', price: '100', category: 'Название категории', S: '150', M: '200', L: '250', volumeS: 'S', volumeM: 'M', volumeL: 'L', isPlaceholder: true },
-                        { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
-                        { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true },
-                        { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '', isPlaceholder: true }
+                        { name: 'Блюдо 2', description: 'Краткое описание блюда', price: '200', category: 'Название категории', S: '', M: '', L: '', volumeS: 'S', volumeM: 'M', volumeL: 'L', isPlaceholder: true },
+                        { name: 'Блюдо 3', description: 'Краткое описание блюда', price: '300', category: 'Название категории', S: '', M: '', L: '', volumeS: 'S', volumeM: 'M', volumeL: 'L', isPlaceholder: true },
+                        { name: 'Блюдо 4', description: 'Краткое описание блюда', price: '400', category: 'Название категории', S: '', M: '', L: '', volumeS: 'S', volumeM: 'M', volumeL: 'L', isPlaceholder: true }
                      ];
                  }
             }
@@ -1313,10 +1437,15 @@
                     updatePreviewAspectRatio();
                 }
 
+                // Set initial font sizes based on default layout ('grid')
+                controls.itemSize.value = 24;
+                controls.priceSize.value = 20;
+
                 createDefaultMenuData();
                 renderManualEditor();
                 updateGridColorVisibility();
                 updateMenuBgControlsVisibility();
+                updatePromoPriceControls(); // Call to set initial state of price/discount
                 render();
             }
 
@@ -1363,7 +1492,27 @@
                 controls.layoutButtons.addEventListener('click', (e) => {
                     const targetButton = e.target.closest('.layout-btn');
                     if (!targetButton) return;
-                    state.layout = targetButton.dataset.layout;
+                    
+                    const newLayout = targetButton.dataset.layout;
+                    
+                    // Update font size defaults and label
+                    if (newLayout === 'list') {
+                        controls.itemSize.value = 32;
+                        if (controls.itemFontLabel) controls.itemFontLabel.textContent = 'Шрифт название и стоимость';
+                        if (state.excelData.length > 5) {
+                            controls.limitModal.style.display = 'flex';
+                        }
+                    } else { // grid or grid3x2
+                        controls.itemSize.value = 24;
+                        controls.priceSize.value = 20;
+                        if (controls.itemFontLabel) controls.itemFontLabel.textContent = 'Шрифт позиции';
+                        const limit = newLayout === 'grid' ? 4 : 6;
+                        if (state.excelData.length > limit) {
+                             controls.limitModal.style.display = 'flex';
+                        }
+                    }
+
+                    state.layout = newLayout;
 
                     document.querySelectorAll('#layout-buttons .layout-btn').forEach(btn => {
                         btn.classList.remove('active');
@@ -1440,6 +1589,13 @@
                     controls.limitModal.style.display = 'none';
                 });
 
+                // Promo SML checkbox listener
+                controls.promoShowSmlPricesCheck.addEventListener('change', () => {
+                    updatePromoPriceControls();
+                    render(); // Re-render to show/hide price block in preview
+                });
+                controls.promoShowPriceCheck.addEventListener('change', render);
+
                 // --- Image Resizing and Panning Listeners ---
                 controls.menuPreview.addEventListener('mousedown', handlePreviewMouseDown);
                 document.addEventListener('mousemove', handleDocumentMouseMove);
@@ -1451,6 +1607,9 @@
                 }, true);
 
                 controls.menuPreview.addEventListener('click', handleDeletePhotoClick);
+
+                // --- Drag and Drop Listeners ---
+                setupDragDropListeners();
             }
             
              function handleDeletePhotoClick(e) {
@@ -1476,11 +1635,73 @@
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.menuBgImage = event.target.result;
+                        // --- ИЗМЕНЕНИЕ 1: Добавлено ---
+                        state.imageTransforms['menuBg'] = { size: 100, x: 50, y: 50 };
                         render();
                     };
                     reader.readAsDataURL(file);
                 }
             }
+
+            // --- Drag and Drop Functions ---
+            function setupDragDropListeners() {
+                const list = controls.manualItemList;
+                list.addEventListener('dragstart', e => {
+                    const target = e.target.closest('.manual-item');
+                    if (!target) return;
+                    dragStartIndex = Array.from(list.children).indexOf(target);
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', dragStartIndex);
+                    setTimeout(() => target.classList.add('dragging'), 0);
+                });
+
+                list.addEventListener('dragend', e => {
+                    const target = e.target.closest('.manual-item');
+                    if (!target) return;
+                    target.classList.remove('dragging');
+                    clearDragOver();
+                });
+
+                list.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const target = e.target.closest('.manual-item');
+                    if (!target) return;
+                    clearDragOver();
+                    target.classList.add('drag-over');
+                });
+
+                list.addEventListener('dragleave', e => {
+                    const target = e.target.closest('.manual-item');
+                     if (target && !target.contains(e.relatedTarget)) {
+                        target.classList.remove('drag-over');
+                    }
+                });
+
+                list.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const target = e.target.closest('.manual-item');
+                    if (!target) {
+                        clearDragOver();
+                        return;
+                    }
+                    
+                    const dragEndIndex = Array.from(list.children).indexOf(target);
+                    
+                    // Reorder data
+                    const [draggedItem] = state.excelData.splice(dragStartIndex, 1);
+                    state.excelData.splice(dragEndIndex, 0, draggedItem);
+                    
+                    clearDragOver();
+                    renderManualEditor();
+                    render();
+                });
+            }
+
+            function clearDragOver() {
+                controls.manualItemList.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            }
+            // --- End Drag and Drop ---
+
 
             function updatePreviewAspectRatio() { controls.exportContainer.style.aspectRatio = state.aspectRatio; }
 
@@ -1503,22 +1724,27 @@
                 render();
             }
 
+            function updatePromoPriceControls() {
+                const showSml = controls.promoShowSmlPricesCheck.checked;
+                getEl('promo-discount-group').style.display = showSml ? 'none' : 'block';
+                getEl('promo-single-price-group').style.display = showSml ? 'none' : 'block';
+            }
+
             function switchInputMode(e) {
                 const mode = e.target.dataset.mode;
                 controls.toggleUpload.classList.toggle('active', mode === 'upload');
                 controls.toggleManual.classList.toggle('active', mode === 'manual');
                 controls.uploadModeContent.style.display = mode === 'upload' ? 'block' : 'none';
                 controls.manualModeContent.style.display = mode === 'manual' ? 'block' : 'none';
-                if(mode === 'manual') {
-                    state.layout = 'grid';
-                    document.querySelectorAll('#layout-buttons .layout-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.layout === 'grid'));
+                if(mode === 'manual' && state.excelData.length === 0) {
                     createDefaultMenuData();
                     render();
+                    renderManualEditor();
                 }
             }
             
             function addManualItem() {
-                const limits = { grid: 4, grid3x2: 6, list: Infinity };
+                const limits = { grid: 4, grid3x2: 6, list: 5 };
                 const limit = limits[state.layout];
                 
                 if (limit && state.excelData.length >= limit) {
@@ -1627,10 +1853,10 @@
 
             function renderManualEditor() {
                 controls.manualItemList.innerHTML = state.excelData.map((item, index) => `
-                    <div class="manual-item">
+                    <div class="manual-item" draggable="true" data-index="${index}">
                         <span class="manual-item-name">${item.name}</span>
                         <div class="manual-item-actions">
-                            <button class="delete-item-btn" data-index="${index}"><img src="delete.svg" alt="Удалить" style="width:32px;height:32px;"></button>
+                            <button class="delete-item-btn" data-index="${index}" title="Удалить эту позицию"><img src="delete.svg" alt="Удалить" style="width:32px;height:32px;"></button>
                         </div>
                     </div>
                 `).join('');
@@ -1654,9 +1880,29 @@
                 if (!field) return;
                 
                 let newValue = target.innerText.trim();
+                const priceFields = ['price', 'promoPrice', 'S', 'M', 'L', 'promoPriceS', 'promoPriceM', 'promoPriceL'];
+
+                // Restore default text if empty
+                if (newValue === '') {
+                    if (field === 'name') newValue = 'Блюдо';
+                    else if (field === 'description') newValue = 'Описание';
+                    else if (priceFields.includes(field)) newValue = '0';
+                    else if (field === 'category') newValue = 'Категория';
+                    else if (field === 'promoTitle') newValue = 'Заголовок акции';
+                    else if (field === 'promoText') newValue = 'Текст акции';
+                    else if (field === 'promoComment') newValue = 'Комментарий';
+                    else if (field === 'displayDate') newValue = state.displayDate;
+                    else if (field.startsWith('volume')) newValue = field.replace('volume', '');
+                    target.innerText = newValue;
+                }
                 
                 if (field.startsWith('promo')) {
-                    state[field] = newValue;
+                     if (priceFields.includes(field)) {
+                        state[field] = newValue.replace(/[^\d.,]/g, '').trim();
+                        target.innerText = formatPrice(state[field]);
+                    } else {
+                        state[field] = newValue;
+                    }
                 } else if (field === 'displayDate') {
                     state.displayDate = newValue;
                 }
@@ -1668,12 +1914,9 @@
 
                     item.isPlaceholder = false;
 
-                    const priceFields = ['price', 'S', 'M', 'L'];
                      if (priceFields.includes(field)) {
                          item[field] = newValue.replace(/[^\d.,]/g, '').trim();
-                         if (!newValue.includes(state.currency)) {
-                            target.innerText = formatPrice(newValue);
-                         }
+                         target.innerText = formatPrice(item[field]);
                     } else if(field.startsWith('volume')) {
                         item[field] = newValue.replace(':', '').trim();
                     } else if (field === 'category') {
@@ -1689,9 +1932,18 @@
             }
 
             function generateFilename() {
-                const dateStr = formatDate(new Date()).replace(/\./g, '-');
-                let categoryStr = (state.excelData.length > 0 ? state.excelData[0].category : 'меню').trim().replace(/\s+/g, '_');
-                return `${categoryStr}_${dateStr}`;
+                // Sanitize helper
+                const sanitize = (str) => str.trim().replace(/[^\wа-яА-ЯёЁ\s]/g, '').replace(/\s+/g, '_');
+
+                if (state.currentTab === 'promo') {
+                    const sanitizedTitle = sanitize(state.promoTitle);
+                    return `${sanitizedTitle || 'акция'}_акция`;
+                }
+                
+                // For 'menu' and 'combined' tabs
+                const categoryStr = (state.excelData.length > 0 ? state.excelData[0].category : 'меню');
+                const sanitizedCategory = sanitize(categoryStr);
+                return `${sanitizedCategory}_меню`;
             }
 
             function exportToExcel() {
@@ -1745,9 +1997,9 @@
             }
 
             function formatPrice(price) {
-                if (price === null || price === undefined || String(price).trim() === '') return '';
+                if (price === null || price === undefined || String(price).trim() === '') return '0 ' + state.currency;
                 const num = parseFloat(String(price).replace(',', '.'));
-                return isNaN(num) ? price : `${num.toFixed(0)} ${state.currency}`;
+                return isNaN(num) ? '0 ' + state.currency : `${num.toFixed(0)} ${state.currency}`;
             }
 
             function calculateDiscountedPrice() {
@@ -1768,6 +2020,9 @@
                     '--promo-title-font-family': controls.promoTitleFont.value, '--promo-title-font-size': controls.promoTitleSize.value + 'px',
                     '--promo-title-font-color': controls.promoTitleColor.value, '--promo-text-font-family': controls.promoTextFont.value,
                     '--promo-text-font-size': controls.promoTextSize.value + 'px', '--promo-text-font-color': controls.promoTextColor.value,
+                    '--promo-comment-font-family': controls.promoCommentFont.value,
+                    '--promo-comment-font-size': controls.promoCommentSize.value + 'px',
+                    '--promo-comment-font-color': controls.promoCommentColor.value,
                     '--promo-price-font-family': controls.promoPriceFont.value, '--promo-price-font-size': controls.promoPriceSize.value + 'px',
                     '--promo-price-font-color': controls.promoPriceColor.value, '--discount-font-color': controls.discountColor.value,
                     '--discount-bg-color': controls.discountBgColor.value, '--promo-text-align': controls.promoTextAlign.value,
@@ -1782,14 +2037,15 @@
                 
                 const isList = currentLayout === 'list';
                 let headerHTML = '';
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
 
                 if (!isList) {
                     const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
                     const isFirstItemPlaceholder = state.excelData.length > 0 && state.excelData[0].isPlaceholder;
                     headerHTML = `
                         <div class="menu-header">
-                            <div class="menu-grid-category-title ${isFirstItemPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="0" data-field="category">${firstCategory}</div>
-                            ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div>` : ''}
+                            <div class="menu-grid-category-title ${isFirstItemPlaceholder ? 'is-placeholder' : ''}" ${editable} data-index="0" data-field="category">${firstCategory}</div>
+                            ${controls.showDateCheck.checked ? `<div class="menu-date auto-contrast" ${editable} data-field="displayDate">${state.displayDate}</div>` : ''}
                         </div>`;
                 }
 
@@ -1801,14 +2057,19 @@
             }
 
             function renderListMenu() {
-                const dataToRender = state.excelData;
+                if (state.excelData.length > 5) {
+                    controls.limitModal.style.display = 'flex';
+                }
+                const dataToRender = state.excelData.slice(0, 5);
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                
                 const categories = {};
                 dataToRender.forEach(item => {
                     if (!categories[item.category]) categories[item.category] = [];
                     categories[item.category].push(item);
                 });
                 
-                const dateHTML = controls.showDateCheck.checked ? `<div class="menu-header list-view-header"><div class="menu-date auto-contrast" contenteditable="true" data-field="displayDate">${state.displayDate}</div></div>` : '';
+                const dateHTML = controls.showDateCheck.checked ? `<div class="menu-header list-view-header"><div class="menu-date auto-contrast" ${editable} data-field="displayDate">${state.displayDate}</div></div>` : '';
 
                 let itemsHTML = Object.keys(categories).map(categoryName => {
                     const itemsInCategory = categories[categoryName];
@@ -1827,7 +2088,7 @@
                     return `
                     <div class="menu-section">
                         <div class="section-header">
-                            <div class="section-title ${isCategoryPlaceholder ? 'is-placeholder' : ''}" contenteditable="true" data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
+                            <div class="section-title ${isCategoryPlaceholder ? 'is-placeholder' : ''}" ${editable} data-index="${firstItemIndex}" data-field="category">${categoryName}</div>
                             ${smlHeader}
                         </div>
                         ${itemsInCategory.map(item => {
@@ -1836,18 +2097,18 @@
                             let priceHTML;
                             if (controls.showSmlPricesCheck.checked) {
                                 priceHTML = `<div class="volume-price-container">` +
-                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S || '') || '-'}</span></div>` +
-                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M || '') || '-'}</span></div>` +
-                                    `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L || '') || '-'}</span></div>` +
+                                    `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span ${editable} data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` +
+                                    `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span ${editable} data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` +
+                                    `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span ${editable} data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` +
                                 `</div>`;
                             } else {
-                                priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
+                                priceHTML = `<span ${editable} class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price)}</span>`;
                             }
                             return `
                             <div class="menu-item">
                                 <div class="item-content">
-                                    <div class="item-name ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
-                                    ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : ''}
+                                    <div class="item-name ${placeholderClass}" ${editable} data-index="${originalIndex}" data-field="name" style="color: var(--item-font-color);">${item.name}</div>
+                                    ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" ${editable} data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : ''}
                                 </div>
                                 <div class="item-price">${priceHTML}</div>
                             </div>`;
@@ -1855,11 +2116,17 @@
                     </div>`;
                 }).join('');
 
-                const columnsClass = state.excelData.length > 10 ? 'two-columns' : '';
+                const columnsClass = state.excelData.length > 10 ? 'two-columns' : ''; // This check is fine, it just affects columns, not item count
                 return `${dateHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
             }
             
             function renderGridMenu(limit, className) {
+                if (state.excelData.length > limit) {
+                    controls.limitModal.style.display = 'flex';
+                }
+                const dataToRender = state.excelData.slice(0, limit);
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+
                 const renderCell = (item, index) => {
                     const originalIndex = state.excelData.indexOf(item);
                     const imgSrc = state.gridImages[originalIndex] || item.photo;
@@ -1868,102 +2135,120 @@
                     const key = `grid-${originalIndex}`;
                     const transform = state.imageTransforms[key] || { size: 100, x: 50, y: 50 };
                     
-                    const photoHTML = imgSrc ? `
-                        <div class="item-photo" style="background-image: url('${imgSrc}');"></div>
-                        <div class="resize-handle tl"></div>
-                        <div class="resize-handle tr"></div>
-                        <div class="resize-handle bl"></div>
-                        <div class="resize-handle br"></div>
-                        <button class="delete-photo-btn" data-index="${originalIndex}"><img src="delete.svg" alt="Удалить"></button>
-                    ` : `<button class="upload-photo-btn">+</button>`;
+                    let photoHTML = '';
+                    if (imgSrc) {
+                        photoHTML = `
+                        <div class="item-photo" style="background-image: url('${imgSrc}'); background-size: auto ${transform.size}%; background-position: ${transform.x}% ${transform.y}%;"></div>
+                        <div class="resize-handle tl" title="Масштабирование"></div>
+                        <div class="resize-handle tr" title="Масштабирование"></div>
+                        <div class="resize-handle bl" title="Масштабирование"></div>
+                        <div class="resize-handle br" title="Масштабирование"></div>
+                        <button class="delete-photo-btn" data-index="${originalIndex}" title="Удалить"><img src="delete.svg" alt="Удалить"></button>
+                        `;
+                    } else if (state.currentTab !== 'combined') {
+                        photoHTML = `<button class="upload-photo-btn">+</button>`;
+                    }
 
                     let priceHTML;
                      if (controls.showSmlPricesCheck.checked) {
                         priceHTML = `<div class="volume-price-container">` +
-                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="S">${formatPrice(item.S || '')}</span></div>` +
-                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="M">${formatPrice(item.M || '')}</span></div>` +
-                            `<div class="volume-price"><span contenteditable="true" data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span contenteditable="true" data-index="${originalIndex}" data-field="L">${formatPrice(item.L || '')}</span></div>` +
+                            `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeS">${item.volumeS || 'S'}:</span><span ${editable} data-index="${originalIndex}" data-field="S">${formatPrice(item.S)}</span></div>` +
+                            `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeM">${item.volumeM || 'M'}:</span><span ${editable} data-index="${originalIndex}" data-field="M">${formatPrice(item.M)}</span></div>` +
+                            `<div class="volume-price"><span ${editable} data-index="${originalIndex}" data-field="volumeL">${item.volumeL || 'L'}:</span><span ${editable} data-index="${originalIndex}" data-field="L">${formatPrice(item.L)}</span></div>` +
                         `</div>`;
                     } else {
-                        priceHTML = `<span contenteditable="true" class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price) || formatPrice('0')}</span>`;
+                        priceHTML = `<span ${editable} class="${placeholderClass}" data-index="${originalIndex}" data-field="price">${formatPrice(item.price)}</span>`;
                     }
                     
                     return `
                     <div class="grid-cell">
                         <div class="grid-gradient-overlay"></div>
                         <div class="grid-cell-content">
-                            <div class="item-name ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="name">${item.name}</div>
-                            ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" contenteditable="true" data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
+                            <div class="item-name ${placeholderClass}" ${editable} data-index="${originalIndex}" data-field="name">${item.name}</div>
+                            ${controls.showDescCheck.checked ? `<div class="item-description ${placeholderClass}" ${editable} data-index="${originalIndex}" data-field="description">${item.description || ''}</div>` : '<div></div>'}
                             <div class="item-price">${priceHTML}</div>
                         </div>
-                        <div class="item-photo-container resizable-container" data-index="${originalIndex}" data-key="${key}">
+                        <div class="item-photo-container resizable-container" data-index="${originalIndex}" data-key="${key}" title="Перемещение">
                             ${photoHTML}
                         </div>
                     </div>`;
                 };
-                return `<div class="${className}">${state.excelData.slice(0, limit).map(renderCell).join('')}</div>`;
+                return `<div class="${className}">${dataToRender.map(renderCell).join('')}</div>`;
             }
 
             function renderPromoHTML() {
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                
+                let promoBgColor;
+                if (controls.promoBgType.value === 'color') {
+                    promoBgColor = controls.bgColorPicker.value;
+                } else {
+                    promoBgColor = '#1A1D1F'; // Assume dark bg for image contrast
+                }
+                const iconPrefix = getContrastColor(promoBgColor) === '#FFFFFF' ? 'wht-' : 'drk-';
+
                 let priceHTML = '';
 
-                if (controls.promoShowSmlPricesCheck.checked) {
-                    const textAlign = controls.promoTextAlign.value;
-                    const justification = textAlign === 'center' ? 'center' : (textAlign === 'right' ? 'flex-end' : 'flex-start');
-                    priceHTML = `
-                        <style>
-                            .promo-sml-prices { flex-direction: column; align-items: ${justification}; gap: 8px; }
-                            .promo-sml-prices .volume-price {
-                                font-size: calc(var(--promo-price-font-size) * 0.7);
-                                color: var(--promo-price-font-color);
-                                font-family: var(--promo-price-font-family);
-                                font-weight: bold;
-                                gap: 10px;
-                                width: 100%;
-                                justify-content: ${justification};
-                            }
-                            .promo-sml-prices .volume-price span:first-child { font-weight: 500; }
-                        </style>
-                        <div class="promo-price-container promo-sml-prices">
-                            <div class="volume-price">
-                                <span contenteditable="true" data-field="promoVolumeS">${state.promoVolumeS || 'S'}:</span>
-                                <span contenteditable="true" data-field="promoPriceS">${formatPrice(state.promoPriceS)}</span>
-                            </div>
-                            <div class="volume-price">
-                                <span contenteditable="true" data-field="promoVolumeM">${state.promoVolumeM || 'M'}:</span>
-                                <span contenteditable="true" data-field="promoPriceM">${formatPrice(state.promoPriceM)}</span>
-                            </div>
-                            <div class="volume-price">
-                                <span contenteditable="true" data-field="promoVolumeL">${state.promoVolumeL || 'L'}:</span>
-                                <span contenteditable="true" data-field="promoPriceL">${formatPrice(state.promoPriceL)}</span>
-                            </div>
-                        </div>`;
-                } else {
-                    const discountedPrice = calculateDiscountedPrice();
-                    priceHTML = discountedPrice > 0 ? `
-                    <div class="promo-price-container">
-                        <div class="promo-price" contenteditable="true" data-field="promoPrice">${formatPrice(state.promoPrice)}</div>
-                        ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
-                    </div>` : '';
+                if (controls.promoShowPriceCheck.checked) {
+                    if (controls.promoShowSmlPricesCheck.checked) {
+                        const textAlign = controls.promoTextAlign.value;
+                        const justification = textAlign === 'center' ? 'center' : (textAlign === 'right' ? 'flex-end' : 'flex-start');
+                        priceHTML = `
+                            <style>
+                                .promo-sml-prices { flex-direction: column; align-items: ${justification}; gap: 8px; }
+                                .promo-sml-prices .volume-price {
+                                    font-size: calc(var(--promo-price-font-size) * 0.7);
+                                    color: var(--promo-price-font-color);
+                                    font-family: var(--promo-price-font-family);
+                                    font-weight: bold;
+                                    gap: 10px;
+                                    width: 100%;
+                                    justify-content: ${justification};
+                                }
+                                .promo-sml-prices .volume-price span:first-child { font-weight: 500; }
+                            </style>
+                            <div class="promo-price-container promo-sml-prices">
+                                <div class="volume-price">
+                                    <span ${editable} data-field="promoVolumeS">${state.promoVolumeS || 'S'}:</span>
+                                    <span ${editable} data-field="promoPriceS">${formatPrice(state.promoPriceS)}</span>
+                                </div>
+                                <div class="volume-price">
+                                    <span ${editable} data-field="promoVolumeM">${state.promoVolumeM || 'M'}:</span>
+                                    <span ${editable} data-field="promoPriceM">${formatPrice(state.promoPriceM)}</span>
+                                </div>
+                                <div class="volume-price">
+                                    <span ${editable} data-field="promoVolumeL">${state.promoVolumeL || 'L'}:</span>
+                                    <span ${editable} data-field="promoPriceL">${formatPrice(state.promoPriceL)}</span>
+                                </div>
+                            </div>`;
+                    } else {
+                        const discountedPrice = calculateDiscountedPrice();
+                        priceHTML = discountedPrice > 0 ? `
+                        <div class="promo-price-container">
+                            <div class="promo-price" ${editable} data-field="promoPrice">${formatPrice(state.promoPrice)}</div>
+                            ${controls.promoDiscountSlider.value > 0 ? `<div class="promo-discount">-${controls.promoDiscountSlider.value}%</div>` : ''}
+                        </div>` : '';
+                    }
                 }
 
-                const createIcon = (src, alt) => `<span class="promo-icon-wrapper"><img src="${src}" alt="${alt}" class="promo-icon"></span>`;
+                const createIcon = (src, alt) => `<span class="promo-icon-wrapper"><img src="${iconPrefix}${src}" alt="${alt}" class="promo-icon"></span>`;
 
                 const iconsHTML = [
                     controls.veganCheck.checked && createIcon("vegan.svg", "Веган"),
                     controls.halalCheck.checked && createIcon("halal.svg", "Халяль"),
                     controls.glutenfreeCheck.checked && createIcon("glutenfree.svg", "Без глютена"),
+                    controls.hotCheck.checked && createIcon("hot.svg", "Острое"),
                     controls.newCheck.checked && createIcon("new.svg", "Новинка")
                 ].filter(Boolean).join('');
 
                 return `
                     <div class="promo-content" style="text-align: ${controls.promoTextAlign.value};">
                         <div>
-                           <div class="promo-title" contenteditable="true" data-field="promoTitle">${state.promoTitle}${iconsHTML}</div>
-                           <div class="promo-text" contenteditable="true" data-field="promoText">${state.promoText}</div>
+                           <div class="promo-title" ${editable} data-field="promoTitle">${state.promoTitle}${iconsHTML}</div>
+                           <div class="promo-text" ${editable} data-field="promoText">${state.promoText}</div>
                            ${priceHTML}
                         </div>
-                        <div class="promo-comment" contenteditable="true" data-field="promoComment">${state.promoComment}</div>
+                        <div class="promo-comment" ${editable} data-field="promoComment">${state.promoComment}</div>
                     </div>`;
             }
 
@@ -2008,13 +2293,43 @@
                 }
 
                 if (menuBgTarget) {
+                    // --- ИЗМЕНЕНИЕ 1: Логика для фона меню ---
                     if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
+                        const key = 'menuBg';
+                        if (!state.imageTransforms[key]) state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
+                        const transform = state.imageTransforms[key];
+
                         menuBgTarget.style.backgroundImage = `url(${state.menuBgImage})`;
+                        menuBgTarget.style.backgroundSize = `${transform.size}%`;
+                        menuBgTarget.style.backgroundPosition = `${transform.x}% ${transform.y}%`;
                         menuBgTarget.style.backgroundColor = '';
+
+                        // Добавляем возможность изменения размера/перетаскивания в комб. режиме
+                        if (state.currentTab === 'combined') {
+                             menuBgTarget.classList.add('resizable-container');
+                             menuBgTarget.dataset.key = key;
+                             menuBgTarget.title = 'Перемещение';
+                             if (!menuBgTarget.querySelector('.resize-handle')) {
+                                const handles = ['tl', 'tr', 'bl', 'br'];
+                                handles.forEach(h => {
+                                    const handle = document.createElement('div');
+                                    handle.className = `resize-handle ${h}`;
+                                    handle.title = 'Масштабирование';
+                                    menuBgTarget.appendChild(handle);
+                                });
+                            }
+                        }
                     } else {
                         menuBgTarget.style.backgroundImage = 'none';
                         menuBgTarget.style.backgroundColor = controls.menuBgPicker.value;
+                        // Убираем возможность изменения
+                        if (state.currentTab === 'combined') {
+                            menuBgTarget.classList.remove('resizable-container');
+                            menuBgTarget.title = '';
+                            menuBgTarget.querySelectorAll('.resize-handle').forEach(h => h.remove());
+                        }
                     }
+                    // --- КОНЕЦ ИЗМЕНЕНИЯ 1 ---
                 }
 
                 if (state.currentTab === 'promo' || state.currentTab === 'combined') {
@@ -2035,11 +2350,13 @@
                     element.style.backgroundColor = '';
 
                     element.classList.add('resizable-container');
+                    element.title = 'Перемещение'; // Добавлена подсказка
                     if (!element.querySelector('.resize-handle')) {
                         const handles = ['tl', 'tr', 'bl', 'br'];
                         handles.forEach(h => {
                             const handle = document.createElement('div');
                             handle.className = `resize-handle ${h}`;
+                            handle.title = 'Масштабирование'; // Добавлена подсказка
                             element.appendChild(handle);
                         });
                     }
@@ -2047,10 +2364,12 @@
                     element.style.backgroundColor = controls.bgColorPicker.value;
                     element.style.backgroundImage = 'none';
                     element.classList.remove('resizable-container');
+                    element.title = ''; // Убрана подсказка
                     element.querySelectorAll('.resize-handle').forEach(h => h.remove());
                 }
             }
             
+            // --- ИЗМЕНЕНИЕ 3: Переработана функция экспорта ---
             function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
@@ -2059,6 +2378,7 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
 
+                // Очистка от элементов управления
                 captureClone.querySelectorAll('.resize-handle, .upload-photo-btn, .delete-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
 
@@ -2069,30 +2389,22 @@
                 captureContainer.style.width = state.exportWidth + 'px';
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
-
-                if (originalPreview.offsetWidth > 0) {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.width = originalPreview.offsetWidth + 'px';
-                    wrapper.style.height = originalPreview.offsetHeight + 'px';
-                    wrapper.style.position = 'absolute';
-                    wrapper.style.top = '0';
-                    wrapper.style.left = '0';
-                    
-                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
-                    wrapper.style.transform = `scale(${scaleFactor})`;
-                    wrapper.style.transformOrigin = 'top left';
-                    
-                    wrapper.appendChild(captureClone);
-                    captureContainer.appendChild(wrapper);
-                } else {
-                     captureContainer.appendChild(captureClone);
-                }
-
+                
+                // Новая логика: рендерим 1:1 в целевом разрешении
+                // Это заставит браузер пересчитать CSS (например, vh/vw, flex)
+                // для точного соответствия размерам экспорта.
+                captureClone.style.width = state.exportWidth + 'px';
+                captureClone.style.height = state.exportHeight + 'px';
+                captureClone.style.position = 'absolute';
+                captureClone.style.top = '0';
+                captureClone.style.left = '0';
+                
+                captureContainer.appendChild(captureClone);
                 document.body.appendChild(captureContainer);
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1, 
+                        scale: 1, // Масштаб 1, т.к. мы уже установили точный размер
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
@@ -2106,8 +2418,9 @@
                     }).finally(() => {
                         document.body.removeChild(captureContainer);
                     });
-                }, 500);
+                }, 500); // Даем время на reflow и загрузку шрифтов в новом размере
             }
+            // --- КОНЕЦ ИЗМЕНЕНИЯ 3 ---
 
             function downloadAsPNG() {
                 download(canvas => {
@@ -2118,7 +2431,10 @@
                 });
             }
             
-            function showMp4Modal() { controls.mp4Modal.style.display = 'flex'; }
+            function showMp4Modal() {
+                controls.mp4Filename.value = generateFilename();
+                controls.mp4Modal.style.display = 'flex'; 
+            }
             
             function downloadAsMP4() {
                 const filenameBase = (controls.mp4Filename.value || generateFilename()).trim().replace(/\s+/g, '_');
@@ -2148,7 +2464,7 @@
                     
                     recorder.onstop = () => {
                         const blob = new Blob(recordedChunks, { type: mimeType });
-                        saveAs(blob, `${generateFilename()}.mp4`);
+                        saveAs(blob, `${filenameBase}.mp4`);
                         controls.loadingOverlay.style.display = 'none';
                     };
 
@@ -2171,6 +2487,8 @@
                     requestAnimationFrame(animate);
                 });
             }
+            // --- КОНЕЦ БЛОКА ЭКСПОРТА ---
+            
             
             // --- Image Resizing and Panning Functions ---
             function deselectActiveResizable() {
@@ -2202,6 +2520,8 @@
                 e.stopPropagation();
 
                 const key = container.dataset.key;
+                if (!key) return; // --- Добавлена проверка
+                
                 if (!state.imageTransforms[key]) {
                     state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
                 }
