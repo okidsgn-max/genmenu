@@ -555,8 +555,6 @@
         flex-direction: column;
         background-size: cover;
         background-position: center;
-        /* --- ИЗМЕНЕНИЕ 2: Добавлено скругление --- */
-        border-radius: var(--border-radius);
     }
     .combined-menu-part .menu-grid-template, .combined-menu-part .menu-grid-template-3x2 {
         flex-grow: 1;
@@ -741,12 +739,7 @@
     .combined-template .item-description { font-size: calc(var(--desc-font-size) * 0.9); }
     .combined-template .item-price { font-size: calc(var(--item-font-size) * 0.9); }
 
-    .combined-template .grid-cell {
-        display: block;
-        position: relative;
-        /* --- ИЗМЕНЕНИЕ 2: Исправлено скругление --- */
-        overflow: hidden;
-    }
+    .combined-template .grid-cell { display: block; position: relative; overflow: visible; }
     .combined-template .grid-cell-content { height: 100%; width: 100%; position: relative; z-index: 2; }
     .combined-template .grid-cell .item-photo-container { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; flex: none; z-index: 1; }
     .combined-template .grid-cell::after { display: none; }
@@ -779,11 +772,6 @@
     .promo-template.resizable-container, .combined-promo-part.resizable-container {
         cursor: move;
     }
-    /* --- ИЗМЕНЕНИЕ 1: Добавлено для фона меню --- */
-    .combined-menu-part.resizable-container {
-        cursor: move;
-    }
-
      .delete-photo-btn {
         position: absolute;
         top: 8px;
@@ -1635,8 +1623,6 @@
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         state.menuBgImage = event.target.result;
-                        // --- ИЗМЕНЕНИЕ 1: Добавлено ---
-                        state.imageTransforms['menuBg'] = { size: 100, x: 50, y: 50 };
                         render();
                     };
                     reader.readAsDataURL(file);
@@ -2293,43 +2279,13 @@
                 }
 
                 if (menuBgTarget) {
-                    // --- ИЗМЕНЕНИЕ 1: Логика для фона меню ---
                     if (controls.menuBgTypeSelect.value === 'image' && state.menuBgImage) {
-                        const key = 'menuBg';
-                        if (!state.imageTransforms[key]) state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
-                        const transform = state.imageTransforms[key];
-
                         menuBgTarget.style.backgroundImage = `url(${state.menuBgImage})`;
-                        menuBgTarget.style.backgroundSize = `${transform.size}%`;
-                        menuBgTarget.style.backgroundPosition = `${transform.x}% ${transform.y}%`;
                         menuBgTarget.style.backgroundColor = '';
-
-                        // Добавляем возможность изменения размера/перетаскивания в комб. режиме
-                        if (state.currentTab === 'combined') {
-                             menuBgTarget.classList.add('resizable-container');
-                             menuBgTarget.dataset.key = key;
-                             menuBgTarget.title = 'Перемещение';
-                             if (!menuBgTarget.querySelector('.resize-handle')) {
-                                const handles = ['tl', 'tr', 'bl', 'br'];
-                                handles.forEach(h => {
-                                    const handle = document.createElement('div');
-                                    handle.className = `resize-handle ${h}`;
-                                    handle.title = 'Масштабирование';
-                                    menuBgTarget.appendChild(handle);
-                                });
-                            }
-                        }
                     } else {
                         menuBgTarget.style.backgroundImage = 'none';
                         menuBgTarget.style.backgroundColor = controls.menuBgPicker.value;
-                        // Убираем возможность изменения
-                        if (state.currentTab === 'combined') {
-                            menuBgTarget.classList.remove('resizable-container');
-                            menuBgTarget.title = '';
-                            menuBgTarget.querySelectorAll('.resize-handle').forEach(h => h.remove());
-                        }
                     }
-                    // --- КОНЕЦ ИЗМЕНЕНИЯ 1 ---
                 }
 
                 if (state.currentTab === 'promo' || state.currentTab === 'combined') {
@@ -2369,7 +2325,7 @@
                 }
             }
             
-            // --- ИЗМЕНЕНИЕ 3: Переработана функция экспорта ---
+            // --- ЭКСПОРТ ИЗ exp1nov.html ---
             function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
@@ -2378,7 +2334,6 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
 
-                // Очистка от элементов управления
                 captureClone.querySelectorAll('.resize-handle, .upload-photo-btn, .delete-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
 
@@ -2389,22 +2344,30 @@
                 captureContainer.style.width = state.exportWidth + 'px';
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
-                
-                // Новая логика: рендерим 1:1 в целевом разрешении
-                // Это заставит браузер пересчитать CSS (например, vh/vw, flex)
-                // для точного соответствия размерам экспорта.
-                captureClone.style.width = state.exportWidth + 'px';
-                captureClone.style.height = state.exportHeight + 'px';
-                captureClone.style.position = 'absolute';
-                captureClone.style.top = '0';
-                captureClone.style.left = '0';
-                
-                captureContainer.appendChild(captureClone);
+
+                if (originalPreview.offsetWidth > 0) {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.width = originalPreview.offsetWidth + 'px';
+                    wrapper.style.height = originalPreview.offsetHeight + 'px';
+                    wrapper.style.position = 'absolute';
+                    wrapper.style.top = '0';
+                    wrapper.style.left = '0';
+                    
+                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
+                    wrapper.style.transform = `scale(${scaleFactor})`;
+                    wrapper.style.transformOrigin = 'top left';
+                    
+                    wrapper.appendChild(captureClone);
+                    captureContainer.appendChild(wrapper);
+                } else {
+                     captureContainer.appendChild(captureClone);
+                }
+
                 document.body.appendChild(captureContainer);
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1, // Масштаб 1, т.к. мы уже установили точный размер
+                        scale: 1, 
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
@@ -2418,9 +2381,8 @@
                     }).finally(() => {
                         document.body.removeChild(captureContainer);
                     });
-                }, 500); // Даем время на reflow и загрузку шрифтов в новом размере
+                }, 500);
             }
-            // --- КОНЕЦ ИЗМЕНЕНИЯ 3 ---
 
             function downloadAsPNG() {
                 download(canvas => {
@@ -2520,8 +2482,6 @@
                 e.stopPropagation();
 
                 const key = container.dataset.key;
-                if (!key) return; // --- Добавлена проверка
-                
                 if (!state.imageTransforms[key]) {
                     state.imageTransforms[key] = { size: 100, x: 50, y: 50 };
                 }
