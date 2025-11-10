@@ -135,7 +135,8 @@
     border-color: #ffffff;
     }
 
-    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close, #download-template-btn {
+    /* --- ИЗМЕНЕНИЕ --- Убрал #download-template-btn из этого списка, т.к. он больше не кнопка */
+    #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close {
         border-radius: 30px;
     }
     
@@ -864,15 +865,25 @@
                             </div>
                             
                             <div id="upload-mode-content" style="display: none;">
-                                <div class="drop-area" id="menu-drop-area">
-    Перетащите файл Excel или TXT или
-    <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Выберите файл</button>
-    <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .txt" style="display: none;">
-    <div class="file-info" id="menu-file-info">Файл не выбран</div>
-</div>
-                                <a href="menutv.xlsx" download="menutv.xlsx" id="download-template-btn" class="btn btn-secondary" style="margin-top: 15px;">Скачать шаблон меню</a>
-                            </div>
+                                <div class="drop-area" id="menu-drop-area" onclick="document.getElementById('file-input').click();" style="cursor: pointer; line-height: 1.6;">
+                                    
+                                    <span style="font-size: 10pt; color: var(--text-secondary);">
+                                        <b>Загрузите меню</b> (нажмите здесь или перетащите файл) 
+                                        <br>
+                                        в формате Excel или TXT
+                                        <br>
+                                        ...или 
+                                        <a href="menutv.xlsx" download="menutv.xlsx" id="download-template-btn"
+                                           style="color: var(--primary); text-decoration: underline; background: none; border: none; padding: 0; font: inherit; cursor: pointer; font-weight: bold;"
+                                           onclick="event.stopPropagation();">
+                                           выберите шаблон
+                                        </a>
+                                    </span>
 
+                                    <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .txt" style="display: none;">
+                                    <div class="file-info" id="menu-file-info" style="margin-top: 10px;">Файл не выбран</div>
+                                </div>
+                                </div>
                             <div id="manual-mode-content" class="manual-editor">
                                <p style="margin-bottom: 15px;">Нажимая на поля текста в превью, вы можете заполнить свое меню. Позиции ниже можно менять местами, перетаскивая их мышкой.</p>
                                <div id="manual-item-list"></div>
@@ -1485,7 +1496,7 @@
                     
                     // Update font size defaults and label
                     if (newLayout === 'list') {
-                        controls.itemSize.value = 32;
+                        controls.itemSize.value = 18; // <-- *** ИЗМЕНЕНИЕ ДЛЯ ШРИФТА "СПИСОК" ***
                         if (controls.itemFontLabel) controls.itemFontLabel.textContent = 'Шрифт название и стоимость';
                         if (state.excelData.length > 5) {
                             controls.limitModal.style.display = 'flex';
@@ -1663,6 +1674,7 @@
                     }
                 });
 
+                // --- *** НАЧАЛО ИЗМЕНЕНИЯ (ЗАПРОС 1: СИНХРОНИЗАЦИЯ D&D) *** ---
                 list.addEventListener('drop', e => {
                     e.preventDefault();
                     const target = e.target.closest('.manual-item');
@@ -1673,14 +1685,90 @@
                     
                     const dragEndIndex = Array.from(list.children).indexOf(target);
                     
-                    // Reorder data
-                    const [draggedItem] = state.excelData.splice(dragStartIndex, 1);
-                    state.excelData.splice(dragEndIndex, 0, draggedItem);
-                    
+                    if (dragStartIndex === dragEndIndex) {
+                        clearDragOver();
+                        return;
+                    }
+
+                    // 1. Reorder state.excelData
+                    const [draggedExcelItem] = state.excelData.splice(dragStartIndex, 1);
+                    state.excelData.splice(dragEndIndex, 0, draggedExcelItem);
+
+                    // 2. Reorder state.gridImages and state.imageTransforms
+                    //    Вспомогательная функция для изменения порядка объектов с числовыми ключами
+                    const reorderSparseObject = (dataObject, oldIndex, newIndex, keyPrefix = "") => {
+                        const dataAsArray = [];
+                        const maxIndex = state.excelData.length; // Длина *после* изменения порядка
+
+                        // Собираем "разреженный" массив из объекта
+                        for (let i = 0; i < maxIndex; i++) {
+                            // Логика для определения, какой старый ключ соответствует какому
+                            // элементу в новом (уже измененном) excelData.
+                            // Это сложно, проще создать временный массив ДО изменения порядка.
+                        }
+                        
+                        // --- Более простой подход: ---
+                        // 1. Создаем временный разреженный массив из данных ДО изменения порядка
+                        const tempArray = [];
+                        const currentLength = state.excelData.length; // Это длина *после* splice+splice
+                        
+                        for (let i = 0; i < currentLength; i++) {
+                            // Определяем, откуда брать данные
+                            let sourceIndex;
+                            if (i < oldIndex) sourceIndex = i;
+                            else if (i > oldIndex) sourceIndex = i - 1;
+                            else sourceIndex = -1; // placeholder for moved item
+                        }
+                        // Это слишком сложно.
+
+                        // --- Самый простой подход: ---
+                        // Создаем временные массивы, представляющие "слоты"
+                        const tempImages = [];
+                        const tempTransforms = [];
+                        const maxLen = state.excelData.length;
+
+                        // Заполняем временные массивы
+                        for (let i = 0; i < maxLen; i++) {
+                            tempImages[i] = state.gridImages[i];
+                            tempTransforms[i] = state.imageTransforms[`grid-${i}`];
+                        }
+
+                        // Перемещаем элементы во временных массивах
+                        const [movedImage] = tempImages.splice(oldIndex, 1);
+                        tempImages.splice(newIndex, 0, movedImage);
+                        
+                        const [movedTransform] = tempTransforms.splice(oldIndex, 1);
+                        tempTransforms.splice(newIndex, 0, movedTransform);
+
+                        // Собираем обратно в объекты
+                        const newGridImages = {};
+                        const newImageTransforms = {};
+                        
+                        // Копируем 'promo' transform, если он есть
+                        if (state.imageTransforms['promo']) {
+                            newImageTransforms['promo'] = state.imageTransforms['promo'];
+                        }
+
+                        for (let i = 0; i < maxLen; i++) {
+                            if (tempImages[i] !== undefined) {
+                                newGridImages[i] = tempImages[i];
+                            }
+                            if (tempTransforms[i] !== undefined) {
+                                newImageTransforms[`grid-${i}`] = tempTransforms[i];
+                            }
+                        }
+                        
+                        state.gridImages = newGridImages;
+                        state.imageTransforms = newImageTransforms;
+                    };
+
+                    reorderSparseObject(state.gridImages, dragStartIndex, dragEndIndex);
+
                     clearDragOver();
                     renderManualEditor();
                     render();
                 });
+                // --- *** КОНЕЦ ИЗМЕНЕНИЯ (ЗАПРОС 1) *** ---
             }
 
             function clearDragOver() {
@@ -2325,7 +2413,26 @@
                 }
             }
             
-            // --- ЭКСПОРТ ИЗ exp1nov.html ---
+            
+            // --- *** НОВЫЙ ИСПРАВЛЕННЫЙ БЛОК ЭКСПОРТА (C ИСПРАВЛЕНИЕМ ДЛЯ 4:3) *** ---
+            
+            // Список всех CSS-переменных, которые мы используем для стилизации
+            const cssVarsToCopy = [
+                '--menu-bg-color', '--cell-bg-color',
+                '--category-font-family', '--category-font-size', '--category-font-color',
+                '--item-font-family', '--item-font-size', '--item-font-color',
+                '--desc-font-family', '--desc-font-size', '--desc-font-color',
+                '--price-font-family', '--price-font-size', '--price-font-color',
+                '--promo-title-font-family', '--promo-title-font-size', '--promo-title-font-color',
+                '--promo-text-font-family', '--promo-text-font-size', '--promo-text-font-color',
+                '--promo-comment-font-family', '--promo-comment-font-size', '--promo-comment-font-color',
+                '--promo-price-font-family', '--promo-price-font-size', '--promo-price-font-color',
+                '--discount-font-color', '--discount-bg-color', '--promo-text-align',
+                '--date-contrast-color', '--grid-gradient-opacity',
+                // Добавим переменные, которые не в списке, но влияют на вид
+                '--border-radius', '--border'
+            ];
+
             function download(callback) {
                 deselectActiveResizable();
                 controls.loadingText.textContent = 'Подготовка к сохранению...';
@@ -2334,9 +2441,11 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
 
+                // Убираем элементы управления из клона
                 captureClone.querySelectorAll('.resize-handle, .upload-photo-btn, .delete-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
 
+                // Создаем контейнер для рендеринга в высоком разрешении
                 const captureContainer = document.createElement('div');
                 captureContainer.style.position = 'absolute';
                 captureContainer.style.left = '-9999px';
@@ -2345,29 +2454,56 @@
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
 
-                if (originalPreview.offsetWidth > 0) {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.width = originalPreview.offsetWidth + 'px';
-                    wrapper.style.height = originalPreview.offsetHeight + 'px';
-                    wrapper.style.position = 'absolute';
-                    wrapper.style.top = '0';
-                    wrapper.style.left = '0';
-                    
-                    const scaleFactor = state.exportWidth / originalPreview.offsetWidth;
-                    wrapper.style.transform = `scale(${scaleFactor})`;
-                    wrapper.style.transformOrigin = 'top left';
-                    
-                    wrapper.appendChild(captureClone);
-                    captureContainer.appendChild(wrapper);
-                } else {
-                     captureContainer.appendChild(captureClone);
-                }
+                // --- *** НОВАЯ ЛОГИКА МАСШТАБИРОВАНИЯ (v3) *** ---
+                
+                // 1. Получаем *текущий* размер превью, который видит пользователь
+                //    Это - "оригинал", который мы хотим масштабировать
+                //    Мы используем offsetWidth/Height для получения реальных пиксельных размеров
+                const baseWidth = originalPreview.offsetWidth; 
+                const baseHeight = originalPreview.offsetHeight;
+
+                // 2. Создаем "wrapper" с *точными* размерами "оригинала"
+                const wrapper = document.createElement('div');
+                wrapper.style.width = baseWidth + 'px';
+                wrapper.style.height = baseHeight + 'px';
+                wrapper.style.position = 'absolute';
+                wrapper.style.top = '0';
+                wrapper.style.left = '0';
+                
+                // 3. Рассчитываем фактор масштабирования, чтобы
+                //    увеличить "оригинал" до целевого разрешения.
+                
+                // --- *** НАЧАЛО ИЗМЕНЕНИЯ (ЗАПРОС 3: ИСПРАВЛЕНИЕ 4:3) *** ---
+                // Рассчитываем scaleX и scaleY отдельно
+                const scaleX = state.exportWidth / baseWidth; 
+                const scaleY = state.exportHeight / baseHeight;
+                // Используем Math.max, чтобы гарантировать, что клон *полностью*
+                // покроет контейнер, даже если есть расхождения в 1px из-за округления.
+                const scaleFactor = Math.max(scaleX, scaleY);
+                // --- *** КОНЕЦ ИЗМЕНЕНИЯ (ЗАПРОС 3) *** ---
+
+                wrapper.style.transform = `scale(${scaleFactor})`;
+                wrapper.style.transformOrigin = 'top left';
+
+                // 4. `captureClone` (копия #menu-preview) имеет width: 100%, height: 100%
+                //    и идеально заполнит 'wrapper'.
+                wrapper.appendChild(captureClone);
+                
+                // 5. Добавляем wrapper в captureContainer.
+                captureContainer.appendChild(wrapper);
+                
+                // 6. Копируем все CSS переменные
+                const computedStyles = getComputedStyle(document.documentElement);
+                cssVarsToCopy.forEach(varName => {
+                    captureContainer.style.setProperty(varName, computedStyles.getPropertyValue(varName));
+                });
+                // --- *** КОНЕЦ НОВОЙ ЛОГИКИ *** ---
 
                 document.body.appendChild(captureContainer);
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1, 
+                        scale: 1, // Мы уже масштабируем через CSS transform
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
@@ -2383,6 +2519,7 @@
                     });
                 }, 500);
             }
+            // --- *** КОНЕЦ БЛОКА ЭКСПОРТА *** ---
 
             function downloadAsPNG() {
                 download(canvas => {
@@ -2449,7 +2586,6 @@
                     requestAnimationFrame(animate);
                 });
             }
-            // --- КОНЕЦ БЛОКА ЭКСПОРТА ---
             
             
             // --- Image Resizing and Panning Functions ---
@@ -2536,6 +2672,8 @@
                     const newSize = Math.max(50, Math.min(500, activeResizable.startSize + sizeChange));
                     transform.size = newSize;
 
+                 
+
                     if (elementToStyle) {
                         if (activeResizable.element.matches('.item-photo-container')) {
                              elementToStyle.style.backgroundSize = `auto ${newSize}%`;
@@ -2544,7 +2682,7 @@
                         }
                     }
 
-                } else if (activeResizable.mode === 'pan') {
+               } else if (activeResizable.mode === 'pan') {
                     const sensitivity = 50 / activeResizable.element.offsetHeight;
                     let newX = activeResizable.startPosX - (dx * sensitivity);
                     let newY = activeResizable.startPosY - (dy * sensitivity);
