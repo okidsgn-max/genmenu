@@ -135,7 +135,6 @@
     border-color: #ffffff;
     }
 
-    /* --- ИЗМЕНЕНИЕ --- Убрал #download-template-btn из этого списка, т.к. он больше не кнопка */
     #confirm-aspect-ratio, #export-excel-btn, #bg-image-container .btn, #menu-bg-image-container .btn, .drop-area .btn, #cancel-mp4, #save-mp4, #limit-modal-close {
         border-radius: 30px;
     }
@@ -297,7 +296,6 @@
         border: 1px solid var(--border); padding: 20px;
     }
     
-    /* --- ИСПРАВЛЕННЫЙ БЛОК --- */
     .preview-container {
         width: 100%;
         max-height: 100%;
@@ -312,7 +310,6 @@
         border: 0px solid var(--border);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    /* --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА --- */
     
     .menu-preview {
         width: 100%; height: 100%; position: relative; background-color: var(--menu-bg-color);
@@ -345,7 +342,6 @@
         margin-bottom: 0;
         padding-bottom: 0;
         border-bottom: none;
-        /* --- НОВОЕ --- */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -360,7 +356,6 @@
         font-size: var(--item-font-size);
         color: #000000;
         margin-bottom: 2px;
-        /* --- НОВОЕ --- */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -372,7 +367,6 @@
         color: var(--desc-font-color); 
         margin-bottom: 5px; 
         font-weight: 300; 
-        /* --- НОВОЕ --- */
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -400,12 +394,10 @@
     
     .menu-grid-template, .menu-grid-template-3x2 { 
         width: 100%; 
-        /* height: 100%; <-- УДАЛЕНО */
         display: grid; 
         gap: 15px; 
         padding: 15px; 
         background-color: var(--grid-bg-color); 
-        /* --- НОВОЕ --- */
         flex-grow: 1;
         min-height: 0;
     }
@@ -433,7 +425,6 @@
         flex-grow: 1; 
         color: var(--desc-font-color);
         word-break: break-word;
-        /* --- НОВОЕ --- */
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -499,7 +490,6 @@
     .promo-title {
         font-size: var(--promo-title-font-size); font-family: var(--promo-title-font-family); color: var(--promo-title-font-color);
         font-weight: 600; margin-bottom: 20px; line-height: 1.1; display: inline-flex; align-items: flex-start; gap: 15px;
-        /* --- НОВОЕ --- */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -510,7 +500,6 @@
         color: var(--promo-text-font-color); 
         margin-bottom: 30px; 
         line-height: 1.3; 
-        /* --- НОВОЕ --- */
         display: -webkit-box;
         -webkit-line-clamp: 4;
         -webkit-box-orient: vertical;
@@ -577,7 +566,6 @@
         font-size: var(--category-font-size); 
         font-weight: 700; 
         color: var(--category-font-color); 
-        /* --- НОВОЕ --- */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -834,13 +822,11 @@
         flex-shrink: 1;
     }
 
-    /* --- ДОБАВЛЕННЫЙ СТИЛЬ ДЛЯ КОМБИНИРОВАННОГО СПИСКА --- */
     .combined-template .menu-list-template .section-header {
-        flex-direction: column;  /* Ставит заголовок и SML-цены друг под другом */
-        align-items: stretch;    /* Растягивает оба элемента на всю ширину */
-        gap: 8px;                /* Добавляет отступ между заголовком и SML-ценами */
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
     }
-    /* --- КОНЕЦ ДОБАВЛЕННОГО СТИЛЯ --- */
 </style>
 </head>
 <body>
@@ -1437,7 +1423,6 @@
                     updatePreviewAspectRatio();
                 }
 
-                // Set initial font sizes based on default layout ('grid')
                 controls.itemSize.value = 24;
                 controls.priceSize.value = 20;
 
@@ -1445,7 +1430,7 @@
                 renderManualEditor();
                 updateGridColorVisibility();
                 updateMenuBgControlsVisibility();
-                updatePromoPriceControls(); // Call to set initial state of price/discount
+                updatePromoPriceControls();
                 render();
             }
 
@@ -1495,14 +1480,13 @@
                     
                     const newLayout = targetButton.dataset.layout;
                     
-                    // Update font size defaults and label
                     if (newLayout === 'list') {
-                        controls.itemSize.value = 18; // <-- *** ИЗМЕНЕНИЕ ДЛЯ ШРИФТА "СПИСОК" ***
+                        controls.itemSize.value = 18; 
                         if (controls.itemFontLabel) controls.itemFontLabel.textContent = 'Шрифт название и стоимость';
                         if (state.excelData.length > 5) {
                             controls.limitModal.style.display = 'flex';
                         }
-                    } else { // grid or grid3x2
+                    } else {
                         controls.itemSize.value = 24;
                         controls.priceSize.value = 20;
                         if (controls.itemFontLabel) controls.itemFontLabel.textContent = 'Шрифт позиции';
@@ -1527,6 +1511,9 @@
                     el.addEventListener('input', render);
                     el.addEventListener('change', render);
                 });
+                
+                // *** ИЗМЕНЕНИЕ: Отслеживание изменения размера окна для адаптивности шрифтов ***
+                window.addEventListener('resize', render);
                 
                 controls.promoDiscountSlider.addEventListener('input', () => {
                     controls.promoDiscountValue.textContent = `${controls.promoDiscountSlider.value}%`;
@@ -1589,14 +1576,12 @@
                     controls.limitModal.style.display = 'none';
                 });
 
-                // Promo SML checkbox listener
                 controls.promoShowSmlPricesCheck.addEventListener('change', () => {
                     updatePromoPriceControls();
-                    render(); // Re-render to show/hide price block in preview
+                    render();
                 });
                 controls.promoShowPriceCheck.addEventListener('change', render);
 
-                // --- Image Resizing and Panning Listeners ---
                 controls.menuPreview.addEventListener('mousedown', handlePreviewMouseDown);
                 document.addEventListener('mousemove', handleDocumentMouseMove);
                 document.addEventListener('mouseup', handleDocumentMouseUp);
@@ -1608,7 +1593,6 @@
 
                 controls.menuPreview.addEventListener('click', handleDeletePhotoClick);
 
-                // --- Drag and Drop Listeners ---
                 setupDragDropListeners();
             }
             
@@ -1641,7 +1625,6 @@
                 }
             }
 
-            // --- Drag and Drop Functions ---
             function setupDragDropListeners() {
                 const list = controls.manualItemList;
                 list.addEventListener('dragstart', e => {
@@ -1675,7 +1658,6 @@
                     }
                 });
 
-                // --- *** НАЧАЛО ИЗМЕНЕНИЯ (ЗАПРОС 1: СИНХРОНИЗАЦИЯ D&D) *** ---
                 list.addEventListener('drop', e => {
                     e.preventDefault();
                     const target = e.target.closest('.manual-item');
@@ -1691,61 +1673,28 @@
                         return;
                     }
 
-                    // 1. Reorder state.excelData
                     const [draggedExcelItem] = state.excelData.splice(dragStartIndex, 1);
                     state.excelData.splice(dragEndIndex, 0, draggedExcelItem);
 
-                    // 2. Reorder state.gridImages and state.imageTransforms
-                    //    Вспомогательная функция для изменения порядка объектов с числовыми ключами
                     const reorderSparseObject = (dataObject, oldIndex, newIndex, keyPrefix = "") => {
-                        const dataAsArray = [];
-                        const maxIndex = state.excelData.length; // Длина *после* изменения порядка
-
-                        // Собираем "разреженный" массив из объекта
-                        for (let i = 0; i < maxIndex; i++) {
-                            // Логика для определения, какой старый ключ соответствует какому
-                            // элементу в новом (уже измененном) excelData.
-                            // Это сложно, проще создать временный массив ДО изменения порядка.
-                        }
-                        
-                        // --- Более простой подход: ---
-                        // 1. Создаем временный разреженный массив из данных ДО изменения порядка
-                        const tempArray = [];
-                        const currentLength = state.excelData.length; // Это длина *после* splice+splice
-                        
-                        for (let i = 0; i < currentLength; i++) {
-                            // Определяем, откуда брать данные
-                            let sourceIndex;
-                            if (i < oldIndex) sourceIndex = i;
-                            else if (i > oldIndex) sourceIndex = i - 1;
-                            else sourceIndex = -1; // placeholder for moved item
-                        }
-                        // Это слишком сложно.
-
-                        // --- Самый простой подход: ---
-                        // Создаем временные массивы, представляющие "слоты"
                         const tempImages = [];
                         const tempTransforms = [];
                         const maxLen = state.excelData.length;
 
-                        // Заполняем временные массивы
                         for (let i = 0; i < maxLen; i++) {
                             tempImages[i] = state.gridImages[i];
                             tempTransforms[i] = state.imageTransforms[`grid-${i}`];
                         }
 
-                        // Перемещаем элементы во временных массивах
                         const [movedImage] = tempImages.splice(oldIndex, 1);
                         tempImages.splice(newIndex, 0, movedImage);
                         
                         const [movedTransform] = tempTransforms.splice(oldIndex, 1);
                         tempTransforms.splice(newIndex, 0, movedTransform);
 
-                        // Собираем обратно в объекты
                         const newGridImages = {};
                         const newImageTransforms = {};
                         
-                        // Копируем 'promo' transform, если он есть
                         if (state.imageTransforms['promo']) {
                             newImageTransforms['promo'] = state.imageTransforms['promo'];
                         }
@@ -1769,14 +1718,11 @@
                     renderManualEditor();
                     render();
                 });
-                // --- *** КОНЕЦ ИЗМЕНЕНИЯ (ЗАПРОС 1) *** ---
             }
 
             function clearDragOver() {
                 controls.manualItemList.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
             }
-            // --- End Drag and Drop ---
-
 
             function updatePreviewAspectRatio() { controls.exportContainer.style.aspectRatio = state.aspectRatio; }
 
@@ -1837,7 +1783,7 @@
                     category: newCategory,
                     S: '', M: '', L: '',
                     volumeS: 'S', volumeM: 'M', volumeL: 'L',
-                    isPlaceholder: true // New items are also placeholders
+                    isPlaceholder: true
                 };
                 state.excelData.push(newItem);
                 renderManualEditor();
@@ -1889,7 +1835,7 @@
                                 volumeS: findValue(row, ['Объем S', 'volumeS']) || 'S',
                                 volumeM: findValue(row, ['Объем M', 'volumeM']) || 'M',
                                 volumeL: findValue(row, ['Объем L', 'volumeL']) || 'L',
-                                isPlaceholder: false // Data from file is not a placeholder
+                                isPlaceholder: false
                             }));
                             state.gridImages = {};
                             state.imageTransforms = {};
@@ -1957,7 +1903,6 @@
                 let newValue = target.innerText.trim();
                 const priceFields = ['price', 'promoPrice', 'S', 'M', 'L', 'promoPriceS', 'promoPriceM', 'promoPriceL'];
 
-                // Restore default text if empty
                 if (newValue === '') {
                     if (field === 'name') newValue = 'Блюдо';
                     else if (field === 'description') newValue = 'Описание';
@@ -2007,7 +1952,6 @@
             }
 
             function generateFilename() {
-                // Sanitize helper
                 const sanitize = (str) => str.trim().replace(/[^\wа-яА-ЯёЁ\s]/g, '').replace(/\s+/g, '_');
 
                 if (state.currentTab === 'promo') {
@@ -2015,7 +1959,6 @@
                     return `${sanitizedTitle || 'акция'}_акция`;
                 }
                 
-                // For 'menu' and 'combined' tabs
                 const categoryStr = (state.excelData.length > 0 ? state.excelData[0].category : 'меню');
                 const sanitizedCategory = sanitize(categoryStr);
                 return `${sanitizedCategory}_меню`;
@@ -2083,28 +2026,53 @@
                 return basePrice * (1 - discount / 100);
             }
 
-            function applyStyles() {
-                const styles = {
-                    '--menu-bg-color': controls.menuBgPicker.value, '--cell-bg-color': controls.cellBgColorPicker.value,
-                    '--category-font-family': controls.categoryFont.value, '--category-font-size': controls.categorySize.value + 'px',
-                    '--category-font-color': controls.categoryColor.value, '--item-font-family': controls.itemFont.value,
-                    '--item-font-size': controls.itemSize.value + 'px', '--item-font-color': controls.itemColor.value,
-                    '--desc-font-family': controls.descFont.value, '--desc-font-size': controls.descSize.value + 'px',
-                    '--desc-font-color': controls.descColor.value, '--price-font-family': controls.priceFont.value,
-                    '--price-font-size': controls.priceSize.value + 'px', '--price-font-color': controls.priceColor.value,
-                    '--promo-title-font-family': controls.promoTitleFont.value, '--promo-title-font-size': controls.promoTitleSize.value + 'px',
-                    '--promo-title-font-color': controls.promoTitleColor.value, '--promo-text-font-family': controls.promoTextFont.value,
-                    '--promo-text-font-size': controls.promoTextSize.value + 'px', '--promo-text-font-color': controls.promoTextColor.value,
+            // *** ИЗМЕНЕНИЕ: Helper function для получения стилей с учетом масштаба ***
+            function getStyles(useFullScale = false) {
+                // Если ширина экрана < 1366px и не требуется полный масштаб (экспорт), уменьшаем шрифт на 15% (множитель 0.85)
+                const isSmallScreen = window.innerWidth < 1366;
+                const scale = (!useFullScale && isSmallScreen) ? 0.85 : 1.0;
+
+                return {
+                    '--menu-bg-color': controls.menuBgPicker.value,
+                    '--cell-bg-color': controls.cellBgColorPicker.value,
+                    '--category-font-family': controls.categoryFont.value,
+                    '--category-font-size': (controls.categorySize.value * scale) + 'px',
+                    '--category-font-color': controls.categoryColor.value,
+                    '--item-font-family': controls.itemFont.value,
+                    '--item-font-size': (controls.itemSize.value * scale) + 'px',
+                    '--item-font-color': controls.itemColor.value,
+                    '--desc-font-family': controls.descFont.value,
+                    '--desc-font-size': (controls.descSize.value * scale) + 'px',
+                    '--desc-font-color': controls.descColor.value,
+                    '--price-font-family': controls.priceFont.value,
+                    '--price-font-size': (controls.priceSize.value * scale) + 'px',
+                    '--price-font-color': controls.priceColor.value,
+                    '--promo-title-font-family': controls.promoTitleFont.value,
+                    '--promo-title-font-size': (controls.promoTitleSize.value * scale) + 'px',
+                    '--promo-title-font-color': controls.promoTitleColor.value,
+                    '--promo-text-font-family': controls.promoTextFont.value,
+                    '--promo-text-font-size': (controls.promoTextSize.value * scale) + 'px',
+                    '--promo-text-font-color': controls.promoTextColor.value,
                     '--promo-comment-font-family': controls.promoCommentFont.value,
-                    '--promo-comment-font-size': controls.promoCommentSize.value + 'px',
+                    '--promo-comment-font-size': (controls.promoCommentSize.value * scale) + 'px',
                     '--promo-comment-font-color': controls.promoCommentColor.value,
-                    '--promo-price-font-family': controls.promoPriceFont.value, '--promo-price-font-size': controls.promoPriceSize.value + 'px',
-                    '--promo-price-font-color': controls.promoPriceColor.value, '--discount-font-color': controls.discountColor.value,
-                    '--discount-bg-color': controls.discountBgColor.value, '--promo-text-align': controls.promoTextAlign.value,
+                    '--promo-price-font-family': controls.promoPriceFont.value,
+                    '--promo-price-font-size': (controls.promoPriceSize.value * scale) + 'px',
+                    '--promo-price-font-color': controls.promoPriceColor.value,
+                    '--discount-font-color': controls.discountColor.value,
+                    '--discount-bg-color': controls.discountBgColor.value,
+                    '--promo-text-align': controls.promoTextAlign.value,
                     '--date-contrast-color': getContrastColor(controls.menuBgPicker.value),
                     '--grid-gradient-opacity': parseFloat(controls.gridGradientSlider.value) / 100,
                 };
-                for (const [key, value] of Object.entries(styles)) { document.documentElement.style.setProperty(key, value); }
+            }
+
+            function applyStyles() {
+                // При рендеринге в браузере используем адаптивный масштаб
+                const styles = getStyles(false);
+                for (const [key, value] of Object.entries(styles)) {
+                    document.documentElement.style.setProperty(key, value);
+                }
             }
             
             function renderMenuHTML(currentLayout) {
@@ -2112,7 +2080,7 @@
                 
                 const isList = currentLayout === 'list';
                 let headerHTML = '';
-                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; 
 
                 if (!isList) {
                     const firstCategory = state.excelData.length > 0 ? state.excelData[0].category : '';
@@ -2136,7 +2104,7 @@
                     controls.limitModal.style.display = 'flex';
                 }
                 const dataToRender = state.excelData.slice(0, 5);
-                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : '';
                 
                 const categories = {};
                 dataToRender.forEach(item => {
@@ -2191,7 +2159,7 @@
                     </div>`;
                 }).join('');
 
-                const columnsClass = state.excelData.length > 10 ? 'two-columns' : ''; // This check is fine, it just affects columns, not item count
+                const columnsClass = state.excelData.length > 10 ? 'two-columns' : '';
                 return `${dateHTML}<div class="menu-list-template"><div class="menu-items-container ${columnsClass}">${itemsHTML}</div></div>`;
             }
             
@@ -2200,7 +2168,7 @@
                     controls.limitModal.style.display = 'flex';
                 }
                 const dataToRender = state.excelData.slice(0, limit);
-                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; 
 
                 const renderCell = (item, index) => {
                     const originalIndex = state.excelData.indexOf(item);
@@ -2252,13 +2220,13 @@
             }
 
             function renderPromoHTML() {
-                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; // Проверка для блокировки редактирования
+                const editable = state.currentTab !== 'combined' ? 'contenteditable="true"' : ''; 
                 
                 let promoBgColor;
                 if (controls.promoBgType.value === 'color') {
                     promoBgColor = controls.bgColorPicker.value;
                 } else {
-                    promoBgColor = '#1A1D1F'; // Assume dark bg for image contrast
+                    promoBgColor = '#1A1D1F';
                 }
                 const iconPrefix = getContrastColor(promoBgColor) === '#FFFFFF' ? 'wht-' : 'drk-';
 
@@ -2395,13 +2363,13 @@
                     element.style.backgroundColor = '';
 
                     element.classList.add('resizable-container');
-                    element.title = 'Перемещение'; // Добавлена подсказка
+                    element.title = 'Перемещение';
                     if (!element.querySelector('.resize-handle')) {
                         const handles = ['tl', 'tr', 'bl', 'br'];
                         handles.forEach(h => {
                             const handle = document.createElement('div');
                             handle.className = `resize-handle ${h}`;
-                            handle.title = 'Масштабирование'; // Добавлена подсказка
+                            handle.title = 'Масштабирование';
                             element.appendChild(handle);
                         });
                     }
@@ -2409,15 +2377,12 @@
                     element.style.backgroundColor = controls.bgColorPicker.value;
                     element.style.backgroundImage = 'none';
                     element.classList.remove('resizable-container');
-                    element.title = ''; // Убрана подсказка
+                    element.title = '';
                     element.querySelectorAll('.resize-handle').forEach(h => h.remove());
                 }
             }
             
             
-            // --- *** НОВЫЙ ИСПРАВЛЕННЫЙ БЛОК ЭКСПОРТА (C ИСПРАВЛЕНИЕМ ДЛЯ 4:3) *** ---
-            
-            // Список всех CSS-переменных, которые мы используем для стилизации
             const cssVarsToCopy = [
                 '--menu-bg-color', '--cell-bg-color',
                 '--category-font-family', '--category-font-size', '--category-font-color',
@@ -2430,7 +2395,6 @@
                 '--promo-price-font-family', '--promo-price-font-size', '--promo-price-font-color',
                 '--discount-font-color', '--discount-bg-color', '--promo-text-align',
                 '--date-contrast-color', '--grid-gradient-opacity',
-                // Добавим переменные, которые не в списке, но влияют на вид
                 '--border-radius', '--border'
             ];
 
@@ -2442,11 +2406,9 @@
                 const originalPreview = getEl('menu-preview');
                 const captureClone = originalPreview.cloneNode(true);
 
-                // Убираем элементы управления из клона
                 captureClone.querySelectorAll('.resize-handle, .upload-photo-btn, .delete-photo-btn').forEach(el => el.style.display = 'none');
                 captureClone.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
 
-                // Создаем контейнер для рендеринга в высоком разрешении
                 const captureContainer = document.createElement('div');
                 captureContainer.style.position = 'absolute';
                 captureContainer.style.left = '-9999px';
@@ -2455,15 +2417,9 @@
                 captureContainer.style.height = state.exportHeight + 'px';
                 captureContainer.style.overflow = 'hidden';
 
-                // --- *** НОВАЯ ЛОГИКА МАСШТАБИРОВАНИЯ (v3) *** ---
-                
-                // 1. Получаем *текущий* размер превью, который видит пользователь
-                //    Это - "оригинал", который мы хотим масштабировать
-                //    Мы используем offsetWidth/Height для получения реальных пиксельных размеров
                 const baseWidth = originalPreview.offsetWidth; 
                 const baseHeight = originalPreview.offsetHeight;
 
-                // 2. Создаем "wrapper" с *точными* размерами "оригинала"
                 const wrapper = document.createElement('div');
                 wrapper.style.width = baseWidth + 'px';
                 wrapper.style.height = baseHeight + 'px';
@@ -2471,40 +2427,33 @@
                 wrapper.style.top = '0';
                 wrapper.style.left = '0';
                 
-                // 3. Рассчитываем фактор масштабирования, чтобы
-                //    увеличить "оригинал" до целевого разрешения.
-                
-                // --- *** НАЧАЛО ИЗМЕНЕНИЯ (ЗАПРОС 3: ИСПРАВЛЕНИЕ 4:3) *** ---
-                // Рассчитываем scaleX и scaleY отдельно
                 const scaleX = state.exportWidth / baseWidth; 
                 const scaleY = state.exportHeight / baseHeight;
-                // Используем Math.max, чтобы гарантировать, что клон *полностью*
-                // покроет контейнер, даже если есть расхождения в 1px из-за округления.
                 const scaleFactor = Math.max(scaleX, scaleY);
-                // --- *** КОНЕЦ ИЗМЕНЕНИЯ (ЗАПРОС 3) *** ---
 
                 wrapper.style.transform = `scale(${scaleFactor})`;
                 wrapper.style.transformOrigin = 'top left';
 
-                // 4. `captureClone` (копия #menu-preview) имеет width: 100%, height: 100%
-                //    и идеально заполнит 'wrapper'.
                 wrapper.appendChild(captureClone);
-                
-                // 5. Добавляем wrapper в captureContainer.
                 captureContainer.appendChild(wrapper);
                 
-                // 6. Копируем все CSS переменные
+                // *** ИЗМЕНЕНИЕ: Используем getStyles(true) для получения стилей без уменьшения (100% размер) ***
+                const fullScaleStyles = getStyles(true);
+                for (const [key, value] of Object.entries(fullScaleStyles)) {
+                    captureContainer.style.setProperty(key, value);
+                }
+                
+                // Copy remaining non-font vars just in case
                 const computedStyles = getComputedStyle(document.documentElement);
-                cssVarsToCopy.forEach(varName => {
-                    captureContainer.style.setProperty(varName, computedStyles.getPropertyValue(varName));
+                ['--border-radius', '--border'].forEach(varName => {
+                     captureContainer.style.setProperty(varName, computedStyles.getPropertyValue(varName));
                 });
-                // --- *** КОНЕЦ НОВОЙ ЛОГИКИ *** ---
 
                 document.body.appendChild(captureContainer);
 
                 setTimeout(() => {
                     html2canvas(captureContainer, {
-                        scale: 1, // Мы уже масштабируем через CSS transform
+                        scale: 1,
                         width: state.exportWidth,
                         height: state.exportHeight,
                         useCORS: true,
@@ -2520,7 +2469,6 @@
                     });
                 }, 500);
             }
-            // --- *** КОНЕЦ БЛОКА ЭКСПОРТА *** ---
 
             function downloadAsPNG() {
                 download(canvas => {
@@ -2542,7 +2490,7 @@
                 controls.mp4Modal.style.display = 'none';
                 
                 download(sourceCanvas => {
-                    controls.loadingText.textContent = 'Сохраняем видео, это может занять время...';
+                    controls.loadingText.textContent = 'Сохраняем видео...';
                     
                     const videoCanvas = document.createElement('canvas');
                     videoCanvas.width = sourceCanvas.width;
@@ -2550,10 +2498,21 @@
                     const ctx = videoCanvas.getContext('2d');
 
                     const stream = videoCanvas.captureStream(30);
-                    const mimeType = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find(MediaRecorder.isTypeSupported);
+                    
+                    // *** ИЗМЕНЕНИЕ: Приоритет H.264 для Mac (avc1) ***
+                    const mimeTypes = [
+                        'video/mp4; codecs="avc1.424028, mp4a.40.2"', // H.264 High/Main profile (Safari/Mac preferred)
+                        'video/mp4; codecs="avc1.42E01E, mp4a.40.2"', // H.264 Baseline
+                        'video/mp4',
+                        'video/webm;codecs=h264',
+                        'video/webm;codecs=vp9',
+                        'video/webm'
+                    ];
+                    
+                    const mimeType = mimeTypes.find(type => MediaRecorder.isTypeSupported(type));
                     
                     if (!mimeType) { 
-                        alert('Ваш браузер не поддерживает запись видео в формате MP4 или WebM.');
+                        alert('Ваш браузер не поддерживает запись видео.');
                         controls.loadingOverlay.style.display = 'none';
                         return;
                     }
@@ -2564,6 +2523,9 @@
                     
                     recorder.onstop = () => {
                         const blob = new Blob(recordedChunks, { type: mimeType });
+                        // Убедимся, что расширение соответствует контейнеру, но пользователь просил MP4
+                        // Если браузер записал webm, файл может не открыться в QuickTime как mp4
+                        // Но если браузер поддержал avc1, это будет валидный mp4.
                         saveAs(blob, `${filenameBase}.mp4`);
                         controls.loadingOverlay.style.display = 'none';
                     };
@@ -2588,8 +2550,6 @@
                 });
             }
             
-            
-            // --- Image Resizing and Panning Functions ---
             function deselectActiveResizable() {
                 const selected = controls.menuPreview.querySelector('.selected');
                 if (selected) {
